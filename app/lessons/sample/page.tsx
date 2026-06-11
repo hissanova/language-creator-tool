@@ -1,6 +1,7 @@
-import { LessonViewer } from "../../components/LessonViewer";
+import { ContentsViewer } from "../../components/ContentsViewer";
 import { sampleLesson } from "../../data/sampleLesson";
+import { sampleDocument } from "@/app/data/sampleDocument";
 
 export default function SampleLessonPage() {
-  return <LessonViewer lesson={sampleLesson} />;
+  return <ContentsViewer document={sampleDocument} />;
 }

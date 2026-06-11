@@ -1,14 +1,14 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import type { Lesson, OptionId } from "../types";
+import type { Document, OptionId } from "../types/viewer";
 import { ScriptLine } from "./ScriptLine";
 
 type Props = {
-  lesson: Lesson;
+  lesson: Document;
 };
 
-export function LessonViewer({ lesson }: Props) {
+export function ContentsViewer({ lesson }: Props) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const [textVariantId, setTextVariantId] = useState<OptionId>(
@@ -23,24 +23,24 @@ export function LessonViewer({ lesson }: Props) {
     lesson.defaultTranslationLanguageId ?? "none"
   );
 
-  const [chapterEndTime, setChapterEndTime] = useState<number | null>(null);
+  const [sectionEndTime, setSectionEndTime] = useState<number | null>(null);
 
-  const playChapter = (startTime: number, endTime: number) => {
+  const playSection = (startTime: number, endTime: number | null) => {
     if (!audioRef.current) return;
 
     audioRef.current.currentTime = startTime;
-    setChapterEndTime(endTime);
+    setSectionEndTime(endTime);
     audioRef.current.play();
   };
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio || chapterEndTime === null) return;
+    if (!audio || sectionEndTime === null) return;
 
     const handleTimeUpdate = () => {
-      if (audio.currentTime >= chapterEndTime) {
+      if (audio.currentTime >= sectionEndTime) {
         audio.pause();
-        setChapterEndTime(null);
+        setSectionEndTime(null);
       }
     };
 
@@ -49,7 +49,7 @@ export function LessonViewer({ lesson }: Props) {
     return () => {
       audio.removeEventListener("timeupdate", handleTimeUpdate);
     };
-  }, [chapterEndTime]);
+  }, [sectionEndTime]);
 
   return (
     <main className="mx-auto max-w-4xl p-6">
@@ -110,26 +110,33 @@ export function LessonViewer({ lesson }: Props) {
       </div>
 
       <div className="space-y-8">
-        {lesson.chapters.map((chapter) => (
-          <section key={chapter.id} className="rounded-2xl border p-5 shadow-sm">
+        {lesson.chapters.map((section) => (
+          <section key={section.id} className="rounded-2xl border p-5 shadow-sm">
             <div className="mb-4 flex items-center justify-between gap-4">
               <div>
-                <h2 className="text-xl font-bold">{chapter.title}</h2>
+                <h2 className="text-xl font-bold">{section.title}</h2>
                 <p className="text-sm text-gray-500">
-                  {chapter.startTime}s – {chapter.endTime}s
+                  {section.startTime}s – {section.endTime}s
                 </p>
               </div>
 
               <button
-                onClick={() => playChapter(chapter.startTime, chapter.endTime)}
+                onClick={() => {
+                    const start = section.startTime;
+                    if (section.endTime == null) {
+                    if (start == null) return;
+                    playSection(start, null);
+                    return;
+                    }
+                }}
                 className="rounded-full border px-4 py-2 text-sm hover:bg-gray-100"
               >
-                Play chapter
+                Play section
               </button>
             </div>
 
             <div className="space-y-4">
-              {chapter.lines.map((line) => (
+              {section.lines.map((line) => (
                 <ScriptLine
                   key={line.id}
                   line={line}

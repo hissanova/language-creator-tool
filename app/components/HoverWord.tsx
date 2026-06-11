@@ -1,13 +1,14 @@
 type Props = {
   text: string;
-  meaning: string;
+  title?: string;
+  className?: string;
 };
 
-export function HoverWord({ text, meaning }: Props) {
+export function HoverWord({ text, title, className }: Props) {
   return (
     <span
-      className="cursor-help rounded border-b border-dotted border-gray-500 bg-blue-400 px-1"
-      title={meaning}
+      className={className}
+      title={title}
     >
       {text}
     </span>

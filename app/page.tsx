@@ -13,6 +13,14 @@ export default function Home() {
       >
         Open sample lesson
       </Link>
+      <br />
+      <Link
+        href="/annotations/sample"
+        className="text-blue-600 underline"
+      >
+        Open sample annotations
+      </Link>
+      
     </main>
   );
 }

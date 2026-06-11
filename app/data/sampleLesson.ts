@@ -1,6 +1,6 @@
-import type { Lesson } from "../types";
+import type { Document } from "../types/viewer";
 
-export const sampleLesson: Lesson = {
+export const sampleLesson: Document = {
   title: "Chinese Conversation 01",
   audio: "/audio/sample.mp3",
 

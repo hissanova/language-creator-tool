@@ -42,15 +42,15 @@ export type ScriptLine = {
   annotations?: Annotation[];
 };
 
-export type Chapter = {
+export type Section = {
   id: string;
   title: string;
   startTime: number;
-  endTime: number;
+  endTime?: number;
   lines: ScriptLine[];
 };
 
-export type Lesson = {
+export type Document = {
   title: string;
   audio: string;
 
@@ -63,5 +63,5 @@ export type Lesson = {
   defaultTranslationLanguageId?: OptionId;
 
   speakers: Speaker[];
-  chapters: Chapter[];
+  chapters: Section[];
 };
