@@ -63,5 +63,5 @@ export type Document = {
   defaultTranslationLanguageId?: OptionId;
 
   speakers: Speaker[];
-  chapters: Section[];
+  sections: Section[];
 };

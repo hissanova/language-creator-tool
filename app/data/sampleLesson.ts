@@ -30,7 +30,7 @@ export const sampleLesson: Document = {
     { id: "speaker-b", name: "B", color: "green" },
   ],
 
-  chapters: [
+  sections: [
     {
       id: "chapter-1",
       title: "Greeting",

@@ -1,0 +1,30 @@
+viewer: basic
+
+annotationDisplay:
+  order:
+    - translation
+    - meaning
+    - grammar
+    - note
+
+  labels:
+    translation: 訳
+    meaning: 意味
+    grammar: 文法
+    note: 注
+
+  visibility:
+    translation: always
+    meaning: onClick
+    grammar: onClick
+    note: collapsed
+
+sectionBlocks:
+  line:
+    display: normal
+  note:
+    display: callout
+  figure:
+    display: block
+  table:
+    display: block
