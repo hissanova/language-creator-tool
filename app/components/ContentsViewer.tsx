@@ -145,37 +145,16 @@ export function ContentsViewer({ document, style = defaultStyle }: Props) {
             <div className={style.layout.sectionHeader}>
               <div className="flex items-center gap-3">
                 {media && (
-                  <>
-                  {audioRef.current &&
-                  sectionEndTime != null &&
-                  audioRef.current.currentTime >= section.time.start &&
-                  audioRef.current.currentTime < sectionEndTime ? (
-                    <button
-                    onClick={() => {
-                      audioRef.current?.pause();
-                      setSectionEndTime(null);
-                    }}
-                    className={style.layout.playButton}
-                    aria-label="Stop section"
-                    title="Stop section"
-                    >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden>
-                      <rect x="6" y="6" width="12" height="12" />
-                    </svg>
-                    </button>
-                  ) : (
-                    <button
+                  <button
                     onClick={() => playSection(section)}
                     className={style.layout.playButton}
                     aria-label="Play section"
                     title="Play section"
-                    >
+                  >
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden>
                       <path d="M8 5v14l11-7z" />
                     </svg>
-                    </button>
-                  )}
-                  </>
+                  </button>
                 )}
 
                 <div>
