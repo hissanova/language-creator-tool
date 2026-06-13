@@ -1,0 +1,61 @@
+{
+  "metadata": {
+    "title": "FormedText and provenance sample",
+    "targetLanguage": "ryu-shuri",
+    "specVersion": "0.2.0"
+  },
+  "body": [
+    {
+      "id": "section-1",
+      "title": "Greeting",
+      "level": 1,
+      "blocks": [
+        {
+          "type": "line",
+          "line": {
+            "id": "line-1",
+            "text": {
+              "surface": "はいさい"
+            },
+            "targets": [
+              {
+                "id": "target-1",
+                "kind": "textSpan",
+                "selector": {
+                  "type": "text",
+                  "text": "はいさい",
+                  "occurrence": 1
+                },
+                "annotations": [
+                  {
+                    "type": "translation",
+                    "language": "ja",
+                    "value": {
+                      "surface": "こんにちは"
+                    },
+                    "provenance": {
+                      "source": "manual"
+                    }
+                  },
+                  {
+                    "type": "form",
+                    "formType": "romanization",
+                    "value": {
+                      "surface": "haisai",
+                      "formType": "romanization"
+                    },
+                    "provenance": {
+                      "source": "auto",
+                      "agent": "example-romanizer",
+                      "confidence": 0.92
+                    }
+                  }
+                ]
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

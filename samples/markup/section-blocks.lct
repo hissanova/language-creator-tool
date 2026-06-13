@@ -1,0 +1,14 @@
+---
+title: Section Blocks Example
+targetLanguage: ryu
+specVersion: 0.1.0
+---
+
+# Greeting
+
+>: はいさい。
+
+@note Greeting note
+  A section-level note can appear between lines.
+
+>: ちゃーがんじゅーやみ？

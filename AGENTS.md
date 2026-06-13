@@ -117,3 +117,8 @@ It is generated from:
 Core JSON defines what the content means.
 Display Style defines how the content is shown.
 Display JSON is the viewer-ready result of combining both.
+
+## Samples are executable TypeScript fixtures.
+
+Do not write canonical samples as plain JSON.
+Use `.sample.ts` files with `satisfies` and import the corresponding type from `app/types`.

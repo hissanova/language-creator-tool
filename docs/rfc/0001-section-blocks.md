@@ -6,7 +6,7 @@ Draft
 
 ## Motivation
 
-The current section model based on `lines[]` is simple, but it cannot preserve the relative order of lines and other section-level content such as notes, figures, tables, or references.
+The previous section model based on `lines[]` is simple, but it cannot preserve the relative order of lines and other section-level content such as notes, figures, tables, or reference notes.
 
 Language content often needs supplemental material between lines, for example:
 
@@ -26,7 +26,8 @@ Introduce `blocks[]` under each section.
 ```ts
 type Section = {
   id: string;
-  title?: string;
+  title: string;
+  level: number;
   blocks: SectionBlock[];
 };
 
@@ -40,36 +41,68 @@ type SectionBlock =
 ## Document Shape
 
 ```text
-Conversation
+Document
   metadata
-  sections[]
+  body[]
     blocks[]
       line | note | figure | table
   references[]
 ```
 
+## Rationale
+
+`blocks[]` keeps the document model language-content-oriented while preserving the order of heterogeneous content.
+
+It is more explicit than `children[]`, while still allowing future extension to block types such as `quiz`, `audioNote`, `map`, or `externalLink`.
+
+## Migration
+
+Existing `lines[]` data may be converted mechanically:
+
+```ts
+const blocks = lines.map((line) => ({
+  type: "line" as const,
+  line,
+}));
+```
+
+During migration, `lines[]` may remain as a deprecated compatibility field, but new data should use `blocks[]`.
+
 ## Example
 
 ```json
 {
-  "id": "basic-conversation",
-  "sections": [
+  "metadata": {
+    "title": "Section Blocks Example",
+    "targetLanguage": "ryu",
+    "specVersion": "0.1.0"
+  },
+  "body": [
     {
       "id": "section-1",
       "title": "Greeting",
+      "level": 1,
       "blocks": [
         {
           "type": "line",
           "line": {
             "id": "line-1",
-            "text": "Hello."
+            "text": { "text": "はいさい。" }
           }
         },
         {
           "type": "note",
           "note": {
             "id": "note-1",
-            "text": "A short greeting note."
+            "title": "Greeting note",
+            "text": "A short greeting note can appear between lines."
+          }
+        },
+        {
+          "type": "line",
+          "line": {
+            "id": "line-2",
+            "text": { "text": "ちゃーがんじゅーやみ？" }
           }
         }
       ]
@@ -86,12 +119,10 @@ More general, but less explicit. `blocks[]` better communicates that these are o
 
 ### Separate arrays
 
-For example, `lines[]`, `notes[]`, and `figures[]`.
-
-This is easy to type but does not preserve the order of mixed content.
+For example, `lines[]`, `notes[]`, and `figures[]`. This is easy to type but does not preserve the order of mixed content.
 
 ## Open Questions
 
 - Should references be only document-level, or can a block also contain local reference links?
 - Should `note` be a section block only, or can it also appear inside a line annotation?
-- Should `blocks[]` replace `lines[]` immediately, or should both be supported during migration?
+- How long should `lines[]` remain as a compatibility field?
