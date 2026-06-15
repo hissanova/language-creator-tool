@@ -15,34 +15,34 @@ export const viewerStyle: ViewerStyle = {
     sectionTitle: "text-xl font-bold",
     sectionTime: "text-sm text-gray-500",
     playButton: "rounded-full border px-4 py-2 text-sm hover:bg-gray-100",
-    lines: "space-y-4",
+    lines: "space-y-1",
   },
   speaker: {
     default: {
-      container: "rounded-xl border p-4 border-gray-300 bg-gray-50",
+      container: "rounded-xl border p-1 border-gray-300 bg-gray-50",
       name: "mb-2 font-bold text-gray-700",
     },
     colors: {
       kanaa: {
-        container: "rounded-xl border p-4 border-blue-300 bg-blue-50",
+        container: "rounded-xl border p-2 border-blue-300 bg-blue-50",
         name: "mb-2 font-bold text-blue-700",
       },
       green: {
-        container: "rounded-xl border p-4 border-green-300 bg-green-50",
+        container: "rounded-xl border p-2 border-green-300 bg-green-50",
         name: "mb-2 font-bold text-green-700",
       },
       purple: {
-        container: "rounded-xl border p-4 border-purple-300 bg-purple-50",
+        container: "rounded-xl border p-2 border-purple-300 bg-purple-50",
         name: "mb-2 font-bold text-purple-700",
       },
       orange: {
-        container: "rounded-xl border p-4 border-orange-300 bg-orange-50",
+        container: "rounded-xl border p-2 border-orange-300 bg-orange-50",
         name: "mb-2 font-bold text-orange-700",
       },
     },
   },
   text: {
-    line: "text-xl leading-10 text-gray-900",
+    line: "text-xl leading-4 text-gray-900",
     annotated: "cursor-help px-0.5 underline decoration-dotted",
     annotationWithoutPopup: "px-0.5",
     translation: "mt-3 text-sm text-gray-600",

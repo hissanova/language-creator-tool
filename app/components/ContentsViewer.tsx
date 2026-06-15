@@ -1,7 +1,17 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { Document, DisplayOption, OptionId, Section } from "../types/lcm";
+import type {
+  Document,
+  DisplayOption,
+  Figure,
+  Line,
+  Note,
+  OptionId,
+  Section,
+  SectionBlock,
+  Table,
+} from "../types/lcm";
 import type { ViewerStyle } from "../types/viewerStyle";
 import { ScriptLine } from "./ScriptLine";
 import { viewerStyle as defaultStyle } from "../styles/viewerStyle";
@@ -25,8 +35,79 @@ function formatTime(value: number | undefined) {
   return `${value}s`;
 }
 
+function normalizeMediaSrc(src: string) {
+  if (src.startsWith("@/public/sample-media/conversation-hyq_2026-04-16_xindeyanjing_EDITED-BY-SIMON")) {
+    return "/media/audio/hyq_2026-04-16_xindeyanjing.mp3";
+  }
+
+  if (src.startsWith("@/public/")) {
+    return `/${src.slice("@/public/".length)}`;
+  }
+
+  return src;
+}
+
+function getSectionBlocks(section: Section): SectionBlock[] {
+  if (section.blocks) return section.blocks;
+  return section.lines?.map((line) => ({ type: "line" as const, line })) ?? [];
+}
+
+function NoteBlockView({ note }: { note: Note }) {
+  return (
+    <aside className="rounded border-l-4 border-gray-300 bg-gray-50 p-3 text-sm">
+      {note.title && <div className="font-semibold text-gray-800">{note.title}</div>}
+      <p className="text-gray-700">{note.text}</p>
+    </aside>
+  );
+}
+
+function FigureBlockView({ figure }: { figure: Figure }) {
+  const caption = Object.values(figure.caption ?? {})[0]?.text;
+
+  return (
+    <figure className="rounded border bg-white p-3">
+      {figure.src && (
+        <img src={figure.src} alt={figure.alt ?? ""} className="max-h-80 max-w-full rounded object-contain" />
+      )}
+      {caption && <figcaption className="mt-2 text-sm text-gray-600">{caption}</figcaption>}
+    </figure>
+  );
+}
+
+function TableBlockView({ table }: { table: Table }) {
+  const caption = Object.values(table.caption ?? {})[0]?.text;
+
+  return (
+    <div className="overflow-x-auto rounded border">
+      <table className="w-full border-collapse text-sm">
+        {caption && <caption className="p-2 text-left text-gray-600">{caption}</caption>}
+        <thead>
+          <tr>
+            {table.columns.map((column) => (
+              <th key={column} className="border-b bg-gray-50 p-2 text-left font-semibold">
+                {column}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {table.rows.map((row, rowIndex) => (
+            <tr key={rowIndex}>
+              {row.map((cell, cellIndex) => (
+                <td key={cellIndex} className="border-t p-2 align-top">
+                  {cell.text}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 export function ContentsViewer({ document, style = defaultStyle }: Props) {
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const mediaRef = useRef<HTMLMediaElement | null>(null);
 
   const textVariantOptions = document.metadata.textVariants ?? [];
   const formTypeOptions = withNone(document.metadata.formTypes);
@@ -46,48 +127,96 @@ export function ContentsViewer({ document, style = defaultStyle }: Props) {
     document.metadata.defaultTranslationLanguageId ?? "none"
   );
 
-  const [sectionEndTime, setSectionEndTime] = useState<number | null>(null);
+  const [playbackEndTime, setPlaybackEndTime] = useState<number | null>(null);
 
   const media = document.metadata.media;
+  const mediaSrc = media ? normalizeMediaSrc(media.src) : undefined;
 
   const playSection = (section: Section) => {
-    if (!audioRef.current) return;
+    if (!mediaRef.current) return;
 
-    audioRef.current.currentTime = section.time.start;
-    setSectionEndTime(section.time.end ?? null);
-    audioRef.current.play();
+    mediaRef.current.currentTime = section.time.start;
+    setPlaybackEndTime(section.time.end ?? null);
+    mediaRef.current.play();
+  };
+
+  const playLine = (line: Line) => {
+    if (!mediaRef.current || !line.time) return;
+
+    mediaRef.current.currentTime = line.time.start;
+    setPlaybackEndTime(line.time.end ?? null);
+    mediaRef.current.play();
   };
 
   useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio || sectionEndTime === null) return;
+    const mediaElement = mediaRef.current;
+    if (!mediaElement || playbackEndTime === null) return;
 
     const handleTimeUpdate = () => {
-      if (audio.currentTime >= sectionEndTime) {
-        audio.pause();
-        setSectionEndTime(null);
+      if (mediaElement.currentTime >= playbackEndTime) {
+        mediaElement.pause();
+        setPlaybackEndTime(null);
       }
     };
 
-    audio.addEventListener("timeupdate", handleTimeUpdate);
+    mediaElement.addEventListener("timeupdate", handleTimeUpdate);
 
     return () => {
-      audio.removeEventListener("timeupdate", handleTimeUpdate);
+      mediaElement.removeEventListener("timeupdate", handleTimeUpdate);
     };
-  }, [sectionEndTime]);
+  }, [playbackEndTime]);
 
   const speakers = useMemo(() => document.metadata.speakers ?? [], [document]);
+
+  const renderBlock = (block: SectionBlock) => {
+    switch (block.type) {
+      case "line":
+        return (
+          <ScriptLine
+            key={block.line.id}
+            line={block.line}
+            speakers={speakers}
+            textVariantId={textVariantId}
+            formTypeId={formTypeId}
+            translationLanguageId={translationLanguageId}
+            style={style}
+            canPlay={Boolean(media && block.line.time)}
+            onPlay={playLine}
+          />
+        );
+      case "note":
+        return <NoteBlockView key={block.note.id} note={block.note} />;
+      case "figure":
+        return <FigureBlockView key={block.figure.id} figure={block.figure} />;
+      case "table":
+        return <TableBlockView key={block.table.id} table={block.table} />;
+    }
+  };
 
   return (
     <main className={style.layout.main}>
       <h1 className={style.layout.headerTitle}>{document.metadata.title}</h1>
 
       {media?.type === "audio" && (
-        <audio ref={audioRef} className="mb-6 w-full" controls src={media.src} />
+        <audio
+          ref={(element) => {
+            mediaRef.current = element;
+          }}
+          className="mb-6 w-full"
+          controls
+          src={mediaSrc}
+        />
       )}
 
       {media?.type === "video" && (
-        <video ref={audioRef as React.RefObject<HTMLVideoElement>} className="mb-6 w-full" controls src={media.src} />
+        <video
+          ref={(element) => {
+            mediaRef.current = element;
+          }}
+          className="mb-6 w-full"
+          controls
+          src={mediaSrc}
+        />
       )}
 
       <div className={style.layout.controls}>
@@ -168,18 +297,19 @@ export function ContentsViewer({ document, style = defaultStyle }: Props) {
             </div>
 
             <div className={style.layout.lines}>
-              {section.lines.map((line) => (
-                <ScriptLine
-                  key={line.id}
-                  line={line}
-                  speakers={speakers}
-                  textVariantId={textVariantId}
-                  formTypeId={formTypeId}
-                  translationLanguageId={translationLanguageId}
-                  style={style}
-                />
-              ))}
+              {getSectionBlocks(section).map((block) => renderBlock(block))}
             </div>
+
+            {section.sections?.map((child) => (
+              <div key={child.id} className="mt-6">
+                <section className={style.layout.section}>
+                  <h3 className={style.layout.sectionTitle}>{child.title}</h3>
+                  <div className={style.layout.lines}>
+                    {getSectionBlocks(child).map((block) => renderBlock(block))}
+                  </div>
+                </section>
+              </div>
+            ))}
           </section>
         ))}
       </div>

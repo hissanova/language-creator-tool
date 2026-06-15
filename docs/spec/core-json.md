@@ -44,7 +44,7 @@ Language expressions are represented by `FormedText`.
 
 ```ts
 type FormedText = {
-  surface: string;
+  text: string;
   formType?: FormTypeId | "surface";
   decomposition?: Decomposition;
 };
@@ -52,7 +52,7 @@ type FormedText = {
 
 Rules:
 
-- `surface` is the default form.
+- `text` is the default display form for the expression.
 - `formType` identifies non-default forms such as romanization, phonetic form, normalized form, or grammatical form.
 - If an annotation value is itself a language expression, it should use `FormedText` rather than plain `string`.
 
@@ -110,4 +110,6 @@ Rules:
 
 ## Display separation
 
-Core JSON must not encode Basic Viewer-specific display decisions. Viewer-specific presentation rules belong in `displayStyle.yaml` and the generated Viewer JSON / Display JSON.
+Core JSON must not encode Basic Viewer-specific display decisions. The current viewer direction is to render Core JSON directly with optional style/config such as `displayStyle.yaml`.
+
+Do not introduce a Viewer JSON or Display JSON layer for the current universal/debug viewer.

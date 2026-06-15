@@ -5,10 +5,24 @@ export const conversation: Document = {
     title: "新的眼睛",
     documentType: "conversation",
     targetLanguage: "zh-Hant",
-    translationLanguages: [
-      { id: "zh-Hant", label: "繁體中文" },
-      { id: "en", label: "English" }
+    textVariants: [
+      { id: "zh-Hans", label: "简体" },
+      { id: "zh-Hant", label: "繁體" },
     ],
+
+    formTypes: [
+      { id: "none", label: "Off" },
+      { id: "pinyin", label: "Pinyin" },
+      { id: "zhuyin", label: "Bopomofo" },
+    ],
+
+    translationLanguages: [
+      { id: "none", label: "Off" },
+      { id: "en", label: "English" },
+      { id: "ja", label: "日本語" },
+      { id: "zh-Hant", label: "繁體中文" },
+    ],
+
     speakers: [
       { id: "simon", name: "Simon" },
       { id: "lan", name: "Lan" }

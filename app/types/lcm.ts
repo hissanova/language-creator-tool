@@ -6,7 +6,7 @@ export type DictionaryRef = string;
 
 export type TimeSpan = {
   start: number;
-  end: number;
+  end?: number;
 };
 
 export type DisplayOption = {
@@ -64,7 +64,7 @@ export type Section = {
     end?: number;
   };
   sections?: Section[];
-  blocks: SectionBlock[];
+  blocks?: SectionBlock[];
   targets?: Target[];
 
   /** @deprecated Use blocks with LineBlock instead. Kept only for migration. */
@@ -108,7 +108,7 @@ export type Line = {
  * expression. Additional forms can be represented by setting `formType`.
  */
 export type FormedText = {
-  formType: FormTypeId;
+  formType?: FormTypeId;
   text: string;
   decomposition?: Decomposition;
 };
@@ -129,6 +129,10 @@ export type TextSelector = {
   type: "text";
   text: string;
   occurrence?: number;
+  range?: {
+    start: number;
+    end: number;
+  };
 };
 
 export type IndexSelector = {
@@ -158,7 +162,14 @@ export type LineTarget = BaseTarget & {
 
 export type TextSpanTarget = BaseTarget & {
   kind: "textSpan";
-  selector: TargetSelector;
+  selector?: TargetSelector;
+  /** @deprecated Use selector.text instead. Kept for older fixtures. */
+  text?: string;
+  /** @deprecated Use selector.range or an index selector instead. */
+  range?: {
+    start: number;
+    end: number;
+  };
 };
 
 export type UnitTarget = BaseTarget & {
@@ -189,10 +200,10 @@ export type BaseAnnotation = {
 export type DictionaryAnnotation = BaseAnnotation & {
   type: "dictionary";
   ref?: DictionaryRef;
-  headword?: FormedText;
-  lemma?: FormedText;
+  headword?: FormedText | string;
+  lemma?: FormedText | string;
   pos?: string;
-  meanings?: Record<LanguageId, FormedText[]>;
+  meanings?: Record<LanguageId, FormedText[] | string[] | string>;
   notes?: string[];
   tags?: string[];
 };
@@ -200,7 +211,9 @@ export type DictionaryAnnotation = BaseAnnotation & {
 export type TranslationAnnotation = BaseAnnotation & {
   type: "translation";
   language: LanguageId;
-  value: FormedText;
+  value?: FormedText;
+  /** @deprecated Use value instead. Kept for older fixtures. */
+  text?: string;
 };
 
 export type FormAnnotation = BaseAnnotation & {

@@ -1,5 +1,7 @@
+import type { ReactNode } from "react";
+
 type Props = {
-  text: string;
+  text: ReactNode;
   title?: string;
   className?: string;
 };

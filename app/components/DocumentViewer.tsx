@@ -6,6 +6,7 @@ import type {
   Line,
   Resource,
   Section,
+  SectionBlock,
   Target,
 } from "../types/lcm";
 
@@ -34,24 +35,37 @@ export function DocumentViewer({ document }: Props) {
 }
 
 function SectionView({ section }: { section: Section }) {
-  const Heading = `h${Math.min(section.level + 1, 6)}` as any;
+  const headingClassName = "text-xl font-semibold";
+  const headingContent = (
+    <>
+      {section.title}
+      <span className="ml-2 text-sm font-normal text-gray-500">
+        {formatSectionTime(section.time)}
+      </span>
+    </>
+  );
 
   return (
     <section className="space-y-4">
-      <Heading className="text-xl font-semibold">
-        {section.title}
-        <span className="ml-2 text-sm font-normal text-gray-500">
-          {formatSectionTime(section.time)}
-        </span>
-      </Heading>
+      {section.level <= 1 ? (
+        <h2 className={headingClassName}>{headingContent}</h2>
+      ) : section.level === 2 ? (
+        <h3 className={headingClassName}>{headingContent}</h3>
+      ) : section.level === 3 ? (
+        <h4 className={headingClassName}>{headingContent}</h4>
+      ) : section.level === 4 ? (
+        <h5 className={headingClassName}>{headingContent}</h5>
+      ) : (
+        <h6 className={headingClassName}>{headingContent}</h6>
+      )}
 
       {section.targets?.map((target) => (
         <TargetView key={target.id} target={target} />
       ))}
 
       <div className="space-y-4">
-        {section.lines.map((line) => (
-          <LineView key={line.id} line={line} />
+        {getSectionBlocks(section).map((block) => (
+          <SectionBlockView key={getBlockKey(block)} block={block} />
         ))}
       </div>
 
@@ -60,6 +74,76 @@ function SectionView({ section }: { section: Section }) {
       ))}
     </section>
   );
+}
+
+function getSectionBlocks(section: Section): SectionBlock[] {
+  if (section.blocks) return section.blocks;
+  return section.lines?.map((line) => ({ type: "line" as const, line })) ?? [];
+}
+
+function getBlockKey(block: SectionBlock) {
+  switch (block.type) {
+    case "line":
+      return block.line.id;
+    case "note":
+      return block.note.id;
+    case "figure":
+      return block.figure.id;
+    case "table":
+      return block.table.id;
+  }
+}
+
+function SectionBlockView({ block }: { block: SectionBlock }) {
+  switch (block.type) {
+    case "line":
+      return <LineView line={block.line} />;
+    case "note":
+      return (
+        <aside className="rounded-lg border bg-gray-50 p-4">
+          {block.note.title && <div className="font-semibold">{block.note.title}</div>}
+          <p>{block.note.text}</p>
+        </aside>
+      );
+    case "figure":
+      return (
+        <figure className="rounded-lg border bg-gray-50 p-4">
+          <img src={block.figure.src} alt={block.figure.alt ?? ""} className="max-w-full rounded" />
+          {Object.values(block.figure.caption ?? {})[0]?.text && (
+            <figcaption className="mt-2 text-sm text-gray-600">
+              {Object.values(block.figure.caption ?? {})[0]?.text}
+            </figcaption>
+          )}
+        </figure>
+      );
+    case "table":
+      return (
+        <div className="overflow-x-auto rounded-lg border">
+          <table className="w-full text-sm">
+            <thead>
+              <tr>
+                {block.table.columns.map((column) => (
+                  <th key={column} className="border-b bg-gray-50 p-2 text-left">
+                    {column}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {block.table.rows.map((row, rowIndex) => (
+                <tr key={rowIndex}>
+                  {row.map((cell, cellIndex) => (
+                    <td key={cellIndex} className="border-t p-2">
+                      {cell.text}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+  }
 }
 
 function LineView({ line }: { line: Line }) {
@@ -157,12 +241,12 @@ function AnnotationView({ annotation }: { annotation: Annotation }) {
       return (
         <AnnotationBox title="Dictionary">
           {annotation.ref && <div>ref: {annotation.ref}</div>}
-          {annotation.headword && <div>headword: {annotation.headword}</div>}
+          {annotation.headword && <div>headword: {formedTextValue(annotation.headword)}</div>}
           {annotation.pos && <div>pos: {annotation.pos}</div>}
           {annotation.meanings &&
             Object.entries(annotation.meanings).map(([lang, text]) => (
               <div key={lang}>
-                {lang}: {text}
+                {lang}: {formedTextListValue(text)}
               </div>
             ))}
           {annotation.tags && <div>tags: {annotation.tags.join(", ")}</div>}
@@ -172,7 +256,7 @@ function AnnotationView({ annotation }: { annotation: Annotation }) {
     case "translation":
       return (
         <AnnotationBox title={`Translation (${annotation.language})`}>
-          {annotation.text}
+          {annotation.value?.text ?? annotation.text}
         </AnnotationBox>
       );
 
@@ -269,24 +353,23 @@ function ResourceView({ resource }: { resource: Resource }) {
   }
 }
 
-function targetLabel(target: Target): string {
-  switch (target.kind) {
-    case "section":
-      return "@section";
-    case "line":
-      return "@line";
-    case "textSpan":
-      return `@"${target.text}"`;
-  }
-}
-
 function formatSectionTime(time: Section["time"]): string {
   if (time.end == null) return `[${formatSeconds(time.start)}]`;
   return `[${formatSeconds(time.start)} --> ${formatSeconds(time.end)}]`;
 }
 
-function formatTimeSpan(time: { start: number; end: number }): string {
+function formatTimeSpan(time: { start: number; end?: number }): string {
+  if (time.end == null) return `[${formatSeconds(time.start)}]`;
   return `[${formatSeconds(time.start)} --> ${formatSeconds(time.end)}]`;
+}
+
+function formedTextValue(value: FormedText | string): string {
+  return typeof value === "string" ? value : value.text;
+}
+
+function formedTextListValue(value: FormedText[] | string[] | string): string {
+  if (typeof value === "string") return value;
+  return value.map((item) => formedTextValue(item)).join(", ");
 }
 
 function formatSeconds(value: number): string {

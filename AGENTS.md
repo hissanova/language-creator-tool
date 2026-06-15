@@ -18,8 +18,9 @@ Language Creator Tool (LCT) is a platform for creating, annotating, and viewing 
 
 Markup
 → Core JSON
-→ Display JSON
 → Viewer
+
+Optional viewer style/config may be applied at render time, but do not introduce Viewer JSON or Display JSON unless the project explicitly re-adopts that layer.
 
 ### Source of Truth
 
@@ -29,7 +30,6 @@ Core JSON is the canonical internal representation.
 * `docs/rfc/` contains proposed changes.
 * `samples/markup/` contains human-authored source examples.
 * `samples/core-json/` contains expected Core JSON outputs.
-* `samples/display-json/` contains expected display-oriented outputs (if applicable).
 * `app/types/` must remain consistent with `docs/spec/core-json.md`.
 
 ---
@@ -77,6 +77,8 @@ RFC
 ### Do
 
 * Keep Core JSON as the primary internal model.
+* Render viewers from Core JSON plus optional style/config.
+* Preserve section order with `blocks[]`; keep `lines[]` only as a deprecated migration fallback.
 * Prefer additive changes over breaking changes.
 * Keep samples synchronized with specifications.
 * Document non-obvious design decisions in RFCs.
@@ -84,6 +86,7 @@ RFC
 ### Do Not
 
 * Do not change Core JSON structures without updating samples.
+* Do not introduce Viewer JSON, Display JSON, or another intermediate viewer model unless explicitly requested.
 * Do not silently rename fields.
 * Do not mix experimental content into production sample data.
 * Do not update accepted specifications before implementation has been validated.
@@ -105,18 +108,20 @@ The implementation should follow the specification, not the other way around.
 
 ## Display Pipeline
 
-Display JSON is not the source of truth.
+Core JSON is rendered directly by the viewer.
 
-It is generated from:
+The current viewer direction is:
 
 - Core JSON
-- `displayStyle.yaml`
+- optional style/config, such as `displayStyle.yaml`
+- Viewer
 
-`displayStyle.yaml` defines how annotations, speakers, translations, notes, and other content blocks should be presented in a specific viewer.
+`displayStyle.yaml` or an equivalent style object may define how annotations, speakers, translations, notes, and other content blocks are presented in a specific viewer.
 
 Core JSON defines what the content means.
 Display Style defines how the content is shown.
-Display JSON is the viewer-ready result of combining both.
+
+Do not add a Viewer JSON or Display JSON layer for the current universal/debug viewer.
 
 ## Samples are executable TypeScript fixtures.
 
