@@ -13,7 +13,10 @@ export const conversation: Document = {
       { id: "simon", name: "Simon" },
       { id: "lan", name: "Lan" }
     ],
-    media: null,
+    media: {
+      src: "@/public/sample-media/conversation-hyq_2026-04-16_xindeyanjing_EDITED-BY-SIMON.mp3",
+      type: "audio"
+    },
     specVersion: "0.3-alpha"
   },
   body: [

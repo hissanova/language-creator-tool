@@ -8,14 +8,14 @@ export default function Home() {
       </h1>
 
       <Link
-        href="/lessons/sample"
+        href="/documents/lessons/sample"
         className="text-blue-600 underline"
       >
         Open sample lesson
       </Link>
       <br />
       <Link
-        href="/annotations/sample"
+        href="/documents/annotations/sample"
         className="text-blue-600 underline"
       >
         Open sample annotations
