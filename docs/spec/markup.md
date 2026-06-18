@@ -1,32 +1,96 @@
-Language Corpus Markup Specification
-Version: 0.3-alpha
+# Language Corpus Markup (LCM)
+
+Version: 0.4-alpha-mvp
 Status: Draft
 
+---
+
 # 1. Overview
-Language Corpus Markup (LCM) is a human-editable markup format for creating annotated language resources.
-The format supports:
-- language learning materials
-- corpus annotation
-- dictionary building
-- subtitle preparation
-- text-only corpora
-- audio/video corpora
-The format is designed to be:
-- human readable
-- Git friendly
-- easy to parse
-- easy to edit manually
-- suitable for GUI editing
+
+Language Corpus Markup (LCM) is a human-editable markup language for creating annotated language resources.
+
+LCM is intended for:
+
+* Language learning content
+* Conversation transcripts
+* Language documentation
+* Grammar study materials
+* Dictionary-linked content
+* Subtitle preparation
+* Audio-aligned corpora
+
+LCM is not a display format.
+
+LCM documents are converted into Core JSON and then rendered by one or more viewers.
+
+```text
+LCM
+ ↓
+Core JSON
+ ↓
+Viewer
+```
+
+Examples of viewers:
+
+* Chinese Conversation Viewer
+* Okinawan Corpus Viewer
+* Grammar Study Viewer
+* Subtitle Viewer
+
+---
 
 # 2. Design Philosophy
-The format separates:
-- document structure
-- annotation
-- dictionary knowledge
-- media alignment
 
-The core model is:
+LCM is designed around the following principles.
 
+## Human-readable
+
+A linguist, teacher, learner, or community member should be able to read and edit the source file directly.
+
+## Git-friendly
+
+LCM should work well with Git and version control.
+
+## Viewer-independent
+
+LCM describes content.
+
+LCM does not prescribe:
+
+* colors
+* popup behavior
+* layout
+* fonts
+* viewer interaction
+
+These belong to Viewer Style configuration.
+
+## Target-centered
+
+Annotations are attached to targets.
+
+Rather than maintaining many separate tiers, LCM stores information around the text being discussed.
+
+## Extensible
+
+Different language communities may use different subsets of the language.
+
+Examples:
+
+* Chinese conversation lessons
+* Okinawan example collections
+* Classical Japanese materials
+
+---
+
+# 3. User-facing Conceptual Model
+
+This section describes how users should think about LCM.
+
+The internal Core JSON representation is described later.
+
+```text
 Document
  ↓
 Section
@@ -35,148 +99,295 @@ Line
  ↓
 Target
     ├ Annotation
+    ├ Transform
     ├ Resource
     └ Decomposition
-         └ Target
-
-- Annotations describe Targets.
-- Resources provide supplementary content for Targets.
-- Decompositions define structural relationships between Targets.
-- Dictionary entries are external resources.
-- Media is optional.
-- The data model is target-centered.
-- Tier-like views are viewer projections derived from annotations and decompositions.
-
-# 3. Core Data Model
-## 3.1 Document
-A Document is the top-level object.
-A Document consists of:
-- Metadata
-- Body
-
-Document type is specified in metadata.
-
-Examples of document types:
-- conversation
-- interview
-- story
-- subtitle project
-- example collection
-- grammar study
-
-## 3.2 Metadata
-Metadata contains document-level configuration.
-Example:
 ```
+
 ---
-title: Matsu Conversation 01
+
+## 3.1 Document
+
+A Document is the top-level object.
+
+Examples:
+
+* Chinese lesson
+* Okinawan example collection
+* Grammar notes
+* Interview transcript
+
+A document contains:
+
+* metadata
+* sections
+
+---
+
+## 3.2 Section
+
+Sections organize content.
+
+Example:
+
+```text
+# Introduction
+
+## New Eyes
+
+## Feeling Dizzy
+```
+
+Sections may be nested.
+
+Sections are used for:
+
+* navigation
+* grouping
+* playback ranges
+
+---
+
+## 3.3 Line
+
+A Line is the basic transcript unit.
+
+Example:
+
+```text
+>simon: 我有一次去喫到飽
+```
+
+A line may contain:
+
+* speaker
+* timing
+* annotations
+* targets
+
+---
+
+## 3.4 Target
+
+A Target specifies the part of text being discussed.
+
+Examples:
+
+```text
+@"喫到飽"
+```
+
+```text
+@"降とーん"
+```
+
+```text
+@line
+```
+
+Targets may represent:
+
+* a whole line
+* a text span
+* a decomposition unit
+
+---
+
+## 3.5 Annotation
+
+Annotations add information.
+
+Examples:
+
+```text
++translation
++dictionary
++note
++correction
++tag
++language
++sound
+```
+
+Annotations describe a target.
+
+---
+
+## 3.6 Transform
+
+Transforms create another representation of the same linguistic content.
+
+Examples:
+
+```text
+surface
+↓
+kana
+```
+
+```text
+surface
+↓
+phoneme
+```
+
+```text
+surface
+↓
+translation
+```
+
+Examples:
+
+```text
+@transform kana:
+  しゅり
+```
+
+```text
+@transform phoneme:
+  hutooN
+```
+
+---
+
+## 3.7 Resource
+
+Resources attach supplementary content.
+
+Examples:
+
+```text
+@resource image:
+```
+
+```text
+@resource url:
+```
+
+```text
+@resource audio:
+```
+
+---
+
+## 3.8 Decomposition
+
+Decomposition describes internal structure.
+
+Example:
+
+```text
+喫到飽
+↓
+喫 | 到 | 飽
+```
+
+Decomposition units may themselves contain:
+
+* annotations
+* transforms
+* decompositions
+
+---
+
+# 4. Basic Syntax
+
+LCM uses two prefixes.
+
+```text
+@ = structure
+
++ = annotation
+```
+
+Examples:
+
+```text
+@"喫到飽"
+
+  +translation ja:
+    食べ放題
+```
+
+```text
+@"法國人"
+
+  +tag:
+    unnatural
+
+  +correction:
+    法文
+```
+
+---
+
+# 5. Metadata
+
+Metadata appears at the beginning of the document.
+
+Example:
+
+```yaml
+---
+title: 新的眼睛
 
 documentType: conversation
 
-targetLanguage: zh-Hant
-
-textVariants:
-  - zh-Hant
-  - zh-Hans
-
-translationLanguages:
-  - ja
-  - en
-
-formTypes:
-  - kana
-  - pinyin
-  - zhuyin
-  - phoneme
-  - ipa
-
-speakers:
-
-  - id: ran
-    name: Ran
-
-  - id: ten
-    name: Ten
-
-dictionarySources:
-
-  - id: local-dictionary
-    type: json
-    path: dictionaries/zh.json
-
-  - id: popup-dictionary
-    type: extension
-
-dictionaryAutoScan:
-
-  defaultSources:
-    - local-dictionary
+defaultLanguageId: zh-Hant
 
 media:
-  src: interview01.mp4
-  type: video
+  src: audio.mp3
 
-specVersion: 0.3
+dictionarySources:
+  - simon-custom
+
+specVersion: 0.4-alpha
 ---
 ```
 
-## 3.3 Media
-Media is optional.
-Media-based document:
-```
-media:
-  src: interview01.mp4
-  type: video
-```
-Text-only document:
-```
-media: null
-```
-Both are valid.
+Metadata fields are profile-dependent.
 
-## 3.4 Body
-The Body contains Sections.
+The MVP specification does not require a complete metadata schema.
 
-## 3.5 Section
+---
+
+# 6. Sections
+
 Sections use Markdown headings.
-Heading levels define nesting.
-Examples:
-```
-# [00:00] Greeting
 
-## [01:20] Taiwan
-
-### [02:10] Weather
-```
-A Section MUST contain:
-title
-startTime
-A Section MAY contain:
-endTime
-
-## 3.6 Line
-A Section contains Lines.
-A Line is the basic transcript unit.
-Line Timing
-Time-aligned lines use SRT-style timing blocks.
 Example:
+
+```text
+# [00:00] INTRO
+
+## [01:09] 新的眼睛
+
+## [06:36] 頭很暈
 ```
-[00:01:12.000 --> 00:01:14.500]
+
+Heading level determines nesting level.
+
+---
+
+# 7. Lines
+
+Timed lines:
+
+```text
+00:01:12.000 --> 00:01:14.500
 >simon: 我有
 ```
-If timing is present:
-startTime is required
-endTime is required
-Speaker Syntax
-Examples:
+
+Untimed lines:
+
+```text
+>simon: 我有
 ```
->ran: 哈嘍
-
->ten: 好久不見
-
->kanaa: 雨ぬ降てーん
 
 Speaker inheritance:
+
+```text
 >simon: 我有
 
 >: 一次
@@ -185,480 +396,513 @@ Speaker inheritance:
 
 >: 喫到飽
 ```
-A line beginning with:
-```
->: ...
-```
-inherits the speaker from the most recent line with an explicit speaker.
-Special speakers MAY be used:
-```
->sound: typing
 
->music: intro theme
+The inherited lines use the previous speaker.
 
->narrator: 昔々あるところに...
+---
+
+# 8. Targets
+
+## Entire line
+
+```text
+@line
 ```
 
-## 3.7 Target
-A Target represents the object being annotated.
-Supported target types:
-Section
-Line
-Text Span
-Examples:
-```
->speaker1: はいさい。ちゅーうがなびら。
+Example:
+
+```text
+>simon: 我有一次去喫到飽
+
   @line
-    …
-```
-```
->speaker1: はいさい。ちゅーうがなびら。
-  @"はいさい"
-     …
-```
-A Target MUST belong to exactly one Section or Line.
-A Target MAY contain timing information.
-Examples:
-```
->simon: 因為在臺灣已經很熱了
-  @"熱"
-    …
-```
-or
-```
->simon: 因為在臺灣已經很熱了
-  @"熱" [00:01:32.100 --> 00:01:33.400]
-    …
-```
-Target Disambiguation
-When the same text appears multiple times, implementations MAY support:
-```
->: 寒いから寒いと言った
-  @"寒い"[2]
-    …
-```
-or
-```
->: 寒いから寒いと言った
-  @[4:6]
-    …
-```
-Exact syntax is TBD.
 
-## 3.8 Annotation
-Annotations describe the meaning, interpretation, or properties of a Target.
-Annotations MUST belong to a Target.
-Annotations MUST NOT contain timing information.
-Timing belongs only to:
-Section
-Line
-Target
-Annotation Categories
-Lexical Annotations
-```
->simon: 供品很多
-  @"供品"
-    @dictionary:
-      ref: dict:zh:gongpin#sense-1
-```
-Translation Annotations
-```
->simon: 因為在臺灣已經很熱了
-  @"熱"
-    @translation ja:
-      暑い
-```
-Form Annotations
-```
->hisa: 首里んかいいちゃびたん。
-  @"首里"
-    @form kana:
-      しゅり
-```
-Editorial Annotations
-```
->simon: teh book
-  @"teh"
-    @correction:
-      the
+    +translation ja:
+      一度食べ放題に行った
 ```
 
+---
+
+## Text span
+
+```text
+@"喫到飽"
 ```
->hisa: はいさい。
-  @"はいさい"
-    @note:
-      首里・那覇では男性的表現。
+
+Example:
+
+```text
+>simon: 我有一次去喫到飽
+
+  @"喫到飽"
+
+    +translation ja:
+      食べ放題
 ```
-Classification Annotations
+
+---
+
+## Repeated text
+
+When the same text appears multiple times:
+
+```text
+@"貿易"[2]
 ```
->: 雨ぬ降とーん。
-  @"降とーん"
-    @tag:
-      - -ooN-form
-      - aspect
-```
-Language Annotations
-```
->simon: 中文では「寒い」も使います
-  @"寒い"
-    @language:
+
+Example:
+
+```text
+>lan: 就是貿易,貿易
+
+  @"貿易"[2]
+
+    +language:
       ja
 ```
-Sound Annotations
-```
->ran: typing
-  @"typing"
-    @sound:
-      keyboard typing
-```
-Additional annotation types MAY be introduced in future versions.
 
-## 3.9 Resource
-Resources provide supplementary content associated with a Target.
-Resources MUST belong to a Target.
-Resources MUST NOT contain timing information.
-Examples:
-```
->simon: サーフィンでお腹の上に横になって、駄目だった！
-  @line
-    @resource image:
-      src: surfing-paddling-surfboard.jpg
-```
+---
 
-```
->hisa: 首里んかいいちゃびたん。
-  @"首里"
-    @resource url:
-      href: https://example.com/shuri
-```
-Resource Types
-image
-audio
-video
-url
+# 9. Structure Commands (@)
 
-## 3.10 Decomposition
-Decomposition defines structural relationships between Targets.
-Decomposition is NOT an Annotation.
-Decomposition creates child Targets.
+## @line
+
+Targets the entire current line.
+
+---
+
+## @"..."
+
+Targets a text span.
+
+---
+
+## @transform
+
+Creates another form representation.
+
 Example:
-```
->simon: 我喜歡喫到飽
-  @"喫到飽"
-    @decompose:
-      喫|到|飽
-      @"喫"
-        @translation ja:
-          食べる
-      @"到"
-        @dictionary:
-          pos: resultative marker
-      @"飽"
-        @translation ja:
-          満腹
-```
-A decomposition MAY itself contain Targets with additional decompositions.
 
-# 4. Timing Model
-Timing MAY be attached only to:
-Section
-Line
-Target
-Annotations MUST NOT contain timing.
-Resources MUST NOT contain timing.
-Decompositions MUST NOT contain timing.
+```text
+@"首里"
+
+  @transform kana:
+    しゅり
+```
+
+Example:
+
+```text
+@"ふとーん"
+
+  @transform phoneme:
+    hutooN
+```
+
+---
+
+## @decompose
+
+Creates structural sub-units.
+
+Example:
+
+```text
+@"喫到飽"
+
+  @decompose:
+    喫|到|飽
+```
+
+---
+
+## @resource
+
+Attaches supplementary resources.
+
+Example:
+
+```text
+@resource image:
+  src: resources/surfing.jpg
+```
+
+---
+
+# 10. Annotation Commands (+)
+
+## +translation
+
+Example:
+
+```text
+@"日本人"
+
+  +translation en:
+    Japanese person
+```
+
+---
+
+## +dictionary
+
+Reference form:
+
+```text
+@"供品"
+
+  +dictionary:
+    ref: dict:zh:gongpin#sense-1
+```
+
+---
+
+## +correction
+
+Example:
+
+```text
+@"法國人"
+
+  +correction:
+    法文
+```
+
+---
+
+## +note
+
+Example:
+
+```text
+@"はいさい"
+
+  +note:
+    首里・那覇では男性的表現。
+```
+
+---
+
+## +tag
+
+Example:
+
+```text
+@"降とーん"
+
+  +tag:
+    - teen-form
+    - aspect
+```
+
+Project-specific classifications should use tags.
+
+Preferred:
+
+```text
++tag:
+  unnatural
+```
+
+Avoid:
+
+```text
++unnatural
+```
+
+---
+
+## +language
+
+Example:
+
+```text
+@"寒い"
+
+  +language:
+    ja
+```
+
+Language annotations may be created automatically.
+
+---
+
+## +sound
+
+Example:
+
+```text
+@line
+
+  +sound:
+    keyboard typing
+```
+
+---
+
+# 11. Timing Model
+
+Timing may belong to:
+
+* Section
+* Line
+* Target
+
+Annotations must not contain timing.
+
 Valid:
+
+```text
+@"熱" [00:01:32.100 --> 00:01:33.400]
+
+  +translation ja:
+    暑い
 ```
->simon: 因為在臺灣已經很熱了
-  @"熱" [00:01:32.100 --> 00:01:33.400]
-    @translation ja:
-      暑い
-```
+
 Invalid:
-```
->simon: 因為在臺灣已經很熱了
-  @"熱"
-    @translation ja [00:01:32.100 --> 00:01:33.400]:
-      暑い
+
+```text
+@"熱"
+
+  +translation ja [00:01:32.100 --> 00:01:33.400]:
+    暑い
 ```
 
-# 5. Dictionary Integration
-## 5.1 Dictionary Sources
-Dictionary sources are configured in Metadata.
-Sources MAY include:
-local JSON dictionaries
-browser extension dictionaries
-online dictionaries
-APIs
+---
+
+# 12. Dictionary Integration
+
+Dictionary sources are external.
+
 Example:
-Inside metadata section, you can write as:
-```
+
+```yaml
 dictionarySources:
-
-  - id: local
-    type: json
-
-  - id: popup
-    type: extension
-
-  - id: wiktionary
-    type: api
+  - simon-custom
+  - ninjal-okinawan
 ```
 
-## 5.2 Dictionary References
-Targets MAY reference dictionary entries.
+Dictionary information may be added manually.
+
 Example:
+
+```text
+@"供品"
+
+  +dictionary:
+    ref: dict:zh:gongpin#sense-1
 ```
->simon: 供品很多
 
-  @"供品"
+Dictionary information may also be generated automatically.
 
-    @dictionary:
-      ref: dict:zh:gongpin#sense-1
+Priority:
+
+```text
+1. Manual dictionary annotation
+2. Dictionary reference
+3. Automatic dictionary scan
 ```
-References SHOULD point to a specific sense whenever possible.
 
-## 5.3 Inline Dictionary Information
-Dictionary information MAY be written directly.
+---
+
+# 13. Viewer Projection
+
+LCM does not define presentation.
+
+Viewer Style determines:
+
+* popup contents
+* translation placement
+* transform placement
+* decomposition visibility
+
 Example:
+
+```yaml
+popup:
+  - dictionary
+  - note
+
+belowLine:
+  - translation
+
+dropdown:
+  - decomposition
 ```
->simon: 供品很多
 
-  @"供品"
+---
 
-    @dictionary:
-      headword: 供品
+# 14. Core JSON Mapping
 
-      pos: noun
+This section is informational.
 
-      meanings:
-        ja: お供え物
-        en: offering
-```
-If both ref and inline fields are present, inline fields override referenced information.
+LCM users do not need to understand Core JSON.
 
-## 5.4 Automatic Dictionary Scan
-A viewer MAY automatically search configured dictionary sources.
-Automatic lookup MUST have lower priority than explicit dictionary annotations.
+A typical implementation may use:
 
-# 6. Popup Meaning Resolution Priority
-Viewers SHOULD resolve meanings using:
-Explicit dictionary fields
-Dictionary references
-Automatic dictionary scan
-
-# 7. Translation
-Translation provides language-specific rendering.
-Translation MAY target:
+```text
+Document
+ ↓
 Section
-Line
-Text Span
-Examples:
-```
->simon: 因為在臺灣已經很熱了
-
-  @line
-
-    @translation ja:
-      台湾ではもう暑かった
-
->simon: 因為在臺灣已經很熱了
-
-  @"熱"
-
-    @translation ja:
-      暑い
-
-    @translation en:
-      hot
+ ↓
+SectionBlock
+ ↓
+TextNode
+ ↓
+SelectorNode
+    ├ Ref
+    └ Transform
 ```
 
-# 8. Form Annotation
-Forms represent alternative representations of the same linguistic content.
-Examples include:
-kana
-pinyin
-zhuyin
-romanization
-phoneme
-ipa
-Example:
-```
->hisa: 首里んかいいちゃびたん。
+Conceptual mapping:
 
-  @"首里"
+| LCM Concept | Core JSON Concept |
+| ----------- | ----------------- |
+| Document    | Document          |
+| Section     | Section           |
+| Line        | TextNode          |
+| Target      | SelectorNode      |
+| Annotation  | Ref / Transform   |
+| Transform   | Transform         |
+| Resource    | Resource          |
 
-    @form kana:
-      しゅり
+For MVP purposes:
+
+```text
++translation
++correction
 ```
-A form MAY contain nested decompositions.
-Okinawan Example:
+
+compile to Transforms.
+
+```text
++note
++tag
++dictionary
++language
++sound
 ```
+
+compile to Refs.
+
+---
+
+# 15. Profiles
+
+## Chinese Conversation Profile
+
+Recommended features:
+
+```text
+@line
+@"..."
++translation
++note
++correction
++tag
+```
+
+Dictionary auto-scan is strongly recommended.
+
+---
+
+## Okinawan Corpus Profile
+
+Additional features:
+
+```text
+@transform kana
+@transform phoneme
+@decompose
++dictionary
+```
+
+---
+
+## Grammar Study Profile
+
+Additional features:
+
+```text
+@decompose
++tag
++note
+```
+
+---
+
+# 16. Examples
+
+## Chinese Conversation
+
+```text
+00:01:24.000 --> 00:01:26.000
+>simon: 聽我?
+
+  @"聽我"
+
+    +tag:
+      unnatural
+```
+
+```text
+00:01:36.000 --> 00:01:38.000
+>simon: 日本人の皆さん！
+
+  @"日本人の皆さん"
+
+    +language:
+      ja
+
+    +translation zh-Hant:
+      大家日本人
+```
+
+---
+
+## Okinawan Grammar Study
+
+```text
 >: 雨ぬ降とーん。
 
   @line
 
-    @form kana:
+    @transform kana:
       あみぬふとーん。
 
       @decompose:
         あみ|ぬ|ふとーん
-
-        @"あみ"
-
-          @dictionary:
-            ref: dict:uch:ami#sense-1
-
-        @"ぬ"
-
-          @dictionary:
-            pos: particle
-
-        @"ふとーん"
-
-          @form phoneme:
-            hutooN
-
-            @decompose:
-              hut|ooN
-
-              @"hut"
-
-                @dictionary:
-                  ref: dict:uch:furu#stem
-
-              @"ooN"
-
-                @dictionary:
-                  category: aspect
-                  subtype: resultative/progressive
 ```
 
-# 9. Language Annotation
-Language information is represented using:
-```
->simon: 中文では「寒い」も使います
+---
 
-  @"寒い"
+## Classical Japanese
 
-    @language:
-      ja
-```
-This replaces dedicated Non-Target-Language syntax.
+```text
+>text: 月日は百代の過客にして
 
-# 10. Correction
-Corrections specify preferred or corrected forms.
-Example:
-```
->simon: teh book
+  @"過客"
 
-  @"teh"
-
-    @correction:
-      the
-```
-Corrections indicate that the original form is considered erroneous, non-standard, or less preferred in the current context.
-
-# 11. Tags
-Tags provide classification metadata.
-Tags are intended for:
-searching
-filtering
-corpus building
-grammar studies
-teaching material selection
-Example:
-```
->: 雨ぬ降とーん。
-
-  @"降とーん"
-
-    @tag:
-      - teen-form
-      - aspect
-      - teaching-material
+    +translation ja:
+      旅人
 ```
 
-```
->hoge: 雨ぬ止むん。
-  @”止むん”
-    @tag unnatural
-    @note “昔は 「雨ぬ晴りゆん」が、普通。”
-```
-A viewer MAY provide tag-based navigation and search.
+---
 
-12. Non-Linguistic Sounds
-Two styles are supported.
-Inline sound:
-```
->ran: 因為在臺灣已經很熱了 typing
+# 17. Out of Scope (MVP)
 
-  @"typing"
+The following topics are intentionally deferred.
 
-    @sound:
-      keyboard typing
-```
-Sound line:
-```
->sound: typing
+* Complete metadata schema
+* Dictionary schema
+* Viewer Style schema
+* Resource schema
+* Evidence model
+* Git history model
+* EAF import/export
+* TextGrid import/export
+* Editor specification
+* Dictionary editor specification
+* Alignment editor specification
+* Plugin architecture
 
-  @line
-
-    @sound:
-      keyboard typing
-```
-
-# 13. ELAN Compatibility
-LCM uses a target-centered data model.
-ELAN compatibility is achieved through viewer projections and import/export mappings.
-## 13.1 Tier-like Views
-Tier-like views are derived viewer projections.
-The canonical model remains target-centered.
-Example:
-```
->simon: 我喜歡喫到飽
-
-  @"喫到飽"
-
-    @translation ja:
-      食べ放題
-```
-Viewer projections:
-Translation Tier
-
-Dictionary Tier
-
-Grammar Tier
-
-Sound Tier
-
-This provides functionality similar to ELAN while preserving a simpler storage model.
-## 13.2 Export / Import Projection
-TBA
-
-# 14. Future Extensions
-Potential future annotations:
-@grammar
-@morphology
-@lemma
-@pos
-@variant
-
-# 15. Open Questions
-Dictionary data structure specification
-Dictionary entry vs sense model
-Dictionary plugin architecture
-Standardized special speakers
-Custom annotation types
-Dictionary creation workflow inside the editor
-Tier projection rules for each annotation type
-Form metadata structure
-Resource schema specification
-Resource viewer behavior
-Resource export/import rules
-Target disambiguation syntax
-EBNF grammar specification
-ELAN import/export mapping
-Nested form representation rules
-
-
+These topics will be addressed in future specifications.
