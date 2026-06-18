@@ -1,14 +1,25 @@
 import type {
-  Annotation,
   Document,
+  FigureBlock,
   FormedText,
-  FormedTextUnit,
-  Line,
+  NoteBlock,
   Resource,
   Section,
   SectionBlock,
-  Target,
+  SelectorNode,
+  TableBlock,
+  TextNode,
+  TextNodeRef,
+  TimeSpan,
 } from "../types/lcm";
+
+type SpeakerRef = TextNodeRef & {
+  body: { type: "speaker"; speakerId: string };
+};
+
+type AlignmentRef = TextNodeRef & {
+  body: { type: "alignment"; interval: TimeSpan };
+};
 
 type Props = {
   document: Document;
@@ -21,33 +32,35 @@ export function DocumentViewer({ document }: Props) {
         <h1 className="text-2xl font-bold">{document.metadata.title}</h1>
         <p className="text-sm text-gray-500">
           {document.metadata.documentType ?? "document"} /{" "}
-          {document.metadata.targetLanguage}
+          {document.metadata.defaultLanguageId ?? "unspecified"}
         </p>
       </header>
 
       <div className="space-y-8">
-        {document.body.map((section) => (
-          <SectionView key={section.id} section={section} />
+        {document.sections.map((section) => (
+          <SectionView key={section.id} section={section} resources={document.resources ?? []} />
         ))}
       </div>
     </article>
   );
 }
 
-function SectionView({ section }: { section: Section }) {
+function SectionView({ section, resources }: { section: Section; resources: Resource[] }) {
   const headingClassName = "text-xl font-semibold";
   const headingContent = (
     <>
       {section.title}
-      <span className="ml-2 text-sm font-normal text-gray-500">
-        {formatSectionTime(section.time)}
-      </span>
+      {section.time && (
+        <span className="ml-2 text-sm font-normal text-gray-500">
+          {formatTimeSpan(section.time)}
+        </span>
+      )}
     </>
   );
 
   return (
     <section className="space-y-4">
-      {section.level <= 1 ? (
+      {(section.level ?? 1) <= 1 ? (
         <h2 className={headingClassName}>{headingContent}</h2>
       ) : section.level === 2 ? (
         <h3 className={headingClassName}>{headingContent}</h3>
@@ -59,32 +72,23 @@ function SectionView({ section }: { section: Section }) {
         <h6 className={headingClassName}>{headingContent}</h6>
       )}
 
-      {section.targets?.map((target) => (
-        <TargetView key={target.id} target={target} />
-      ))}
-
       <div className="space-y-4">
-        {getSectionBlocks(section).map((block) => (
-          <SectionBlockView key={getBlockKey(block)} block={block} />
+        {section.blocks.map((block) => (
+          <SectionBlockView key={getBlockKey(block)} block={block} resources={resources} />
         ))}
       </div>
 
       {section.sections?.map((child) => (
-        <SectionView key={child.id} section={child} />
+        <SectionView key={child.id} section={child} resources={resources} />
       ))}
     </section>
   );
 }
 
-function getSectionBlocks(section: Section): SectionBlock[] {
-  if (section.blocks) return section.blocks;
-  return section.lines?.map((line) => ({ type: "line" as const, line })) ?? [];
-}
-
 function getBlockKey(block: SectionBlock) {
   switch (block.type) {
-    case "line":
-      return block.line.id;
+    case "text":
+      return block.text.id;
     case "note":
       return block.note.id;
     case "figure":
@@ -94,210 +98,134 @@ function getBlockKey(block: SectionBlock) {
   }
 }
 
-function SectionBlockView({ block }: { block: SectionBlock }) {
+function SectionBlockView({ block, resources }: { block: SectionBlock; resources: Resource[] }) {
   switch (block.type) {
-    case "line":
-      return <LineView line={block.line} />;
+    case "text":
+      return <TextNodeView textNode={block.text} resources={resources} />;
     case "note":
-      return (
-        <aside className="rounded-lg border bg-gray-50 p-4">
-          {block.note.title && <div className="font-semibold">{block.note.title}</div>}
-          <p>{block.note.text}</p>
-        </aside>
-      );
+      return <NoteBlockView note={block.note} />;
     case "figure":
-      return (
-        <figure className="rounded-lg border bg-gray-50 p-4">
-          <img src={block.figure.src} alt={block.figure.alt ?? ""} className="max-w-full rounded" />
-          {Object.values(block.figure.caption ?? {})[0]?.text && (
-            <figcaption className="mt-2 text-sm text-gray-600">
-              {Object.values(block.figure.caption ?? {})[0]?.text}
-            </figcaption>
-          )}
-        </figure>
-      );
+      return <FigureBlockView figure={block.figure} resources={resources} />;
     case "table":
-      return (
-        <div className="overflow-x-auto rounded-lg border">
-          <table className="w-full text-sm">
-            <thead>
-              <tr>
-                {block.table.columns.map((column) => (
-                  <th key={column} className="border-b bg-gray-50 p-2 text-left">
-                    {column}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {block.table.rows.map((row, rowIndex) => (
-                <tr key={rowIndex}>
-                  {row.map((cell, cellIndex) => (
-                    <td key={cellIndex} className="border-t p-2">
-                      {cell.text}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      );
+      return <TableBlockView table={block.table} />;
   }
 }
 
-function LineView({ line }: { line: Line }) {
+function TextNodeView({ textNode, resources }: { textNode: TextNode; resources: Resource[] }) {
+  const speaker = textNode.refs?.find(
+    (ref): ref is SpeakerRef => ref.body.type === "speaker"
+  )?.body.speakerId;
+  const alignment = textNode.refs?.find(
+    (ref): ref is AlignmentRef => ref.body.type === "alignment"
+  )?.body.interval;
+
   return (
     <div className="rounded-lg border p-4">
-      {line.time && (
-        <div className="mb-1 text-xs text-gray-500">{formatTimeSpan(line.time)}</div>
+      {alignment && (
+        <div className="mb-1 text-xs text-gray-500">{formatTimeSpan(alignment)}</div>
       )}
 
       <div className="mb-3">
-        {line.speakerId && (
+        {speaker && (
           <span className="mr-2 rounded bg-gray-100 px-2 py-0.5 text-sm">
-            {line.speakerId}
+            {speaker}
           </span>
         )}
-        <span className="text-lg">{line.text.text}</span>
+        <span className="text-lg">{textNode.content.text}</span>
       </div>
 
-      <FormedTextView formedText={line.text} />
+      {textNode.transforms?.map((transform) => (
+        <div key={transform.id} className="mt-2 rounded bg-gray-50 p-2 text-sm">
+          <span className="font-semibold">{transform.transformType}: </span>
+          {transform.output.content.text}
+        </div>
+      ))}
 
-      {line.targets?.map((target) => (
-        <TargetView key={target.id} target={target} />
+      {textNode.refs?.map((refValue) => (
+        <RefView key={refValue.id} body={refValue.body} resources={resources} />
+      ))}
+
+      {textNode.selectors?.map((selector) => (
+        <SelectorView key={selector.id} selector={selector} resources={resources} />
       ))}
     </div>
   );
 }
 
-function FormedTextView({ formedText }: { formedText: FormedText }) {
-  if (!formedText.decomposition) return null;
-
-  return (
-    <div className="mt-3 rounded bg-gray-50 p-3">
-      <div className="mb-2 text-sm font-semibold text-gray-700">Decomposition</div>
-      <div className="space-y-2">
-        {formedText.decomposition.units.map((unit) => (
-          <FormedTextUnitView key={unit.id} unit={unit} />
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function FormedTextUnitView({ unit }: { unit: FormedTextUnit }) {
-  return (
-    <div className="rounded border bg-white p-3">
-      <div className="font-medium">{unit.text.text}</div>
-
-      {unit.time && (
-        <div className="text-xs text-gray-500">{formatTimeSpan(unit.time)}</div>
-      )}
-
-      <FormedTextView formedText={unit.text} />
-
-      {unit.targets?.map((target) => (
-        <TargetView key={target.id} target={target} />
-      ))}
-    </div>
-  );
-}
-
-function TargetView({ target }: { target: Target }) {
+function SelectorView({ selector, resources }: { selector: SelectorNode; resources: Resource[] }) {
   return (
     <div className="mt-3 border-l-4 border-gray-200 pl-3">
       <div className="text-sm font-semibold text-gray-700">
-        {/* {targetLabel(target)} */}
-        {target.time && (
+        {selector.label ?? selector.selectorType}
+        {selector.selectedRanges?.length ? (
           <span className="ml-2 font-normal text-gray-500">
-            {formatTimeSpan(target.time)}
+            {selector.selectedRanges.map((range) => `${range.start}-${range.end}`).join(", ")}
           </span>
-        )}
+        ) : null}
       </div>
 
-      {target.annotations && target.annotations.length > 0 && (
-        <div className="mt-2 space-y-2">
-          {target.annotations.map((annotation, index) => (
-            <AnnotationView key={index} annotation={annotation} />
-          ))}
-        </div>
-      )}
+      {selector.children.map((child) => (
+        <TextNodeView key={child.id} textNode={child} resources={resources} />
+      ))}
 
-      {target.resources && target.resources.length > 0 && (
-        <div className="mt-2 space-y-2">
-          {target.resources.map((resource) => (
-            <ResourceView key={resource.id} resource={resource} />
-          ))}
-        </div>
-      )}
+      {selector.refs?.map((refValue) => (
+        <RefView key={refValue.id} body={refValue.body} resources={resources} />
+      ))}
     </div>
   );
 }
 
-function AnnotationView({ annotation }: { annotation: Annotation }) {
-  switch (annotation.type) {
+function RefView({
+  body,
+  resources,
+}: {
+  body: NonNullable<TextNode["refs"]>[number]["body"] | NonNullable<SelectorNode["refs"]>[number]["body"];
+  resources: Resource[];
+}) {
+  switch (body.type) {
     case "dictionary":
       return (
         <AnnotationBox title="Dictionary">
-          {annotation.ref && <div>ref: {annotation.ref}</div>}
-          {annotation.headword && <div>headword: {formedTextValue(annotation.headword)}</div>}
-          {annotation.pos && <div>pos: {annotation.pos}</div>}
-          {annotation.meanings &&
-            Object.entries(annotation.meanings).map(([lang, text]) => (
+          {body.ref && <div>ref: {body.ref.resourceId}</div>}
+          {body.headword && <div>headword: {formedTextValue(body.headword)}</div>}
+          {body.pos && <div>pos: {body.pos}</div>}
+          {body.definitions &&
+            Object.entries(body.definitions).map(([lang, text]) => (
               <div key={lang}>
                 {lang}: {formedTextListValue(text)}
               </div>
             ))}
-          {annotation.tags && <div>tags: {annotation.tags.join(", ")}</div>}
-        </AnnotationBox>
-      );
-
-    case "translation":
-      return (
-        <AnnotationBox title={`Translation (${annotation.language})`}>
-          {annotation.value?.text ?? annotation.text}
-        </AnnotationBox>
-      );
-
-    case "form":
-      return (
-        <AnnotationBox title={`Form (${annotation.formType})`}>
-          <div>{annotation.value.text}</div>
-          <FormedTextView formedText={annotation.value} />
+          {body.tags && <div>tags: {body.tags.join(", ")}</div>}
         </AnnotationBox>
       );
 
     case "note":
-      return <AnnotationBox title="Note">{annotation.text}</AnnotationBox>;
-
-    case "correction":
-      return (
-        <AnnotationBox title="Correction">
-          <div>{annotation.value.text}</div>
-          <FormedTextView formedText={annotation.value} />
-          {annotation.note && <div className="mt-1 text-gray-600">{annotation.note}</div>}
-        </AnnotationBox>
-      );
+      return <AnnotationBox title="Note">{body.text}</AnnotationBox>;
 
     case "tag":
-      return <AnnotationBox title="Tags">{annotation.tags.join(", ")}</AnnotationBox>;
+      return <AnnotationBox title="Tags">{body.tags.join(", ")}</AnnotationBox>;
 
-    case "language":
-      return <AnnotationBox title="Language">{annotation.language}</AnnotationBox>;
-
-    case "sound":
+    case "resourceRef":
       return (
-        <AnnotationBox title="Sound">
-          <div>{annotation.label}</div>
-          {annotation.description && (
-            <div className="text-gray-600">{annotation.description}</div>
-          )}
-        </AnnotationBox>
+        <>
+          {body.refs.map((ref) => {
+            const resource = resources.find((candidate) => candidate.id === ref.resourceId);
+            return resource ? <ResourceView key={ref.resourceId} resource={resource} /> : null;
+          })}
+        </>
       );
 
-    default:
-      return null;
+    case "custom":
+      return <AnnotationBox title="Custom">{body.schema ?? "custom"}</AnnotationBox>;
+
+    case "alignment":
+      return <AnnotationBox title="Alignment">{formatTimeSpan(body.interval)}</AnnotationBox>;
+
+    case "speaker":
+      return <AnnotationBox title="Speaker">{body.speakerId}</AnnotationBox>;
+
+    case "relation":
+      return <AnnotationBox title="Relation">{body.label ?? body.relationType}</AnnotationBox>;
   }
 }
 
@@ -309,9 +237,72 @@ function AnnotationBox({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded bg-gray-50 p-2 text-sm">
+    <div className="mt-2 rounded bg-gray-50 p-2 text-sm">
       <div className="font-semibold text-gray-700">{title}</div>
       <div className="mt-1 text-gray-800">{children}</div>
+    </div>
+  );
+}
+
+function NoteBlockView({ note }: { note: NoteBlock }) {
+  return (
+    <aside className="rounded-lg border bg-gray-50 p-4">
+      {note.title && <div className="font-semibold">{note.title}</div>}
+      <p>{note.text}</p>
+    </aside>
+  );
+}
+
+function FigureBlockView({
+  figure,
+  resources,
+}: {
+  figure: FigureBlock;
+  resources: Resource[];
+}) {
+  const resource =
+    figure.resourceRef &&
+    resources.find(
+      (candidate): candidate is Extract<Resource, { type: "image" }> =>
+        candidate.id === figure.resourceRef?.resourceId && candidate.type === "image"
+    );
+  const src = figure.src ?? resource?.src;
+  const alt = figure.alt ?? resource?.alt ?? "";
+  const caption = Object.values(figure.caption ?? resource?.caption ?? {})[0]?.text;
+
+  return (
+    <figure className="rounded-lg border bg-gray-50 p-4">
+      {src && <img src={src} alt={alt} className="max-w-full rounded" />}
+      {caption && <figcaption className="mt-2 text-sm text-gray-600">{caption}</figcaption>}
+    </figure>
+  );
+}
+
+function TableBlockView({ table }: { table: TableBlock }) {
+  return (
+    <div className="overflow-x-auto rounded-lg border">
+      <table className="w-full text-sm">
+        <thead>
+          <tr>
+            {table.columns.map((column) => (
+              <th key={column} className="border-b bg-gray-50 p-2 text-left">
+                {column}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {table.rows.map((row, rowIndex) => (
+            <tr key={rowIndex}>
+              {row.map((cell, cellIndex) => (
+                <td key={cellIndex} className="border-t p-2">
+                  {cell.text}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -326,39 +317,25 @@ function ResourceView({ resource }: { resource: Resource }) {
         </div>
       );
 
-    case "audio":
-      return (
-        <div className="rounded bg-gray-50 p-2 text-sm">
-          <div className="font-semibold">Audio</div>
-          <audio controls src={resource.src} className="mt-2 w-full" />
-        </div>
+    case "media":
+      return resource.mediaType === "audio" ? (
+        <audio controls src={resource.src} className="mt-2 w-full" />
+      ) : (
+        <video controls src={resource.src} className="mt-2 w-full" />
       );
 
-    case "video":
-      return (
+    case "external":
+      return resource.uri ? (
         <div className="rounded bg-gray-50 p-2 text-sm">
-          <div className="font-semibold">Video</div>
-          <video controls src={resource.src} className="mt-2 w-full" />
-        </div>
-      );
-
-    case "url":
-      return (
-        <div className="rounded bg-gray-50 p-2 text-sm">
-          <a href={resource.href} target="_blank" rel="noreferrer" className="underline">
-            {resource.label ?? resource.href}
+          <a href={resource.uri} target="_blank" rel="noreferrer" className="underline">
+            {resource.title ?? resource.uri}
           </a>
         </div>
-      );
+      ) : null;
   }
 }
 
-function formatSectionTime(time: Section["time"]): string {
-  if (time.end == null) return `[${formatSeconds(time.start)}]`;
-  return `[${formatSeconds(time.start)} --> ${formatSeconds(time.end)}]`;
-}
-
-function formatTimeSpan(time: { start: number; end?: number }): string {
+function formatTimeSpan(time: TimeSpan): string {
   if (time.end == null) return `[${formatSeconds(time.start)}]`;
   return `[${formatSeconds(time.start)} --> ${formatSeconds(time.end)}]`;
 }

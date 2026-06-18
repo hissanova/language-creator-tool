@@ -1,0 +1,4928 @@
+{
+  "〇": {
+    "en": "zero (written form)",
+    "ja": "〇（ゼロの表記）"
+  },
+  "一": {
+    "en": "one",
+    "ja": "一（いち）"
+  },
+  "一下": {
+    "en": "a bit; briefly",
+    "ja": "ちょっと；少し"
+  },
+  "一个": {
+    "en": "one (thing)",
+    "ja": "一つ（ひとつ）"
+  },
+  "一个人": {
+    "en": "one person; alone",
+    "ja": "一人；一人で"
+  },
+  "一些": {
+    "en": "some; a few",
+    "ja": "いくつか；少し",
+    "pinyin": "yi4 xie1",
+    "zhuyin": "ㄧˋ ㄒㄧㄝ"
+  },
+  "一半": {
+    "en": "half",
+    "ja": "半分"
+  },
+  "一周": {
+    "en": "one week",
+    "ja": "1週間",
+    "pinyin": "yi1 zhou1",
+    "zhuyin": "ㄧ ㄓㄡ"
+  },
+  "一定要": {
+    "en": "must; definitely",
+    "ja": "必ず～する；絶対に"
+  },
+  "一样": {
+    "en": "the same; alike",
+    "ja": "同じ；同様の"
+  },
+  "一点": {
+    "en": "a little; a bit",
+    "ja": "少し；ちょっと"
+  },
+  "一点点": {
+    "en": "a little bit; slightly",
+    "ja": "少し；ちょっと",
+    "pinyin": "yi1 dian3 dian3",
+    "zhuyin": "ㄧ ㄉㄧㄢˇ ㄉㄧㄢˇ"
+  },
+  "一般": {
+    "en": "ordinary; common",
+    "ja": "普通；一般的",
+    "pinyin": "yi4 ban1",
+    "zhuyin": "ㄧˋ ㄅㄢ"
+  },
+  "一起": {
+    "en": "together",
+    "ja": "いっしょに"
+  },
+  "一边": {
+    "en": "while ~ing",
+    "ja": "〜しながら"
+  },
+  "七": {
+    "en": "seven",
+    "ja": "七（なな／しち）"
+  },
+  "万": {
+    "en": "ten thousand",
+    "ja": "万（まん）"
+  },
+  "三": {
+    "en": "three",
+    "ja": "三（さん）"
+  },
+  "三小": {
+    "en": "what the hell?; what are you talking about? (Taiwan slang)",
+    "ja": "何言ってんの？／何のこと？（台湾口語）"
+  },
+  "三小時": {
+    "en": "3 hours",
+    "ja": "3時間",
+    "pinyin": "san1 xiao3 shi2",
+    "zhuyin": "ㄙㄢ ㄒㄧㄠˇ ㄕˊ"
+  },
+  "上": {
+    "en": "up; on; previous",
+    "ja": "上；〜の上; 前の"
+  },
+  "上一个": {
+    "en": "previous; last (one)",
+    "ja": "前の；前回の"
+  },
+  "上个": {
+    "en": "previous; last",
+    "ja": "前の；先の",
+    "pinyin": "shang4 ge5",
+    "zhuyin": "ㄕㄤˋ ㄍㄜ˙"
+  },
+  "上午": {
+    "en": "morning (before noon)",
+    "ja": "午前"
+  },
+  "上去": {
+    "en": "go up; climb",
+    "ja": "上がる；登る",
+    "pinyin": "shang4 qu5",
+    "zhuyin": "ㄕㄤˋ ㄑㄩ˙"
+  },
+  "上周": {
+    "en": "last week",
+    "ja": "先週"
+  },
+  "上次": {
+    "en": "last time",
+    "ja": "前回"
+  },
+  "上游": {
+    "en": "upstream; upper reaches",
+    "ja": "上流；上流部",
+    "pinyin": "shang4 you2",
+    "zhuyin": "ㄕㄤˋ ㄧㄡˊ"
+  },
+  "上班": {
+    "en": "to go to work",
+    "ja": "出勤する；仕事に行く"
+  },
+  "上面": {
+    "en": "above; on top",
+    "ja": "上",
+    "pinyin": "shang4 mian4",
+    "zhuyin": "ㄕㄤˋ ㄇㄧㄢˋ"
+  },
+  "下": {
+    "en": "down/below; next; to go down",
+    "ja": "下；下がる；次の"
+  },
+  "下午": {
+    "en": "afternoon",
+    "ja": "午後"
+  },
+  "下周": {
+    "en": "next week",
+    "ja": "来週"
+  },
+  "下手": {
+    "en": "poor skill; unskilled",
+    "ja": "下手；不器用",
+    "pinyin": "xia4 shou3",
+    "zhuyin": "ㄒㄧㄚˋ ㄕㄡˇ"
+  },
+  "下来": {
+    "en": "down; come down",
+    "ja": "下に；下がってくる"
+  },
+  "下面": {
+    "en": "below; under",
+    "ja": "下",
+    "pinyin": "xia4 mian4",
+    "zhuyin": "ㄒㄧㄚˋ ㄇㄧㄢˋ"
+  },
+  "不": {
+    "en": "not",
+    "ja": "～ない"
+  },
+  "不一样": {
+    "en": "different; not the same",
+    "ja": "違う；同じではない",
+    "pinyin": "bu4 yi1 yang4",
+    "zhuyin": "ㄅㄨˋ ㄧ ㄧㄤˋ"
+  },
+  "不会": {
+    "en": "will not; cannot; not know how to",
+    "ja": "～しないだろう；～できない；～の仕方が分からない"
+  },
+  "不再": {
+    "en": "no longer; not anymore",
+    "ja": "もう～しない；二度と～しない",
+    "pinyin": "bu4 zai4",
+    "zhuyin": "ㄅㄨˋ ㄗㄞˋ"
+  },
+  "不可能": {
+    "en": "impossible; cannot",
+    "ja": "不可能；できない",
+    "pinyin": "bu4 ke3 neng2",
+    "zhuyin": "ㄅㄨˋ ㄎㄜˇ ㄋㄥˊ"
+  },
+  "不同": {
+    "en": "different",
+    "ja": "違う；異なる",
+    "pinyin": "bu4 tong2",
+    "zhuyin": "ㄅㄨˋ ㄊㄨㄥˊ"
+  },
+  "不够": {
+    "en": "not enough",
+    "ja": "十分でない"
+  },
+  "不好": {
+    "en": "not good",
+    "ja": "良くない",
+    "pinyin": "bu4 hao3",
+    "zhuyin": "ㄅㄨˋ ㄏㄠˇ"
+  },
+  "不安": {
+    "en": "uneasy; anxious",
+    "ja": "不安；心配",
+    "pinyin": "bu4 an1",
+    "zhuyin": "ㄅㄨˋ ㄢ"
+  },
+  "不对": {
+    "en": "wrong; not correct",
+    "ja": "違う；正しくない"
+  },
+  "不想": {
+    "en": "don't want to; not feel like",
+    "ja": "～したくない；気が進まない",
+    "pinyin": "bu4 xiang3",
+    "zhuyin": "ㄅㄨˋ ㄒㄧㄤˇ"
+  },
+  "不是": {
+    "en": "is not; not",
+    "ja": "～ではない"
+  },
+  "不是吗": {
+    "en": "isn't it?; right?",
+    "ja": "〜じゃない？／〜でしょう？"
+  },
+  "不标准": {
+    "en": "not standard; non-standard",
+    "ja": "標準的でない"
+  },
+  "不用": {
+    "en": "do not need to; no need",
+    "ja": "～する必要がない"
+  },
+  "不知道": {
+    "en": "not know; be unaware",
+    "ja": "知らない"
+  },
+  "不自然": {
+    "en": "unnatural",
+    "ja": "不自然な"
+  },
+  "不行": {
+    "en": "not OK; not allowed; not possible",
+    "ja": "だめ；いけない；無理"
+  },
+  "不要": {
+    "en": "don't; must not",
+    "ja": "～しないで；～してはいけない"
+  },
+  "不过": {
+    "en": "but; however",
+    "ja": "でも；けれど"
+  },
+  "不错": {
+    "en": "pretty good; not bad",
+    "ja": "いい感じ；悪くない",
+    "pinyin": "bu2 cuo4",
+    "zhuyin": "ㄅㄨˊ ㄘㄨㄛˋ"
+  },
+  "专业": {
+    "en": "professional; major",
+    "ja": "専門；プロ",
+    "pinyin": "zhuan1 ye4",
+    "zhuyin": "ㄓㄨㄢ ㄧㄝˋ"
+  },
+  "世代": {
+    "en": "generation",
+    "ja": "世代"
+  },
+  "东京": {
+    "en": "Tokyo",
+    "ja": "東京",
+    "pinyin": "dong1 jing1",
+    "zhuyin": "ㄉㄨㄥ ㄐㄧㄥ"
+  },
+  "东西": {
+    "en": "things; stuff",
+    "ja": "物；もの"
+  },
+  "两": {
+    "en": "two (before a measure word); a couple of",
+    "ja": "二（助数詞の前で使う）／二つ・二人などの「二」"
+  },
+  "严重": {
+    "en": "serious; severe",
+    "ja": "深刻；重大な",
+    "pinyin": "yan2 zhong4",
+    "zhuyin": "ㄧㄢˊ ㄓㄨㄥˋ"
+  },
+  "个": {
+    "en": "general measure word; piece/item",
+    "ja": "一般的な助数詞（〜個）"
+  },
+  "个人": {
+    "en": "individual; personal",
+    "ja": "個人の"
+  },
+  "个月": {
+    "en": "month (with 个)",
+    "ja": "〜か月"
+  },
+  "中国": {
+    "en": "China",
+    "ja": "中国"
+  },
+  "中文": {
+    "en": "Chinese",
+    "ja": "中国語"
+  },
+  "中的": {
+    "en": "among; in the middle of",
+    "ja": "～の中；～のうち",
+    "pinyin": "zhong1 de5",
+    "zhuyin": "ㄓㄨㄥ ㄉㄜ˙"
+  },
+  "中间": {
+    "en": "middle; between",
+    "ja": "間；真ん中",
+    "pinyin": "zhong1 jian1",
+    "zhuyin": "ㄓㄨㄥ ㄐㄧㄢ"
+  },
+  "为": {
+    "en": "for; as (often formal)",
+    "ja": "〜のために／〜として（文語っぽい）"
+  },
+  "为了": {
+    "en": "in order to; for the sake of",
+    "ja": "～のために",
+    "pinyin": "wei4 le",
+    "zhuyin": "ㄨㄟˋ ㄌㄜ˙"
+  },
+  "为什么": {
+    "en": "why?",
+    "ja": "なぜ？"
+  },
+  "主": {
+    "en": "main",
+    "ja": "主（メイン）"
+  },
+  "主字稿": {
+    "en": "transcript",
+    "ja": "文字起こし、トランスクリプト",
+    "pinyin": "zhu3 zi4 gao3",
+    "zhuyin": "ㄓㄨˇ ㄗˋ ㄍㄠˇ"
+  },
+  "主要": {
+    "en": "main; major; chief",
+    "ja": "主な；主要な",
+    "pinyin": "zhu3 yao4",
+    "zhuyin": "ㄓㄨˇ ㄧㄠˋ"
+  },
+  "久": {
+    "en": "long time; for a while",
+    "ja": "長い間；しばらく",
+    "pinyin": "jiu3",
+    "zhuyin": "ㄐㄧㄡˇ"
+  },
+  "之前": {
+    "en": "before",
+    "ja": "〜の前に"
+  },
+  "之后": {
+    "en": "after; later",
+    "ja": "～のあと"
+  },
+  "之间": {
+    "en": "between; among",
+    "ja": "～の間；～の間に",
+    "pinyin": "zhi1 jian1",
+    "zhuyin": "ㄓ ㄐㄧㄢ"
+  },
+  "乌龟": {
+    "en": "tortoise; turtle",
+    "ja": "カメ",
+    "pinyin": "wu1 gui1",
+    "zhuyin": "ㄨ ㄍㄨㄟ"
+  },
+  "乗": {
+    "en": "ride; take (transport)",
+    "ja": "乗る；利用する",
+    "pinyin": "cheng2",
+    "zhuyin": "ㄔㄥˊ"
+  },
+  "乘": {
+    "en": "multiply; ride",
+    "ja": "掛ける；乗る",
+    "pinyin": "cheng2",
+    "zhuyin": "ㄔㄥˊ"
+  },
+  "乘法": {
+    "en": "multiplication",
+    "ja": "掛け算",
+    "pinyin": "cheng2 fa3",
+    "zhuyin": "ㄔㄥˊ ㄈㄚˇ"
+  },
+  "九": {
+    "en": "nine",
+    "ja": "九（きゅう）"
+  },
+  "也": {
+    "en": "also; too",
+    "ja": "～も"
+  },
+  "书": {
+    "en": "book",
+    "ja": "本"
+  },
+  "买": {
+    "en": "to buy",
+    "ja": "買う"
+  },
+  "乱": {
+    "en": "messy",
+    "ja": "散らかっている"
+  },
+  "了": {
+    "en": "change; now different",
+    "ja": "変化・完了（新しい状態）"
+  },
+  "事": {
+    "en": "matter/thing",
+    "ja": "事；出来事"
+  },
+  "事情": {
+    "en": "matter; thing; affair",
+    "ja": "事；出来事"
+  },
+  "二": {
+    "en": "two",
+    "ja": "二（に）"
+  },
+  "二十": {
+    "en": "twenty",
+    "ja": "二十"
+  },
+  "五": {
+    "en": "five",
+    "ja": "五（ご）"
+  },
+  "五十": {
+    "en": "fifty",
+    "ja": "五十"
+  },
+  "京都": {
+    "en": "Kyoto (city)",
+    "ja": "京都（都市）",
+    "pinyin": "jing1 du1",
+    "zhuyin": "ㄐㄧㄥ ㄉㄨ"
+  },
+  "亮晶晶": {
+    "en": "sparkly-clean",
+    "ja": "ピカピカ"
+  },
+  "人": {
+    "en": "person; people",
+    "ja": "人"
+  },
+  "人们": {
+    "en": "people",
+    "ja": "人々",
+    "pinyin": "ren2 men5",
+    "zhuyin": "ㄖㄣˊ ㄇㄣ˙"
+  },
+  "亿": {
+    "en": "hundred million (10^8)",
+    "ja": "億（おく／1億=10^8）"
+  },
+  "什么": {
+    "en": "what?",
+    "ja": "何？"
+  },
+  "什么时候": {
+    "en": "when",
+    "ja": "いつ",
+    "pinyin": "shen2 me shi2 hou4",
+    "zhuyin": "ㄕㄣˊ ㄇㄜ˙ ㄕˊ ㄏㄡˋ"
+  },
+  "什么样": {
+    "en": "what kind of; how",
+    "ja": "どんな；どのような",
+    "pinyin": "shen2 me5 yang4",
+    "zhuyin": "ㄕㄣˊ ㄇㄜ˙ ㄧㄤˋ"
+  },
+  "什么的": {
+    "en": "and so on; etc.",
+    "ja": "～とか；～など",
+    "pinyin": "shen2 me de5",
+    "zhuyin": "ㄕㄣˊ ㄇㄜ˙ ㄉㄜ˙"
+  },
+  "今天": {
+    "en": "today",
+    "ja": "今日；きょう"
+  },
+  "介绍": {
+    "en": "introduce; presentation",
+    "ja": "紹介する；説明する",
+    "pinyin": "jie4 shao4",
+    "zhuyin": "ㄐㄧㄝˋ ㄕㄠˋ"
+  },
+  "从": {
+    "en": "from",
+    "ja": "〜から"
+  },
+  "他": {
+    "en": "he; him",
+    "ja": "彼"
+  },
+  "他们": {
+    "en": "they; them",
+    "ja": "彼ら"
+  },
+  "他用": {
+    "en": "he uses",
+    "ja": "彼は使う",
+    "pinyin": "ta1 yong4",
+    "zhuyin": "ㄊㄚ ㄩㄥˋ"
+  },
+  "付": {
+    "en": "pay; hand over",
+    "ja": "支払う；手渡す",
+    "pinyin": "fu4",
+    "zhuyin": "ㄈㄨˋ"
+  },
+  "代表": {
+    "en": "represent; delegate",
+    "ja": "代表する",
+    "pinyin": "dai4 biao3",
+    "zhuyin": "ㄉㄞˋ ㄅㄧㄠˇ"
+  },
+  "以前": {
+    "en": "before; previously",
+    "ja": "以前；前に"
+  },
+  "以后": {
+    "en": "after; later",
+    "ja": "あとで；以後",
+    "pinyin": "yi3 hou4",
+    "zhuyin": "ㄧˇ ㄏㄡˋ"
+  },
+  "们": {
+    "en": "(plural marker for pronouns and nouns)",
+    "ja": "～たち；～ら",
+    "pinyin": "men5",
+    "zhuyin": "ㄇㄣ˙"
+  },
+  "件": {
+    "en": "measure word for matters; clothing; items",
+    "ja": "事柄・衣類などの助数詞"
+  },
+  "价格": {
+    "en": "price",
+    "ja": "価格",
+    "pinyin": "jia4 ge2",
+    "zhuyin": "ㄐㄧㄚˋ ㄍㄜˊ"
+  },
+  "价钱": {
+    "en": "price",
+    "ja": "値段",
+    "pinyin": "jia4 qian5",
+    "zhuyin": "ㄐㄧㄚˋ ㄑㄧㄢˊ"
+  },
+  "份": {
+    "en": "portion",
+    "ja": "一人前；分",
+    "pinyin": "fen4",
+    "zhuyin": "ㄈㄣˋ"
+  },
+  "休息": {
+    "en": "rest; take a break",
+    "ja": "休む；休憩する",
+    "pinyin": "xiu1 xi5",
+    "zhuyin": "ㄒㄧㄡ ㄒㄧ˙"
+  },
+  "休闲": {
+    "en": "leisure; relaxation",
+    "ja": "余暇；リラックス",
+    "pinyin": "xiu1 xian2",
+    "zhuyin": "ㄒㄧㄡ ㄒㄧㄢˊ"
+  },
+  "会": {
+    "en": "can; will",
+    "ja": "～できる；～するだろう"
+  },
+  "会员": {
+    "en": "member; VIP",
+    "ja": "会員；メンバー",
+    "pinyin": "hui4 yuan2",
+    "zhuyin": "ㄏㄨㄟˋ ㄩㄢˊ"
+  },
+  "但": {
+    "en": "but",
+    "ja": "でも（硬め）"
+  },
+  "但是": {
+    "en": "but; however",
+    "ja": "でも；しかし"
+  },
+  "位": {
+    "en": "polite measure word for people",
+    "ja": "人を数える丁寧な助数詞（〜名様）"
+  },
+  "住": {
+    "en": "to live; reside",
+    "ja": "住む"
+  },
+  "住宅": {
+    "en": "residence; housing",
+    "ja": "住宅",
+    "pinyin": "zhu4 zhai2",
+    "zhuyin": "ㄓㄨˋ ㄓㄞˊ"
+  },
+  "体": {
+    "en": "body; form",
+    "ja": "体；形",
+    "pinyin": "ti3",
+    "zhuyin": "ㄊㄧˇ"
+  },
+  "你": {
+    "en": "you",
+    "ja": "あなた"
+  },
+  "你们": {
+    "en": "you (plural)",
+    "ja": "あなたたち"
+  },
+  "使用": {
+    "en": "use; employ",
+    "ja": "使用する",
+    "pinyin": "shi3 yong4",
+    "zhuyin": "ㄕˇ ㄩㄥˋ"
+  },
+  "供": {
+    "en": "supply; provide; offer",
+    "ja": "供給する；提供する",
+    "pinyin": "gong4",
+    "zhuyin": "ㄍㄨㄥˋ"
+  },
+  "供品": {
+    "en": "offering",
+    "ja": "供え物",
+    "pinyin": "gong4 pin3",
+    "zhuyin": "ㄍㄨㄥˋ ㄆㄧㄣˇ"
+  },
+  "便宜": {
+    "en": "cheap; inexpensive",
+    "ja": "安い",
+    "pinyin": "pian2 yi5",
+    "zhuyin": "ㄆㄧㄢˊ ㄧˊ"
+  },
+  "便当": {
+    "en": "bento",
+    "ja": "弁当"
+  },
+  "修好": {
+    "en": "fix; repair",
+    "ja": "修理する；直す",
+    "pinyin": "xiu1 hao3",
+    "zhuyin": "ㄒㄧㄡ ㄏㄠˇ"
+  },
+  "假": {
+    "en": "holiday; vacation",
+    "ja": "休み",
+    "pinyin": "jia4",
+    "zhuyin": "ㄐㄧㄚˋ"
+  },
+  "做": {
+    "en": "do, make",
+    "ja": "する, 作る"
+  },
+  "做主": {
+    "en": "decide by yourself",
+    "ja": "自分で決める"
+  },
+  "做出": {
+    "en": "make; produce",
+    "ja": "作り出す；生み出す",
+    "pinyin": "zuo4 chu1",
+    "zhuyin": "ㄗㄨㄛˋ ㄔㄨ"
+  },
+  "做工作": {
+    "en": "to do work; to work",
+    "ja": "仕事をする"
+  },
+  "做法": {
+    "en": "method; way of doing",
+    "ja": "やり方；方法",
+    "pinyin": "zuo4 fa3",
+    "zhuyin": "ㄗㄨㄛˋ ㄈㄚˇ"
+  },
+  "停": {
+    "en": "stop; halt",
+    "ja": "止まる；停止する",
+    "pinyin": "ting2",
+    "zhuyin": "ㄊㄧㄥˊ"
+  },
+  "健康": {
+    "en": "health; healthy",
+    "ja": "健康；健康的",
+    "pinyin": "jian4 kang1",
+    "zhuyin": "ㄐㄧㄢˋ ㄎㄤ"
+  },
+  "健身房": {
+    "en": "gym; fitness center",
+    "ja": "ジム；フィットネスセンター",
+    "pinyin": "jian4 shen1 fang2",
+    "zhuyin": "ㄐㄧㄢˋ ㄕㄣ ㄈㄤˊ"
+  },
+  "像": {
+    "en": "to resemble; to be like",
+    "ja": "〜のようだ"
+  },
+  "儿子": {
+    "en": "son",
+    "ja": "息子"
+  },
+  "元": {
+    "en": "yuan (currency)",
+    "ja": "元（通貨単位）",
+    "pinyin": "yuan2",
+    "zhuyin": "ㄩㄢˊ"
+  },
+  "兆": {
+    "en": "trillion (10^12)",
+    "ja": "兆（ちょう／1兆=10^12）"
+  },
+  "先": {
+    "en": "first; first do ~",
+    "ja": "まず；先に",
+    "pinyin": "xian1",
+    "zhuyin": "ㄒㄧㄢ"
+  },
+  "光": {
+    "en": "light; merely",
+    "ja": "光；単に",
+    "pinyin": "guang1",
+    "zhuyin": "ㄍㄨㄤ"
+  },
+  "兜": {
+    "en": "go around",
+    "ja": "ぐるっと回る",
+    "pinyin": "dou1",
+    "zhuyin": "ㄉㄡ"
+  },
+  "入": {
+    "en": "enter; join",
+    "ja": "入る；参加する",
+    "pinyin": "ru4",
+    "zhuyin": "ㄖㄨˋ"
+  },
+  "全": {
+    "en": "all; complete",
+    "ja": "全部；完全な",
+    "pinyin": "quan2",
+    "zhuyin": "ㄑㄩㄢˊ"
+  },
+  "全家": {
+    "en": "whole family",
+    "ja": "家族全員"
+  },
+  "全部": {
+    "en": "all; entire",
+    "ja": "全部"
+  },
+  "八": {
+    "en": "eight",
+    "ja": "八（はち）"
+  },
+  "八十": {
+    "en": "eighty",
+    "ja": "八十"
+  },
+  "公布": {
+    "en": "announce; publish",
+    "ja": "発表する；公表する",
+    "pinyin": "gong1 bu4",
+    "zhuyin": "ㄍㄨㄥ ㄅㄨˋ"
+  },
+  "六": {
+    "en": "six",
+    "ja": "六（ろく）"
+  },
+  "关于": {
+    "en": "about; regarding",
+    "ja": "〜について"
+  },
+  "兴趣": {
+    "en": "interest; hobby",
+    "ja": "興味；趣味",
+    "pinyin": "xing4 qu4",
+    "zhuyin": "ㄒㄧㄥˋ ㄑㄩˋ"
+  },
+  "其中": {
+    "en": "among; in which",
+    "ja": "その中で；その中の",
+    "pinyin": "qi2 zhong1",
+    "zhuyin": "ㄑㄧˊ ㄓㄨㄥ"
+  },
+  "其他": {
+    "en": "other; others",
+    "ja": "ほかの；他の",
+    "pinyin": "qi2 ta1",
+    "zhuyin": "ㄑㄧˊ ㄊㄚ"
+  },
+  "其实": {
+    "en": "actually",
+    "ja": "実は"
+  },
+  "具": {
+    "en": "tool; utensil",
+    "ja": "道具；用具",
+    "pinyin": "ju4",
+    "zhuyin": "ㄐㄩˋ"
+  },
+  "再": {
+    "en": "again",
+    "ja": "また, もう一回"
+  },
+  "再一次": {
+    "en": "once again; one more time",
+    "ja": "もう一度"
+  },
+  "写": {
+    "en": "to write",
+    "ja": "書く"
+  },
+  "写真": {
+    "en": "photo; picture",
+    "ja": "写真",
+    "pinyin": "xie3 zhen1",
+    "zhuyin": "ㄒㄧㄝˇ ㄓㄣ"
+  },
+  "冬天": {
+    "en": "winter",
+    "ja": "冬",
+    "pinyin": "dong1 tian1",
+    "zhuyin": "ㄉㄨㄥ ㄊㄧㄢ"
+  },
+  "冰箱": {
+    "en": "fridge",
+    "ja": "冷蔵庫"
+  },
+  "冲": {
+    "en": "to rush; to flush",
+    "ja": "突進する；流す"
+  },
+  "冲浪": {
+    "en": "surf; surfing",
+    "ja": "サーフィン",
+    "pinyin": "chong1 lang4",
+    "zhuyin": "ㄔㄨㄥ ㄌㄤˋ"
+  },
+  "冲浪板": {
+    "en": "surfboard",
+    "ja": "サーフボード",
+    "pinyin": "chong1 lang4 ban3",
+    "zhuyin": "ㄔㄨㄥ ㄌㄤˋ ㄅㄢˇ"
+  },
+  "冲绳": {
+    "en": "Okinawa (Japanese island)",
+    "ja": "沖縄"
+  },
+  "决定": {
+    "en": "to decide; decision",
+    "ja": "決める；決定"
+  },
+  "冷": {
+    "en": "cold",
+    "ja": "寒い；冷たい",
+    "pinyin": "leng3",
+    "zhuyin": "ㄌㄥˇ"
+  },
+  "准备": {
+    "en": "prepare; get ready",
+    "ja": "準備する；用意する",
+    "pinyin": "zhun3 bei4",
+    "zhuyin": "ㄓㄨㄣˇ ㄅㄟˋ"
+  },
+  "准备好了": {
+    "en": "ready; prepared",
+    "ja": "準備ができた",
+    "pinyin": "zhun3 bei4 hao3 le5",
+    "zhuyin": "ㄓㄨㄣˇ ㄅㄟˋ ㄏㄠˇ ㄌㄜ˙"
+  },
+  "几个": {
+    "en": "a few; several",
+    "ja": "いくつか"
+  },
+  "几乎": {
+    "en": "almost; nearly",
+    "ja": "ほとんど；ほぼ"
+  },
+  "几年": {
+    "en": "how many years; several years",
+    "ja": "何年；数年",
+    "pinyin": "ji3 nian2",
+    "zhuyin": "ㄐㄧˇ ㄋㄧㄢˊ"
+  },
+  "出生": {
+    "en": "be born",
+    "ja": "生まれる",
+    "pinyin": "chu1 sheng1",
+    "zhuyin": "ㄔㄨ ㄕㄥ"
+  },
+  "分": {
+    "en": "minute; part",
+    "ja": "分；部分",
+    "pinyin": "fen1",
+    "zhuyin": "ㄈㄣ"
+  },
+  "分享": {
+    "en": "share",
+    "ja": "共有する；分かち合う",
+    "pinyin": "fen1 xiang3",
+    "zhuyin": "ㄈㄣ ㄒㄧㄤˇ"
+  },
+  "分开": {
+    "en": "to separate",
+    "ja": "分かれる"
+  },
+  "分析": {
+    "en": "analyze; analysis",
+    "ja": "分析する；解析する",
+    "pinyin": "fen1 xi1",
+    "zhuyin": "ㄈㄣ ㄒㄧ"
+  },
+  "分钟": {
+    "en": "minute",
+    "ja": "分間"
+  },
+  "刚刚": {
+    "en": "just now",
+    "ja": "さっき；今しがた"
+  },
+  "别的": {
+    "en": "other; else",
+    "ja": "他の"
+  },
+  "到": {
+    "en": "arrive; to",
+    "ja": "～に着く；～まで"
+  },
+  "刹车": {
+    "en": "brake",
+    "ja": "ブレーキ",
+    "pinyin": "sha1 che1",
+    "zhuyin": "ㄕㄚ ㄔㄜ"
+  },
+  "前面": {
+    "en": "front; ahead",
+    "ja": "前；前方",
+    "pinyin": "qian2 mian4",
+    "zhuyin": "ㄑㄧㄢˊ ㄇㄧㄢˋ"
+  },
+  "剑": {
+    "en": "sword",
+    "ja": "剣",
+    "pinyin": "jian4",
+    "zhuyin": "ㄐㄧㄢˋ"
+  },
+  "剩": {
+    "en": "to remain; to be left over",
+    "ja": "残る；余る"
+  },
+  "剩下": {
+    "en": "to remain; remaining",
+    "ja": "残る；残りの"
+  },
+  "剪纸": {
+    "en": "paper cutting (art)",
+    "ja": "切り絵；切り紙",
+    "pinyin": "jian3 zhi3",
+    "zhuyin": "ㄐㄧㄢˇ ㄓˇ"
+  },
+  "功": {
+    "en": "merit; result (as a component)",
+    "ja": "功（手柄・効果の感じ）"
+  },
+  "加油": {
+    "en": "Keep going!/You can do it!; add oil",
+    "ja": "頑張れ/ファイト; 油を追加する"
+  },
+  "动作": {
+    "en": "action; movement",
+    "ja": "動作；行動",
+    "pinyin": "dong4 zuo4",
+    "zhuyin": "ㄉㄨㄥˋ ㄗㄨㄛˋ"
+  },
+  "努力": {
+    "en": "effort; strive",
+    "ja": "努力する；頑張る",
+    "pinyin": "nu3 li4",
+    "zhuyin": "ㄋㄨˇ ㄌㄧˋ"
+  },
+  "十": {
+    "en": "ten",
+    "ja": "十（じゅう）"
+  },
+  "千": {
+    "en": "thousand",
+    "ja": "千（せん）"
+  },
+  "午餐": {
+    "en": "lunch",
+    "ja": "昼食"
+  },
+  "华丽": {
+    "en": "gorgeous; magnificent",
+    "ja": "華麗な",
+    "pinyin": "hua2 li4",
+    "zhuyin": "ㄏㄨㄚˊ ㄌㄧˋ"
+  },
+  "卖": {
+    "en": "sell",
+    "ja": "売る",
+    "pinyin": "mai4",
+    "zhuyin": "ㄇㄞˋ"
+  },
+  "危险": {
+    "en": "dangerous; danger",
+    "ja": "危険；危ない",
+    "pinyin": "wei1 xian3",
+    "zhuyin": "ㄨㄟ ㄒㄧㄢˇ"
+  },
+  "厉害": {
+    "en": "amazing; impressive",
+    "ja": "すごい；凄い",
+    "pinyin": "li4 hai5",
+    "zhuyin": "ㄌㄧˋ ㄏㄞ˙"
+  },
+  "厕所": {
+    "en": "toilet/restroom",
+    "ja": "トイレ"
+  },
+  "原因": {
+    "en": "reason; cause",
+    "ja": "原因"
+  },
+  "原本": {
+    "en": "originally; at first",
+    "ja": "もともと；もとの",
+    "pinyin": "yuan2 ben3",
+    "zhuyin": "ㄩㄢˊ ㄅㄣˇ"
+  },
+  "厨": {
+    "en": "kitchen (abbrev. form)",
+    "ja": "台所（略）"
+  },
+  "厨房": {
+    "en": "kitchen",
+    "ja": "台所, キッチン"
+  },
+  "去": {
+    "en": "go; go to ~",
+    "ja": "行く；～しに行く"
+  },
+  "去台": {
+    "en": "go to Taiwan",
+    "ja": "台湾に行く",
+    "pinyin": "qu4 tai2",
+    "zhuyin": "ㄑㄩˋ ㄊㄞˊ"
+  },
+  "去年": {
+    "en": "last year",
+    "ja": "去年",
+    "pinyin": "qu4 nian2",
+    "zhuyin": "ㄑㄩˋ ㄋㄧㄢˊ"
+  },
+  "参与": {
+    "en": "participate; take part in",
+    "ja": "参加する；関与する",
+    "pinyin": "can1 yu4",
+    "zhuyin": "ㄘㄢ ㄩˋ"
+  },
+  "参加": {
+    "en": "to participate",
+    "ja": "参加する"
+  },
+  "又": {
+    "en": "again",
+    "ja": "また（繰り返し）"
+  },
+  "反正": {
+    "en": "anyway; in any case",
+    "ja": "いずれにせよ；ともかく",
+    "pinyin": "fan3 zheng4",
+    "zhuyin": "ㄈㄢˇ ㄓㄥˋ"
+  },
+  "反过来": {
+    "en": "the other way around; on the other hand",
+    "ja": "逆に"
+  },
+  "发": {
+    "en": "send; issue",
+    "ja": "送る；発行する",
+    "pinyin": "fa1",
+    "zhuyin": "ㄈㄚ"
+  },
+  "发现": {
+    "en": "to discover; to find out",
+    "ja": "発見する；気づく"
+  },
+  "发生": {
+    "en": "to happen",
+    "ja": "起こる"
+  },
+  "取": {
+    "en": "take; get; fetch",
+    "ja": "取る；手に入れる",
+    "pinyin": "qu3",
+    "zhuyin": "ㄑㄩˇ"
+  },
+  "受伤": {
+    "en": "get injured; hurt",
+    "ja": "怪我をする；傷つく",
+    "pinyin": "shou4 shang1",
+    "zhuyin": "ㄕㄡˋ ㄕㄤ"
+  },
+  "变得": {
+    "en": "to become",
+    "ja": "〜になる"
+  },
+  "变成": {
+    "en": "to become; to turn into",
+    "ja": "～になる；変わる"
+  },
+  "句": {
+    "en": "sentence",
+    "ja": "文"
+  },
+  "另一": {
+    "en": "the other; another",
+    "ja": "もう一方の；他の",
+    "pinyin": "ling4 yi1",
+    "zhuyin": "ㄌㄧㄥˋ ㄧ"
+  },
+  "另外": {
+    "en": "another; in addition; besides",
+    "ja": "もう一つの；加えて",
+    "pinyin": "ling4 wai4",
+    "zhuyin": "ㄌㄧㄥˋ ㄨㄞˋ"
+  },
+  "只": {
+    "en": "measure word for animals; one of a pair; only",
+    "ja": "動物・対の片方を数える助数詞; だけ"
+  },
+  "只有": {
+    "en": "only; alone",
+    "ja": "〜だけ"
+  },
+  "只能": {
+    "en": "can only",
+    "ja": "〜するしかない"
+  },
+  "只要": {
+    "en": "as long as",
+    "ja": "～さえすれば",
+    "pinyin": "zhi3 yao4",
+    "zhuyin": "ㄓˇ ㄧㄠˋ"
+  },
+  "叫": {
+    "en": "to call; to be called",
+    "ja": "呼ぶ／〜と呼ばれる"
+  },
+  "叫做": {
+    "en": "be called",
+    "ja": "～と呼ばれる",
+    "pinyin": "jiao4 zuo4",
+    "zhuyin": "ㄐㄧㄠˋ ㄗㄨㄛˋ"
+  },
+  "可以": {
+    "en": "can, may",
+    "ja": "〜できる, 〜していい"
+  },
+  "可怜": {
+    "en": "pitiful; poor",
+    "ja": "かわいそう"
+  },
+  "可惜": {
+    "en": "unfortunately; it's a pity",
+    "ja": "残念ながら",
+    "pinyin": "ke3 xi1",
+    "zhuyin": "ㄎㄜˇ ㄒㄧ"
+  },
+  "可是": {
+    "en": "but",
+    "ja": "でも；けれど"
+  },
+  "可爱": {
+    "en": "cute; lovely",
+    "ja": "かわいい",
+    "pinyin": "ke3 ai4",
+    "zhuyin": "ㄎㄜˇ ㄞˋ"
+  },
+  "可能": {
+    "en": "maybe",
+    "ja": "たぶん, 〜かも"
+  },
+  "台": {
+    "en": "measure word for machines; vehicles",
+    "ja": "機械・車両などの助数詞"
+  },
+  "台北": {
+    "en": "Taipei",
+    "ja": "台北",
+    "pinyin": "tai2 bei3",
+    "zhuyin": "ㄊㄞˊ ㄅㄟˇ"
+  },
+  "台币": {
+    "en": "New Taiwan Dollar",
+    "ja": "NTD（ニュー台湾ドル）",
+    "pinyin": "tai2 bi4",
+    "zhuyin": "ㄊㄞˊ ㄅㄧˋ"
+  },
+  "台湾": {
+    "en": "Taiwan",
+    "ja": "台湾"
+  },
+  "吃": {
+    "en": "eat",
+    "ja": "食べる"
+  },
+  "吃的": {
+    "en": "food; something to eat",
+    "ja": "食べ物",
+    "pinyin": "chi1 de5",
+    "zhuyin": "ㄔ ㄉㄜ˙"
+  },
+  "吃饭": {
+    "en": "eat (a meal)",
+    "ja": "ご飯を食べる"
+  },
+  "各个": {
+    "en": "each; every",
+    "ja": "それぞれの",
+    "pinyin": "ge4 ge5",
+    "zhuyin": "ㄍㄜˋ ㄍㄜ˙"
+  },
+  "各位": {
+    "en": "everyone",
+    "ja": "皆さん",
+    "pinyin": "ge4 wei4",
+    "zhuyin": "ㄍㄜˋ ㄨㄟˋ"
+  },
+  "各处": {
+    "en": "everywhere; various places",
+    "ja": "あちこち／各所"
+  },
+  "各种": {
+    "en": "all kinds of; various",
+    "ja": "様々な",
+    "pinyin": "ge4 zhong3",
+    "zhuyin": "ㄍㄜˋ ㄓㄨㄥˇ"
+  },
+  "同一": {
+    "en": "same; identical",
+    "ja": "同一の",
+    "pinyin": "tong2 yi1",
+    "zhuyin": "ㄊㄨㄥˊ ㄧ"
+  },
+  "同学": {
+    "en": "classmate",
+    "ja": "クラスメート；同級生"
+  },
+  "同时": {
+    "en": "at the same time",
+    "ja": "同時に"
+  },
+  "名": {
+    "en": "measure word for people (formal)",
+    "ja": "人を数える助数詞（ややフォーマル）"
+  },
+  "名字": {
+    "en": "name",
+    "ja": "名前"
+  },
+  "后来": {
+    "en": "later; then/after that",
+    "ja": "そのあと, 後で; そして"
+  },
+  "后面": {
+    "en": "behind; at the back; later",
+    "ja": "後ろ；後で"
+  },
+  "向": {
+    "en": "toward; direction",
+    "ja": "～に向かって；方向",
+    "pinyin": "xiang4",
+    "zhuyin": "ㄒㄧㄤˋ"
+  },
+  "吓": {
+    "en": "scare; frighten",
+    "ja": "驚かす",
+    "pinyin": "xia4",
+    "zhuyin": "ㄒㄧㄚˋ"
+  },
+  "吗": {
+    "en": "(question)",
+    "ja": "～？（疑問）"
+  },
+  "吧": {
+    "en": "let's; soft suggestion",
+    "ja": "～しよう；～だよね（やわらかい）"
+  },
+  "含": {
+    "en": "contain; include",
+    "ja": "含む",
+    "pinyin": "han2",
+    "zhuyin": "ㄏㄢˊ"
+  },
+  "听": {
+    "en": "listen",
+    "ja": "聞く"
+  },
+  "听众": {
+    "en": "audience; listeners",
+    "ja": "聴衆；リスナー",
+    "pinyin": "ting1 zhong4",
+    "zhuyin": "ㄊㄧㄥ ㄓㄨㄥˋ"
+  },
+  "听到": {
+    "en": "hear; listen to",
+    "ja": "聞く；耳にする",
+    "pinyin": "ting1 dao4",
+    "zhuyin": "ㄊㄧㄥ ㄉㄠˋ"
+  },
+  "听起来": {
+    "en": "sound; seem",
+    "ja": "聞くと～そう",
+    "pinyin": "ting1 qi3 lai2",
+    "zhuyin": "ㄊㄧㄥ ㄑㄧˇ ㄌㄞˊ"
+  },
+  "吵架": {
+    "en": "quarrel; have a fight",
+    "ja": "けんかする；言い争う",
+    "pinyin": "chao3 jia4",
+    "zhuyin": "ㄔㄠˇ ㄐㄧㄚˋ"
+  },
+  "吸尘器": {
+    "en": "vacuum cleaner",
+    "ja": "掃除機"
+  },
+  "吹": {
+    "en": "blow",
+    "ja": "吹く"
+  },
+  "吹风机": {
+    "en": "hair dryer",
+    "ja": "ドライヤー"
+  },
+  "呃": {
+    "en": "uh... (hesitation)",
+    "ja": "えーと（ためらい）",
+    "pinyin": "e4",
+    "zhuyin": "ㄜˋ"
+  },
+  "告诉": {
+    "en": "tell; inform",
+    "ja": "教える；知らせる",
+    "pinyin": "gao4 su5",
+    "zhuyin": "ㄍㄠˋ ㄙㄨ˙"
+  },
+  "呢": {
+    "en": "...what about?; ongoing tone",
+    "ja": "～は？／～してるよ"
+  },
+  "呦": {
+    "en": "oh! (exclamation)",
+    "ja": "おや！",
+    "pinyin": "yo1",
+    "zhuyin": "ㄧㄛ"
+  },
+  "周": {
+    "en": "week",
+    "ja": "週"
+  },
+  "周末": {
+    "en": "weekend",
+    "ja": "週末",
+    "pinyin": "zhou1 mo4",
+    "zhuyin": "ㄓㄡ ㄇㄛˋ"
+  },
+  "和": {
+    "en": "and",
+    "ja": "〜と"
+  },
+  "咖啡厅": {
+    "en": "cafe",
+    "ja": "カフェ",
+    "pinyin": "ka1 fei1 ting1",
+    "zhuyin": "ㄎㄚ ㄈㄟ ㄊㄧㄥ"
+  },
+  "哇": {
+    "en": "wow",
+    "ja": "わあ"
+  },
+  "哈": {
+    "en": "ha (laugh)",
+    "ja": "は（笑い）"
+  },
+  "哈哈": {
+    "en": "haha (laugh)",
+    "ja": "はは（笑い）"
+  },
+  "哈啰": {
+    "en": "hello",
+    "ja": "こんにちは",
+    "pinyin": "ha1 luo2",
+    "zhuyin": "ㄏㄚ ㄌㄨㄛˊ"
+  },
+  "哈喽": {
+    "en": "hello",
+    "ja": "ハロー"
+  },
+  "哎": {
+    "en": "hey; sigh",
+    "ja": "ああ；ねえ"
+  },
+  "哎呀": {
+    "en": "oh no!; oops!",
+    "ja": "あら！；しまった！",
+    "pinyin": "ai1 ya1",
+    "zhuyin": "ㄞ ㄧㄚ"
+  },
+  "哒": {
+    "en": "da (sound particle)",
+    "ja": "ダ（音）"
+  },
+  "哦": {
+    "en": "oh/I see",
+    "ja": "ああ；なるほど"
+  },
+  "哪里": {
+    "en": "where; nowhere",
+    "ja": "どこ；どこにもない",
+    "pinyin": "na3 li3",
+    "zhuyin": "ㄋㄚˇ ㄌㄧˇ"
+  },
+  "商品": {
+    "en": "product; merchandise",
+    "ja": "商品"
+  },
+  "啊": {
+    "en": "ah; realization",
+    "ja": "あ（気づき・強調）"
+  },
+  "啦": {
+    "en": "sentence-final particle (softening / emphasis)",
+    "ja": "～だよ；～ね（語気）"
+  },
+  "喔": {
+    "en": "oh (sentence-final particle)",
+    "ja": "～だよ（語気）"
+  },
+  "喜庆": {
+    "en": "festive; joyous",
+    "ja": "お祝い；お祭り気分",
+    "pinyin": "xi3 qing4",
+    "zhuyin": "ㄒㄧˇ ㄑㄧㄥˋ"
+  },
+  "喜欢": {
+    "en": "like",
+    "ja": "好き",
+    "pinyin": "xi3 huan1",
+    "zhuyin": "ㄒㄧˇ ㄏㄨㄢ"
+  },
+  "喫": {
+    "en": "eat",
+    "ja": "食べる"
+  },
+  "嗯": {
+    "en": "um; hmm",
+    "ja": "うーん；ええと"
+  },
+  "嘉": {
+    "en": "fine; excellent; (affix for honor)",
+    "ja": "素晴らしい； 敬称として",
+    "pinyin": "jia1",
+    "zhuyin": "ㄐㄧㄚ"
+  },
+  "嘛": {
+    "en": "modal particle (obviousness / persuasion)",
+    "ja": "～じゃない（当然・念押しの語気）"
+  },
+  "四": {
+    "en": "four",
+    "ja": "四（よん／し）"
+  },
+  "回": {
+    "en": "return; reply; measure word for occurrences",
+    "ja": "戻る；返事；回",
+    "pinyin": "hui2",
+    "zhuyin": "ㄏㄨㄟˊ"
+  },
+  "回到": {
+    "en": "return to",
+    "ja": "～に戻る",
+    "pinyin": "hui2 dao4",
+    "zhuyin": "ㄏㄨㄟˊ ㄉㄠˋ"
+  },
+  "回去": {
+    "en": "go back",
+    "ja": "戻る；戻っていく"
+  },
+  "回家": {
+    "en": "to go home",
+    "ja": "家に帰る"
+  },
+  "回来": {
+    "en": "to come back",
+    "ja": "戻ってくる"
+  },
+  "回答": {
+    "en": "to answer; answer",
+    "ja": "答える；回答"
+  },
+  "因": {
+    "en": "because of",
+    "ja": "〜のため（硬め）"
+  },
+  "因为": {
+    "en": "because",
+    "ja": "～だから"
+  },
+  "团队": {
+    "en": "team; group, organization",
+    "ja": "チーム;団体",
+    "pinyin": "tuan2 dui4",
+    "zhuyin": "ㄊㄨㄢˊ ㄉㄨㄟˋ"
+  },
+  "困难": {
+    "en": "difficult",
+    "ja": "大変, 難しい"
+  },
+  "固定": {
+    "en": "fixed; set",
+    "ja": "固定；決まった",
+    "pinyin": "gu4 ding4",
+    "zhuyin": "ㄍㄨˋ ㄉㄧㄥˋ"
+  },
+  "国人": {
+    "en": "people of a country; compatriot",
+    "ja": "国民；同胞",
+    "pinyin": "guo2 ren2",
+    "zhuyin": "ㄍㄨㄛˊ ㄖㄣˊ"
+  },
+  "圈": {
+    "en": "lap; round",
+    "ja": "一周；ぐるっと",
+    "pinyin": "quan1",
+    "zhuyin": "ㄑㄩㄢ"
+  },
+  "圣": {
+    "en": "sacred; holy",
+    "ja": "聖なる",
+    "pinyin": "sheng4",
+    "zhuyin": "ㄕㄥˋ"
+  },
+  "在": {
+    "en": "at; in; be ~ing",
+    "ja": "～にいる；～で；～している"
+  },
+  "在外": {
+    "en": "abroad; overseas",
+    "ja": "海外；外国",
+    "pinyin": "zai4 wai4",
+    "zhuyin": "ㄗㄞˋ ㄨㄞˋ"
+  },
+  "在家": {
+    "en": "at home",
+    "ja": "家にいる；家で"
+  },
+  "在旁": {
+    "en": "at the side; nearby",
+    "ja": "そばに；横に"
+  },
+  "地上": {
+    "en": "on the ground",
+    "ja": "地面に；床に"
+  },
+  "块": {
+    "en": "piece/chunk; (colloquial) yuan (money)",
+    "ja": "塊・切れ／（口語）元"
+  },
+  "基本上": {
+    "en": "basically; in general",
+    "ja": "基本的に；概ね",
+    "pinyin": "ji1 ben3 shang4",
+    "zhuyin": "ㄐㄧ ㄅㄣˇ ㄕㄤˋ"
+  },
+  "売": {
+    "en": "sell",
+    "ja": "売る",
+    "pinyin": "mai4",
+    "zhuyin": "ㄇㄞˋ"
+  },
+  "复习": {
+    "en": "to review; to revise",
+    "ja": "復習する"
+  },
+  "复原": {
+    "en": "recover; restore",
+    "ja": "回復する；元に戻す",
+    "pinyin": "fu4 yuan2",
+    "zhuyin": "ㄈㄨˋ ㄩㄢˊ"
+  },
+  "夏天": {
+    "en": "summer",
+    "ja": "夏"
+  },
+  "外国人": {
+    "en": "foreigner",
+    "ja": "外国人",
+    "pinyin": "wai4 guo2 ren2",
+    "zhuyin": "ㄨㄞˋ ㄍㄨㄛˊ ㄖㄣˊ"
+  },
+  "外在": {
+    "en": "external; outward",
+    "ja": "外面の；外見の",
+    "pinyin": "wai4 zai4",
+    "zhuyin": "ㄨㄞˋ ㄗㄞˋ"
+  },
+  "外面": {
+    "en": "outside; outdoors",
+    "ja": "外；屋外"
+  },
+  "外食": {
+    "en": "to eat out",
+    "ja": "外食する"
+  },
+  "多": {
+    "en": "many; much; more",
+    "ja": "多い／多くの"
+  },
+  "多大": {
+    "en": "how big; how old",
+    "ja": "どのくらい大きい；何歳"
+  },
+  "多时": {
+    "en": "for a long time",
+    "ja": "長い間",
+    "pinyin": "duo1 shi2",
+    "zhuyin": "ㄉㄨㄛ ㄕˊ"
+  },
+  "大": {
+    "en": "big; large",
+    "ja": "大きい"
+  },
+  "大学": {
+    "en": "university",
+    "ja": "大学"
+  },
+  "大学生": {
+    "en": "university student",
+    "ja": "大学生"
+  },
+  "大家": {
+    "en": "everyone; everybody",
+    "ja": "みんな"
+  },
+  "大概": {
+    "en": "probably; approximately",
+    "ja": "たぶん；およそ",
+    "pinyin": "da4 gai4",
+    "zhuyin": "ㄉㄚˋ ㄍㄞˋ"
+  },
+  "大部分": {
+    "en": "most; majority",
+    "ja": "大部分；大半"
+  },
+  "天": {
+    "en": "sky, heaven; day (measure word)",
+    "ja": "空,日; 日数を数える助数詞"
+  },
+  "太": {
+    "en": "too; overly",
+    "ja": "～すぎる"
+  },
+  "女人": {
+    "en": "woman",
+    "ja": "女性"
+  },
+  "女儿": {
+    "en": "daughter",
+    "ja": "娘"
+  },
+  "女生": {
+    "en": "female student; girl",
+    "ja": "女子；女の子"
+  },
+  "她": {
+    "en": "she; her",
+    "ja": "彼女"
+  },
+  "她们": {
+    "en": "they; them",
+    "ja": "彼女たち"
+  },
+  "好": {
+    "en": "good; OK",
+    "ja": "よい；いい；はい"
+  },
+  "好不好": {
+    "en": "good or not",
+    "ja": "良いですか？",
+    "pinyin": "hao3 bu4 hao3",
+    "zhuyin": "ㄏㄠˇ ㄅㄨˋ ㄏㄠˇ"
+  },
+  "好久不见": {
+    "en": "long time no see",
+    "ja": "お久しぶり",
+    "pinyin": "hao3 jiu3 bu4 jian4",
+    "zhuyin": "ㄏㄠˇ ㄐㄧㄡˇ ㄅㄨˋ ㄐㄧㄢˋ"
+  },
+  "好像": {
+    "en": "seems like; as if",
+    "ja": "～のようだ；～みたい"
+  },
+  "好几": {
+    "en": "quite a few",
+    "ja": "何回も, いくつも"
+  },
+  "好吃": {
+    "en": "delicious",
+    "ja": "おいしい",
+    "pinyin": "hao3 chi1",
+    "zhuyin": "ㄏㄠˇ ㄔ"
+  },
+  "好好": {
+    "en": "properly; well",
+    "ja": "ちゃんと"
+  },
+  "好玩": {
+    "en": "fun",
+    "ja": "楽しい",
+    "pinyin": "hao3 wan2",
+    "zhuyin": "ㄏㄠˇ ㄨㄢˊ"
+  },
+  "好笑": {
+    "en": "funny; amusing",
+    "ja": "面白い；笑える"
+  },
+  "如何": {
+    "en": "how; what about",
+    "ja": "どう；どのように",
+    "pinyin": "ru2 he2",
+    "zhuyin": "ㄖㄨˊ ㄏㄜˊ"
+  },
+  "如果": {
+    "en": "if",
+    "ja": "もし～なら"
+  },
+  "妈妈": {
+    "en": "mom/mum",
+    "ja": "お母さん"
+  },
+  "姐": {
+    "en": "elder sister",
+    "ja": "お姉さん",
+    "pinyin": "jie3",
+    "zhuyin": "ㄐㄧㄝˇ"
+  },
+  "姑婆": {
+    "en": "great aunt",
+    "ja": "叔母",
+    "pinyin": "gu1 po2",
+    "zhuyin": "ㄍㄨ ㄆㄛˊ"
+  },
+  "子": {
+    "en": "suffix; child",
+    "ja": "〜子；接尾辞"
+  },
+  "字": {
+    "en": "character",
+    "ja": "字（文字）"
+  },
+  "字典": {
+    "en": "dictionary",
+    "ja": "辞書",
+    "pinyin": "zi4 dian3",
+    "zhuyin": "ㄗˋ ㄉㄧㄢˇ"
+  },
+  "字幕": {
+    "en": "subtitles",
+    "ja": "字幕"
+  },
+  "学": {
+    "en": "study",
+    "ja": "学ぶ"
+  },
+  "学习": {
+    "en": "study, learn",
+    "ja": "勉強する"
+  },
+  "学校": {
+    "en": "school",
+    "ja": "学校"
+  },
+  "学生": {
+    "en": "student",
+    "ja": "学生"
+  },
+  "孩子": {
+    "en": "child",
+    "ja": "子供"
+  },
+  "孩子们": {
+    "en": "children",
+    "ja": "子どもたち"
+  },
+  "學": {
+    "en": "study",
+    "ja": "学ぶ"
+  },
+  "學校": {
+    "en": "school",
+    "ja": "学校"
+  },
+  "它": {
+    "en": "it (non-human)",
+    "ja": "それ（物）"
+  },
+  "安全": {
+    "en": "safe; safety",
+    "ja": "安全",
+    "pinyin": "an1 quan2",
+    "zhuyin": "ㄢ ㄑㄩㄢˊ"
+  },
+  "安静": {
+    "en": "quiet; peaceful",
+    "ja": "静か；落ち着いた",
+    "pinyin": "an1 jing4",
+    "zhuyin": "ㄢ ㄐㄧㄥˋ"
+  },
+  "完": {
+    "en": "to finish; complete",
+    "ja": "終わる；終える"
+  },
+  "完了": {
+    "en": "finished; oh no",
+    "ja": "終わった；しまった"
+  },
+  "完全": {
+    "en": "completely",
+    "ja": "完全に"
+  },
+  "完成": {
+    "en": "to complete; to accomplish",
+    "ja": "完成する；成し遂げる"
+  },
+  "定": {
+    "en": "set; decide",
+    "ja": "決める；決定する",
+    "pinyin": "ding4",
+    "zhuyin": "ㄉㄧㄥˋ"
+  },
+  "宝": {
+    "en": "treasure; precious",
+    "ja": "宝物；大切な",
+    "pinyin": "bao3",
+    "zhuyin": "ㄅㄠˇ"
+  },
+  "实体": {
+    "en": "entity; physical object",
+    "ja": "実体；物体",
+    "pinyin": "shi2 ti3",
+    "zhuyin": "ㄕˊ ㄊㄧˇ"
+  },
+  "客": {
+    "en": "guest; customer",
+    "ja": "お客さん；客",
+    "pinyin": "ke4",
+    "zhuyin": "ㄎㄜˋ"
+  },
+  "客人": {
+    "en": "guest",
+    "ja": "客"
+  },
+  "客厅": {
+    "en": "living room",
+    "ja": "リビング／居間"
+  },
+  "家": {
+    "en": "house/home; measure word for businesses/families",
+    "ja": "家; 店・会社・家庭などの助数詞"
+  },
+  "家事": {
+    "en": "housework; household chores",
+    "ja": "家事"
+  },
+  "家人": {
+    "en": "family members",
+    "ja": "家族"
+  },
+  "家庭主妇": {
+    "en": "housewife; homemaker",
+    "ja": "専業主婦"
+  },
+  "家电": {
+    "en": "home appliance(s)",
+    "ja": "家電"
+  },
+  "家里": {
+    "en": "at home; in the house",
+    "ja": "家で；家の中"
+  },
+  "宿舍": {
+    "en": "dormitory",
+    "ja": "寮；寮室",
+    "pinyin": "su4 she4",
+    "zhuyin": "ㄙㄨˋ ㄕㄜˋ"
+  },
+  "寒": {
+    "en": "cold",
+    "ja": "寒い",
+    "pinyin": "han2",
+    "zhuyin": "ㄏㄢˊ"
+  },
+  "对": {
+    "en": "right; correct",
+    "ja": "そう；正しい"
+  },
+  "对不对": {
+    "en": "isn't it?",
+    "ja": "～ですよね？",
+    "pinyin": "dui4 bu4 dui4",
+    "zhuyin": "ㄉㄨㄟˋ ㄅㄨˋ ㄉㄨㄟˋ"
+  },
+  "对了": {
+    "en": "oh right; by the way",
+    "ja": "そうだ；ところで",
+    "pinyin": "dui4 le5",
+    "zhuyin": "ㄉㄨㄟˋ ㄌㄜ˙"
+  },
+  "对马": {
+    "en": "Tsushima (Japanese island)",
+    "ja": "対馬",
+    "pinyin": "dui4 ma3",
+    "zhuyin": "ㄉㄨㄟˋ ㄇㄚˇ"
+  },
+  "小": {
+    "en": "small",
+    "ja": "小さい"
+  },
+  "小孩": {
+    "en": "child; kid",
+    "ja": "子ども"
+  },
+  "小小": {
+    "en": "very small; tiny",
+    "ja": "とても小さい",
+    "pinyin": "xiao3 xiao3",
+    "zhuyin": "ㄒㄧㄠˇ ㄒㄧㄠˇ"
+  },
+  "小岛": {
+    "en": "small island",
+    "ja": "小島",
+    "pinyin": "xiao3 dao3",
+    "zhuyin": "ㄒㄧㄠˇ ㄉㄠˇ"
+  },
+  "小心": {
+    "en": "be careful; cautious",
+    "ja": "注意する；気をつける",
+    "pinyin": "xiao3 xin1",
+    "zhuyin": "ㄒㄧㄠˇ ㄒㄧㄣ"
+  },
+  "小时": {
+    "en": "hour",
+    "ja": "時間（じかん）"
+  },
+  "小時": {
+    "en": "~hours (e.g. 3 hours)",
+    "ja": "~時間（３時間とか）"
+  },
+  "少": {
+    "en": "few; little; less",
+    "ja": "少ない；わずか"
+  },
+  "就": {
+    "en": "then; right away; emphasis",
+    "ja": "すぐ；まさに（強調）"
+  },
+  "就是": {
+    "en": "that is, exactly (emphasis)",
+    "ja": "つまり, 〜ってこと"
+  },
+  "就要": {
+    "en": "be about to; soon",
+    "ja": "もうすぐ",
+    "pinyin": "jiu4 yao4",
+    "zhuyin": "ㄐㄧㄡˋ ㄧㄠˋ"
+  },
+  "尽量": {
+    "en": "as much as possible",
+    "ja": "できるだけ",
+    "pinyin": "jin3 liang4",
+    "zhuyin": "ㄐㄧㄣˇ ㄌㄧㄤˋ"
+  },
+  "居民": {
+    "en": "resident; inhabitant",
+    "ja": "住民；居住者",
+    "pinyin": "ju1 min2",
+    "zhuyin": "ㄐㄩ ㄇㄧㄣˊ"
+  },
+  "山": {
+    "en": "mountain; hills",
+    "ja": "山",
+    "pinyin": "shan1",
+    "zhuyin": "ㄕㄢ"
+  },
+  "岁": {
+    "en": "years old; age",
+    "ja": "歳；年齢",
+    "pinyin": "sui4",
+    "zhuyin": "ㄙㄨㄟˋ"
+  },
+  "岚": {
+    "en": "Lan (name)",
+    "ja": "嵐（名前）"
+  },
+  "岛": {
+    "en": "island",
+    "ja": "島",
+    "pinyin": "dao3",
+    "zhuyin": "ㄉㄠˇ"
+  },
+  "岛民": {
+    "en": "islander",
+    "ja": "島民",
+    "pinyin": "dao3 min2",
+    "zhuyin": "ㄉㄠˇ ㄇㄧㄣˊ"
+  },
+  "嵐": {
+    "en": "Lan (name)",
+    "ja": "嵐（名前）"
+  },
+  "工作": {
+    "en": "work",
+    "ja": "仕事"
+  },
+  "工具箱": {
+    "en": "toolbox",
+    "ja": "工具箱",
+    "pinyin": "gong1 ju4 xiang1",
+    "zhuyin": "ㄍㄨㄥ ㄐㄩˋ ㄒㄧㄤ"
+  },
+  "左右": {
+    "en": "around; approximately; left and right",
+    "ja": "およそ；左右",
+    "pinyin": "zuo3 you4",
+    "zhuyin": "ㄗㄨㄛˇ ㄧㄡˋ"
+  },
+  "差不多": {
+    "en": "almost; nearly; about the same",
+    "ja": "ほぼ；だいたい；ほとんど"
+  },
+  "差别": {
+    "en": "difference; distinction",
+    "ja": "違い；差異",
+    "pinyin": "cha1 bie2",
+    "zhuyin": "ㄔㄚ ㄅㄧㄝˊ"
+  },
+  "已经": {
+    "en": "already",
+    "ja": "もう（すでに）"
+  },
+  "币": {
+    "en": "currency; coin",
+    "ja": "通貨；コイン",
+    "pinyin": "bi4",
+    "zhuyin": "ㄅㄧˋ"
+  },
+  "帐篷": {
+    "en": "tent",
+    "ja": "テント",
+    "pinyin": "zhang4 peng2",
+    "zhuyin": "ㄓㄤˋ ㄆㄥˊ"
+  },
+  "带": {
+    "en": "bring/take along",
+    "ja": "持っていく / 持ってくる",
+    "pinyin": "dai4",
+    "zhuyin": "ㄉㄞˋ"
+  },
+  "帮": {
+    "en": "help",
+    "ja": "手伝う"
+  },
+  "帮忙": {
+    "en": "to help; to give a hand",
+    "ja": "手伝う；助ける"
+  },
+  "常": {
+    "en": "often; usually",
+    "ja": "よく；通常",
+    "pinyin": "chang2",
+    "zhuyin": "ㄔㄤˊ"
+  },
+  "常用": {
+    "en": "commonly used; frequent",
+    "ja": "よく使う；一般的",
+    "pinyin": "chang2 yong4",
+    "zhuyin": "ㄔㄤˊ ㄩㄥˋ"
+  },
+  "干净": {
+    "en": "clean; tidy",
+    "ja": "きれい（清潔）"
+  },
+  "干嘛": {
+    "en": "what are you doing?",
+    "ja": "何してるの？"
+  },
+  "平常": {
+    "en": "usual; ordinary",
+    "ja": "普段の"
+  },
+  "年": {
+    "en": "year (measure word)",
+    "ja": "年数を数える助数詞"
+  },
+  "年前": {
+    "en": "years ago",
+    "ja": "～年前",
+    "pinyin": "nian2 qian2",
+    "zhuyin": "ㄋㄧㄢˊ ㄑㄧㄢˊ"
+  },
+  "年底": {
+    "en": "the end of the year",
+    "ja": "年末"
+  },
+  "年末": {
+    "en": "year end",
+    "ja": "年末"
+  },
+  "庆祝": {
+    "en": "celebrate",
+    "ja": "祝う",
+    "pinyin": "qing4 zhu4",
+    "zhuyin": "ㄑㄧㄥˋ ㄓㄨˋ"
+  },
+  "床": {
+    "en": "bed",
+    "ja": "ベッド；寝台"
+  },
+  "应该": {
+    "en": "should",
+    "ja": "～すべきだ"
+  },
+  "店": {
+    "en": "shop",
+    "ja": "店"
+  },
+  "庙": {
+    "en": "temple",
+    "ja": "寺；神社",
+    "pinyin": "miao4",
+    "zhuyin": "ㄇㄧㄠˋ"
+  },
+  "开": {
+    "en": "open; start; operate",
+    "ja": "開く；始める；運営する",
+    "pinyin": "kai1",
+    "zhuyin": "ㄎㄞ"
+  },
+  "开场": {
+    "en": "begin; start",
+    "ja": "始まる；開始する",
+    "pinyin": "kai1 chang3",
+    "zhuyin": "ㄎㄞ ㄔㄤˇ"
+  },
+  "开心": {
+    "en": "happy",
+    "ja": "うれしい, 楽しい"
+  },
+  "式": {
+    "en": "style; ceremony",
+    "ja": "方式；式",
+    "pinyin": "shi4",
+    "zhuyin": "ㄕˋ"
+  },
+  "张": {
+    "en": "measure word for flat objects (paper, tickets, tables)",
+    "ja": "平たいものを数える助数詞"
+  },
+  "强壮": {
+    "en": "strong; robust",
+    "ja": "強い；丈夫な",
+    "pinyin": "qiang2 zhuang4",
+    "zhuyin": "ㄑㄧㄤˊ ㄓㄨㄤˋ"
+  },
+  "当": {
+    "en": "when; at the time",
+    "ja": "～の時；～している間",
+    "pinyin": "dang1",
+    "zhuyin": "ㄉㄤ"
+  },
+  "当地": {
+    "en": "local; at the scene",
+    "ja": "地元；現地の",
+    "pinyin": "dang1 di4",
+    "zhuyin": "ㄉㄤ ㄉㄧˋ"
+  },
+  "当时": {
+    "en": "at that time; then",
+    "ja": "その時；当時",
+    "pinyin": "dang1 shi2",
+    "zhuyin": "ㄉㄤ ㄕˊ"
+  },
+  "当然": {
+    "en": "of course; naturally",
+    "ja": "もちろん"
+  },
+  "录音": {
+    "en": "recording",
+    "ja": "録音"
+  },
+  "形象": {
+    "en": "image; form; figure",
+    "ja": "イメージ；形象",
+    "pinyin": "xing2 xiang4",
+    "zhuyin": "ㄒㄧㄥˊ ㄒㄧㄤˋ"
+  },
+  "影片": {
+    "en": "film; video",
+    "ja": "映画；ビデオ",
+    "pinyin": "ying3 pian1",
+    "zhuyin": "ㄧㄥˇ ㄆㄧㄢ"
+  },
+  "待": {
+    "en": "stay; treat",
+    "ja": "滞在する；扱う",
+    "pinyin": "dai1",
+    "zhuyin": "ㄉㄞ"
+  },
+  "很": {
+    "en": "very",
+    "ja": "とても"
+  },
+  "得": {
+    "en": "must; have to; structural particle (complement marker)",
+    "ja": "～しなければならない；（補語マーカー）"
+  },
+  "得到": {
+    "en": "obtain; get",
+    "ja": "得る；手に入れる",
+    "pinyin": "de2 dao4",
+    "zhuyin": "ㄉㄜˊ ㄉㄠˋ"
+  },
+  "得很": {
+    "en": "very; extremely",
+    "ja": "とても；非常に",
+    "pinyin": "de2 hen3",
+    "zhuyin": "ㄉㄜˊ ㄏㄣˇ"
+  },
+  "微波炉": {
+    "en": "microwave",
+    "ja": "電子レンジ"
+  },
+  "德国": {
+    "en": "Germany",
+    "ja": "ドイツ"
+  },
+  "德国人": {
+    "en": "German person",
+    "ja": "ドイツ人"
+  },
+  "心里": {
+    "en": "in the heart; in mind",
+    "ja": "心の中",
+    "pinyin": "xin1 li5",
+    "zhuyin": "ㄒㄧㄣ ㄌㄧˇ"
+  },
+  "忘": {
+    "en": "forget",
+    "ja": "忘れる"
+  },
+  "忙": {
+    "en": "busy",
+    "ja": "忙しい"
+  },
+  "快": {
+    "en": "fast; quickly",
+    "ja": "速い；早く"
+  },
+  "快要": {
+    "en": "about to; soon",
+    "ja": "もうすぐ；間もなく",
+    "pinyin": "kuai4 yao4",
+    "zhuyin": "ㄎㄨㄞˋ ㄧㄠˋ"
+  },
+  "怎么": {
+    "en": "how; why",
+    "ja": "どう？；どうして？"
+  },
+  "怎么样": {
+    "en": "how is it?",
+    "ja": "どう？ どう思う？"
+  },
+  "怪": {
+    "en": "strange; odd",
+    "ja": "変な；おかしい"
+  },
+  "总共": {
+    "en": "in total; altogether",
+    "ja": "合計で；全部で"
+  },
+  "恢复": {
+    "en": "recover; restore",
+    "ja": "回復する；元に戻る",
+    "pinyin": "hui1 fu4",
+    "zhuyin": "ㄏㄨㄟ ㄈㄨˋ"
+  },
+  "悪": {
+    "en": "bad; evil",
+    "ja": "悪い；邪悪な",
+    "pinyin": "e4",
+    "zhuyin": "ㄜˋ"
+  },
+  "想": {
+    "en": "think; want to",
+    "ja": "思う；～したい"
+  },
+  "想像": {
+    "en": "imagine",
+    "ja": "想像する",
+    "pinyin": "xiang3 xiang4",
+    "zhuyin": "ㄒㄧㄤˇ ㄒㄧㄤˋ"
+  },
+  "想要": {
+    "en": "to want",
+    "ja": "欲しい；〜したい"
+  },
+  "意思": {
+    "en": "meaning; idea",
+    "ja": "意味"
+  },
+  "感": {
+    "en": "feel; sense",
+    "ja": "感じる",
+    "pinyin": "gan3",
+    "zhuyin": "ㄍㄢˇ"
+  },
+  "感觉": {
+    "en": "to feel; feeling",
+    "ja": "感じる；感覚"
+  },
+  "慢": {
+    "en": "slow",
+    "ja": "遅い",
+    "pinyin": "man4",
+    "zhuyin": "ㄇㄢˋ"
+  },
+  "成": {
+    "en": "become",
+    "ja": "なる, 成る"
+  },
+  "成功": {
+    "en": "success",
+    "ja": "成功"
+  },
+  "我": {
+    "en": "I; me",
+    "ja": "私"
+  },
+  "我们": {
+    "en": "we, us",
+    "ja": "私たち"
+  },
+  "我去": {
+    "en": "I go (context dependent)",
+    "ja": "私が行く（文脈依存）"
+  },
+  "或是": {
+    "en": "or; or else",
+    "ja": "または／あるいは"
+  },
+  "或者": {
+    "en": "or; possibly",
+    "ja": "あるいは；または",
+    "pinyin": "huo4 zhe3",
+    "zhuyin": "ㄏㄨㄛˋ ㄓㄜˇ"
+  },
+  "戴帽子": {
+    "en": "wear a hat",
+    "ja": "帽子を被る",
+    "pinyin": "dai4 mao4 zi5",
+    "zhuyin": "ㄉㄞˋ ㄇㄠˋ ㄗ˙"
+  },
+  "房子": {
+    "en": "house",
+    "ja": "家；家屋",
+    "pinyin": "fang2 zi5",
+    "zhuyin": "ㄈㄤˊ ㄗ˙"
+  },
+  "房间": {
+    "en": "room",
+    "ja": "部屋"
+  },
+  "所": {
+    "en": "measure word for buildings; institutions",
+    "ja": "建物・学校などの助数詞"
+  },
+  "所以": {
+    "en": "so; therefore",
+    "ja": "だから；そのため"
+  },
+  "所有": {
+    "en": "all; every",
+    "ja": "すべての"
+  },
+  "手动": {
+    "en": "manual; by hand",
+    "ja": "手動；手で",
+    "pinyin": "shou3 dong4",
+    "zhuyin": "ㄕㄡˇ ㄉㄨㄥˋ"
+  },
+  "手机": {
+    "en": "phone",
+    "ja": "スマホ"
+  },
+  "才": {
+    "en": "only then; just",
+    "ja": "やっと；～してこそ"
+  },
+  "才能": {
+    "en": "talent; ability",
+    "ja": "才能；能力",
+    "pinyin": "cai2 neng2",
+    "zhuyin": "ㄘㄞˊ ㄋㄥˊ"
+  },
+  "打": {
+    "en": "do; hit; operate",
+    "ja": "する；打つ",
+    "pinyin": "da3",
+    "zhuyin": "ㄉㄚˇ"
+  },
+  "打扫": {
+    "en": "clean; tidy up",
+    "ja": "掃除する"
+  },
+  "打气筒": {
+    "en": "bike pump",
+    "ja": "空気入れ",
+    "pinyin": "da3 qi4 tong3",
+    "zhuyin": "ㄉㄚˇ ㄑㄧˋ ㄊㄨㄥˇ"
+  },
+  "打电话": {
+    "en": "to make a phone call",
+    "ja": "電話をかける"
+  },
+  "扫": {
+    "en": "to sweep",
+    "ja": "掃く"
+  },
+  "扫除": {
+    "en": "cleaning; clean",
+    "ja": "掃除；掃除する"
+  },
+  "找": {
+    "en": "look for; seek",
+    "ja": "探す",
+    "pinyin": "zhao3",
+    "zhuyin": "ㄓㄠˇ"
+  },
+  "技巧": {
+    "en": "skill; technique",
+    "ja": "技術；テクニック",
+    "pinyin": "ji4 qiao3",
+    "zhuyin": "ㄐㄧˋ ㄑㄧㄠˇ"
+  },
+  "技术": {
+    "en": "technology; technique",
+    "ja": "技術；テクノロジー",
+    "pinyin": "ji4 shu4",
+    "zhuyin": "ㄐㄧˋ ㄕㄨˋ"
+  },
+  "把": {
+    "en": "measure word for objects with a handle; handful",
+    "ja": "（物を）～してしまう；～をどうにかする; 取っ手のあるもの／ひとつかみの助数詞"
+  },
+  "投": {
+    "en": "throw; invest",
+    "ja": "投げる；投資する",
+    "pinyin": "tou2",
+    "zhuyin": "ㄊㄡˊ"
+  },
+  "护": {
+    "en": "protect; guard",
+    "ja": "守る；保護する",
+    "pinyin": "hu4",
+    "zhuyin": "ㄏㄨˋ"
+  },
+  "拖": {
+    "en": "drag; delay; pull",
+    "ja": "引きずる；引っ張る",
+    "pinyin": "tuo1",
+    "zhuyin": "ㄊㄨㄛ"
+  },
+  "拜拜": {
+    "en": "bye-bye",
+    "ja": "バイバイ",
+    "pinyin": "bai2 bai5",
+    "zhuyin": "ㄅㄞˊ ㄅㄞ˙"
+  },
+  "拜访": {
+    "en": "visit; pay a call",
+    "ja": "訪問する",
+    "pinyin": "bai4 fang3",
+    "zhuyin": "ㄅㄞˋ ㄈㄤˇ"
+  },
+  "拿出": {
+    "en": "take out",
+    "ja": "取り出す"
+  },
+  "拿到": {
+    "en": "get; obtain; receive",
+    "ja": "手に入れる",
+    "pinyin": "na2 dao4",
+    "zhuyin": "ㄋㄚˊ ㄉㄠˋ"
+  },
+  "持": {
+    "en": "hold; carry",
+    "ja": "持つ；保持する",
+    "pinyin": "chi2",
+    "zhuyin": "ㄔˊ"
+  },
+  "指": {
+    "en": "point; refer to",
+    "ja": "指す；指摘する",
+    "pinyin": "zhi3",
+    "zhuyin": "ㄓˇ"
+  },
+  "挑战": {
+    "en": "challenge; take on",
+    "ja": "挑戦する；挑む",
+    "pinyin": "tiao3 zhan4",
+    "zhuyin": "ㄊㄧㄠˇ ㄓㄢˋ"
+  },
+  "换": {
+    "en": "to change; exchange",
+    "ja": "替える；交換する"
+  },
+  "掉": {
+    "en": "to drop; to fall; to lose (complement)",
+    "ja": "落ちる；落とす；（結果補語）"
+  },
+  "接下来": {
+    "en": "next; following",
+    "ja": "次；続いて",
+    "pinyin": "jie1 xia4 lai2",
+    "zhuyin": "ㄐㄧㄝ ㄒㄧㄚˋ ㄌㄞˊ"
+  },
+  "推荐": {
+    "en": "recommend",
+    "ja": "推薦する",
+    "pinyin": "tui1 jian4",
+    "zhuyin": "ㄊㄨㄟ ㄐㄧㄢˋ"
+  },
+  "掰掰": {
+    "en": "goodbye; bye-bye",
+    "ja": "バイバイ",
+    "pinyin": "bai1 bai1",
+    "zhuyin": "ㄅㄞ ㄅㄞ"
+  },
+  "提早": {
+    "en": "early",
+    "ja": "早めに"
+  },
+  "提示": {
+    "en": "prompt; hint",
+    "ja": "ヒント；示す",
+    "pinyin": "ti2 shi4",
+    "zhuyin": "ㄊㄧˊ ㄕˋ"
+  },
+  "搞不好": {
+    "en": "maybe; possibly",
+    "ja": "もしかすると",
+    "pinyin": "gao3 bu4 hao3",
+    "zhuyin": "ㄍㄠˇ ㄅㄨˋ ㄏㄠˇ"
+  },
+  "搬": {
+    "en": "move; carry",
+    "ja": "引っ越す；移動する",
+    "pinyin": "ban1",
+    "zhuyin": "ㄅㄢ"
+  },
+  "搬家": {
+    "en": "move house",
+    "ja": "引っ越す"
+  },
+  "搭": {
+    "en": "take (a ride); go by",
+    "ja": "乗る",
+    "pinyin": "da1",
+    "zhuyin": "ㄉㄚ"
+  },
+  "摆": {
+    "en": "put; arrange",
+    "ja": "置く；並べる",
+    "pinyin": "bai3",
+    "zhuyin": "ㄅㄞˇ"
+  },
+  "支": {
+    "en": "measure word for pens; long thin objects",
+    "ja": "ペンなど細長いものの助数詞"
+  },
+  "收听": {
+    "en": "listen to (a program)",
+    "ja": "聴取する",
+    "pinyin": "shou1 ting1",
+    "zhuyin": "ㄕㄡ ㄊㄧㄥ"
+  },
+  "改掉": {
+    "en": "to get rid of; to correct (a habit)",
+    "ja": "（習慣などを）直す／やめる"
+  },
+  "放": {
+    "en": "put; place",
+    "ja": "置く；入れる"
+  },
+  "故事": {
+    "en": "story",
+    "ja": "物語；話"
+  },
+  "教室": {
+    "en": "classroom",
+    "ja": "教室"
+  },
+  "散落": {
+    "en": "to scatter; to be scattered",
+    "ja": "散らばる"
+  },
+  "数一数二": {
+    "en": "top; among the best",
+    "ja": "トップ；一、二を争う",
+    "pinyin": "shu3 yi1 shu3 er4",
+    "zhuyin": "ㄕㄨˇ ㄧ ㄕㄨˇ ㄦˋ"
+  },
+  "整个": {
+    "en": "the whole",
+    "ja": "全部の, まるごと"
+  },
+  "整修": {
+    "en": "renovate; repair",
+    "ja": "修理する；改装する",
+    "pinyin": "zheng3 xiu1",
+    "zhuyin": "ㄓㄥˇ ㄒㄧㄡ"
+  },
+  "整天": {
+    "en": "all day",
+    "ja": "一日中"
+  },
+  "整理": {
+    "en": "tidy; organize",
+    "ja": "片付ける；整理する"
+  },
+  "料理": {
+    "en": "cuisine; cooking",
+    "ja": "料理",
+    "pinyin": "liao4 li3",
+    "zhuyin": "ㄌㄧㄠˋ ㄌㄧˇ"
+  },
+  "新": {
+    "en": "new; fresh",
+    "ja": "新しい；フレッシュな",
+    "pinyin": "xin1",
+    "zhuyin": "ㄒㄧㄣ"
+  },
+  "方": {
+    "en": "direction; side; square",
+    "ja": "方向；方角；四角い",
+    "pinyin": "fang1",
+    "zhuyin": "ㄈㄤ"
+  },
+  "方式": {
+    "en": "way; method",
+    "ja": "方法；方式",
+    "pinyin": "fang1 shi4",
+    "zhuyin": "ㄈㄤ ㄕˋ"
+  },
+  "方法": {
+    "en": "method",
+    "ja": "やり方, 方法"
+  },
+  "旅行": {
+    "en": "travel",
+    "ja": "旅行",
+    "pinyin": "lv3 xing2",
+    "zhuyin": "ㄌㄩˇ ㄒㄧㄥˊ"
+  },
+  "日文": {
+    "en": "Japanese language",
+    "ja": "日本語"
+  },
+  "日本": {
+    "en": "Japan",
+    "ja": "日本"
+  },
+  "日本人": {
+    "en": "Japanese person/people",
+    "ja": "日本人"
+  },
+  "早": {
+    "en": "early",
+    "ja": "早い, 早く"
+  },
+  "早上": {
+    "en": "morning",
+    "ja": "朝"
+  },
+  "早起": {
+    "en": "to get up early",
+    "ja": "早起きする"
+  },
+  "早餐": {
+    "en": "breakfast",
+    "ja": "朝食"
+  },
+  "时": {
+    "en": "time; when (e.g. when they go)",
+    "ja": "時"
+  },
+  "时候": {
+    "en": "when (at this/that time)",
+    "ja": "〜の時"
+  },
+  "时间": {
+    "en": "time",
+    "ja": "時間"
+  },
+  "明天": {
+    "en": "tomorrow",
+    "ja": "明日",
+    "pinyin": "ming2 tian1",
+    "zhuyin": "ㄇㄧㄥˊ ㄊㄧㄢ"
+  },
+  "明年": {
+    "en": "next year",
+    "ja": "来年",
+    "pinyin": "ming2 nian2",
+    "zhuyin": "ㄇㄧㄥˊ ㄋㄧㄢˊ"
+  },
+  "明白": {
+    "en": "understand; clear",
+    "ja": "わかる；明確な",
+    "pinyin": "ming2 bai5",
+    "zhuyin": "ㄇㄧㄥˊ ㄅㄞ˙"
+  },
+  "昨天": {
+    "en": "yesterday",
+    "ja": "昨日；きのう"
+  },
+  "是": {
+    "en": "be",
+    "ja": "～だ"
+  },
+  "是不是": {
+    "en": "isn't it?; right?",
+    "ja": "～でしょ？；～じゃない？"
+  },
+  "晚上": {
+    "en": "evening; night",
+    "ja": "夜；晩",
+    "pinyin": "wan3 shang5",
+    "zhuyin": "ㄨㄢˇ ㄕㄤ˙"
+  },
+  "晚餐": {
+    "en": "dinner",
+    "ja": "夕食"
+  },
+  "普通": {
+    "en": "ordinary; normal",
+    "ja": "普通；一般的"
+  },
+  "曲奇": {
+    "en": "cookie",
+    "ja": "クッキー",
+    "pinyin": "qu1 qi2",
+    "zhuyin": "ㄑㄩ ㄑㄧˊ"
+  },
+  "更": {
+    "en": "more; even more",
+    "ja": "さらに；もっと"
+  },
+  "曾经": {
+    "en": "once; ever",
+    "ja": "かつて；以前",
+    "pinyin": "ceng2 jing1",
+    "zhuyin": "ㄘㄥˊ ㄐㄧㄥ"
+  },
+  "最": {
+    "en": "most; -est",
+    "ja": "最も"
+  },
+  "最后": {
+    "en": "finally; last",
+    "ja": "最後に；最終",
+    "pinyin": "zui4 hou4",
+    "zhuyin": "ㄗㄨㄟˋ ㄏㄡˋ"
+  },
+  "最好": {
+    "en": "best; had better",
+    "ja": "最も良い；～した方が良い",
+    "pinyin": "zui4 hao3",
+    "zhuyin": "ㄗㄨㄟˋ ㄏㄠˇ"
+  },
+  "最少": {
+    "en": "at least; minimum",
+    "ja": "少なくとも；最低",
+    "pinyin": "zui4 shao3",
+    "zhuyin": "ㄗㄨㄟˋ ㄕㄠˇ"
+  },
+  "最近": {
+    "en": "recently",
+    "ja": "最近"
+  },
+  "會": {
+    "en": "can; will",
+    "ja": "～できる；～するだろう"
+  },
+  "月": {
+    "en": "month",
+    "ja": "月",
+    "pinyin": "yue4",
+    "zhuyin": "ㄩㄝˋ"
+  },
+  "有": {
+    "en": "have; there is/are",
+    "ja": "持っている；～がある",
+    "pinyin": "you3",
+    "zhuyin": "ㄧㄡˇ"
+  },
+  "有一些": {
+    "en": "some; a few; there are some",
+    "ja": "いくつかある；いくらか",
+    "pinyin": "you3 yi4 xie1",
+    "zhuyin": "ㄧㄡˇ ㄧ ㄒㄧㄝ"
+  },
+  "有一点": {
+    "en": "a little; slightly",
+    "ja": "少し；ちょっと"
+  },
+  "有了": {
+    "en": "got; obtained",
+    "ja": "手に入れた",
+    "pinyin": "you3 le5",
+    "zhuyin": "ㄧㄡˇ ㄌㄜ˙"
+  },
+  "有人": {
+    "en": "someone; there is/are people",
+    "ja": "誰か;／ある人"
+  },
+  "有兴趣": {
+    "en": "interested",
+    "ja": "興味がある",
+    "pinyin": "you3 xing4 qu4",
+    "zhuyin": "ㄧㄡˇ ㄒㄧㄥˋ ㄑㄩˋ"
+  },
+  "有成": {
+    "en": "make progress",
+    "ja": "成果がある"
+  },
+  "有时": {
+    "en": "sometimes",
+    "ja": "時々"
+  },
+  "有时候": {
+    "en": "sometimes",
+    "ja": "時々"
+  },
+  "有没有": {
+    "en": "whether or not; yes or no",
+    "ja": "～かどうか；あるかないか",
+    "pinyin": "you3 mei2 you3",
+    "zhuyin": "ㄧㄡˇ ㄇㄟˊ ㄧㄡˇ"
+  },
+  "有点": {
+    "en": "a bit; somewhat",
+    "ja": "少し；ちょっと",
+    "pinyin": "you3 dian3",
+    "zhuyin": "ㄧㄡˇ ㄉㄧㄢˇ"
+  },
+  "有用": {
+    "en": "useful",
+    "ja": "役に立つ"
+  },
+  "有趣": {
+    "en": "interesting",
+    "ja": "面白い"
+  },
+  "朋友": {
+    "en": "friend",
+    "ja": "友達"
+  },
+  "期": {
+    "en": "period; term",
+    "ja": "期間；期限",
+    "pinyin": "qi1",
+    "zhuyin": "ㄑㄧ"
+  },
+  "期待": {
+    "en": "look forward to",
+    "ja": "期待する",
+    "pinyin": "qi1 dai4",
+    "zhuyin": "ㄑㄧ ㄉㄞˋ"
+  },
+  "期间": {
+    "en": "period; during",
+    "ja": "期間；～の間",
+    "pinyin": "qi1 jian1",
+    "zhuyin": "ㄑㄧ ㄐㄧㄢ"
+  },
+  "木": {
+    "en": "wood, tree",
+    "ja": "木"
+  },
+  "本": {
+    "en": "measure word for books",
+    "ja": "本を数える助数詞"
+  },
+  "本人": {
+    "en": "myself/yourself/etc; in person",
+    "ja": "本人"
+  },
+  "机": {
+    "en": "how many?; machine/device",
+    "ja": "いくつ？; 機械／〜機"
+  },
+  "材料": {
+    "en": "material; ingredients",
+    "ja": "材料",
+    "pinyin": "cai2 liao4",
+    "zhuyin": "ㄘㄞˊ ㄌㄧㄠˋ"
+  },
+  "村": {
+    "en": "village",
+    "ja": "村",
+    "pinyin": "cun1",
+    "zhuyin": "ㄘㄨㄣ"
+  },
+  "村子": {
+    "en": "village",
+    "ja": "村",
+    "pinyin": "cun1 zi5",
+    "zhuyin": "ㄘㄨㄣ ㄗ˙"
+  },
+  "村民": {
+    "en": "villager",
+    "ja": "村人",
+    "pinyin": "cun1 min2",
+    "zhuyin": "ㄘㄨㄣ ㄇㄧㄣˊ"
+  },
+  "条": {
+    "en": "measure word for long, thin objects; rivers; fish",
+    "ja": "細長いもの・川・魚などの助数詞"
+  },
+  "来": {
+    "en": "come; come to ~",
+    "ja": "来る；～しに来る"
+  },
+  "来年": {
+    "en": "next year",
+    "ja": "来年",
+    "pinyin": "lai2 nian2",
+    "zhuyin": "ㄌㄞˊ ㄋㄧㄢˊ"
+  },
+  "来日": {
+    "en": "future day; someday",
+    "ja": "将来；いつか"
+  },
+  "杯": {
+    "en": "cup (measure word for drinks)",
+    "ja": "飲み物を数える助数詞（〜杯）"
+  },
+  "松": {
+    "en": "loose",
+    "ja": "ゆるい",
+    "pinyin": "song1",
+    "zhuyin": "ㄙㄨㄥ"
+  },
+  "板": {
+    "en": "board; plank",
+    "ja": "板",
+    "pinyin": "ban3",
+    "zhuyin": "ㄅㄢˇ"
+  },
+  "架": {
+    "en": "measure word for large machines; airplanes",
+    "ja": "大型機械・飛行機などの助数詞"
+  },
+  "柔": {
+    "en": "soft; gentle",
+    "ja": "柔らかい",
+    "pinyin": "rou2",
+    "zhuyin": "ㄖㄡˊ"
+  },
+  "查": {
+    "en": "check; look up",
+    "ja": "調べる；確認する",
+    "pinyin": "cha2",
+    "zhuyin": "ㄔㄚˊ"
+  },
+  "样子": {
+    "en": "appearance; look",
+    "ja": "様子；外見",
+    "pinyin": "yang4 zi5",
+    "zhuyin": "ㄧㄤˋ ㄗ˙"
+  },
+  "桌": {
+    "en": "table",
+    "ja": "机；テーブル",
+    "pinyin": "zhuo1",
+    "zhuyin": "ㄓㄨㄛ"
+  },
+  "桌子": {
+    "en": "table",
+    "ja": "机；テーブル",
+    "pinyin": "zhuo1 zi5",
+    "zhuyin": "ㄓㄨㄛ ㄗ˙"
+  },
+  "检查": {
+    "en": "check; inspect",
+    "ja": "確認する；チェックする",
+    "pinyin": "jian3 cha2",
+    "zhuyin": "ㄐㄧㄢˇ ㄔㄚˊ"
+  },
+  "棒": {
+    "en": "great; awesome",
+    "ja": "素晴らしい；最高",
+    "pinyin": "bang4",
+    "zhuyin": "ㄅㄤˋ"
+  },
+  "棒球": {
+    "en": "baseball",
+    "ja": "野球",
+    "pinyin": "bang4 qiu2",
+    "zhuyin": "ㄅㄤˋ ㄑㄧㄡˊ"
+  },
+  "次": {
+    "en": "next; measure word for times (occurrences)",
+    "ja": "〜回／次（回数を数える助数詞）"
+  },
+  "欢迎": {
+    "en": "welcome",
+    "ja": "歓迎する",
+    "pinyin": "huan1 ying2",
+    "zhuyin": "ㄏㄨㄢ ㄧㄥˊ"
+  },
+  "欧巴": {
+    "en": "oppa (Korean honorific)",
+    "ja": "オッパ",
+    "pinyin": "ou1 ba1",
+    "zhuyin": "ㄡ ㄅㄚ"
+  },
+  "正常": {
+    "en": "normal; proper",
+    "ja": "正常；通常の"
+  },
+  "歳": {
+    "en": "years old; age",
+    "ja": "歳；年齢",
+    "pinyin": "sui4",
+    "zhuyin": "ㄙㄨㄟˋ"
+  },
+  "残念": {
+    "en": "regrettable; too bad",
+    "ja": "残念だ",
+    "pinyin": "can2 nian4",
+    "zhuyin": "ㄘㄢˊ ㄋㄧㄢˋ"
+  },
+  "段": {
+    "en": "section; segment",
+    "ja": "段落；区間",
+    "pinyin": "duan4",
+    "zhuyin": "ㄉㄨㄢˋ"
+  },
+  "每": {
+    "en": "every; each",
+    "ja": "毎；それぞれ"
+  },
+  "每个": {
+    "en": "each; every",
+    "ja": "それぞれ；各々",
+    "pinyin": "mei3 ge5",
+    "zhuyin": "ㄇㄟˇ ㄍㄜ˙"
+  },
+  "每周": {
+    "en": "every week",
+    "ja": "毎週",
+    "pinyin": "mei3 zhou1",
+    "zhuyin": "ㄇㄟˇ ㄓㄡ"
+  },
+  "每天": {
+    "en": "every day",
+    "ja": "毎日"
+  },
+  "每年": {
+    "en": "every year; annually",
+    "ja": "毎年",
+    "pinyin": "mei3 nian2",
+    "zhuyin": "ㄇㄟˇ ㄋㄧㄢˊ"
+  },
+  "比": {
+    "en": "to compare; than (comparison marker)",
+    "ja": "～より；比べる"
+  },
+  "比例": {
+    "en": "proportion; ratio",
+    "ja": "割合；比率"
+  },
+  "比如说": {
+    "en": "for example",
+    "ja": "たとえば"
+  },
+  "比赛": {
+    "en": "game; match; competition",
+    "ja": "試合；競技",
+    "pinyin": "bi3 sai4",
+    "zhuyin": "ㄅㄧˇ ㄙㄞˋ"
+  },
+  "比起": {
+    "en": "compared to",
+    "ja": "～と比べて",
+    "pinyin": "bi3 qi3",
+    "zhuyin": "ㄅㄧˇ ㄑㄧˇ"
+  },
+  "比较": {
+    "en": "rather; comparatively",
+    "ja": "比較的；わりと"
+  },
+  "毛": {
+    "en": "fur; hair",
+    "ja": "毛；羽毛",
+    "pinyin": "mao2",
+    "zhuyin": "ㄇㄠˊ"
+  },
+  "气": {
+    "en": "air; gas",
+    "ja": "空気",
+    "pinyin": "qi4",
+    "zhuyin": "ㄑㄧˋ"
+  },
+  "水准": {
+    "en": "level; standard",
+    "ja": "水準；レベル",
+    "pinyin": "shui3 zhun3",
+    "zhuyin": "ㄕㄨㄟˇ ㄓㄨㄣˇ"
+  },
+  "水曜日": {
+    "en": "Wednesday",
+    "ja": "水曜日",
+    "pinyin": "shui3 yao4 ri4",
+    "zhuyin": "ㄕㄨㄟˇ ㄧㄠˋ ㄖˋ"
+  },
+  "水果": {
+    "en": "fruit",
+    "ja": "果物",
+    "pinyin": "shui3 guo3",
+    "zhuyin": "ㄕㄨㄟˇ ㄍㄨㄛˇ"
+  },
+  "汉字": {
+    "en": "Chinese character",
+    "ja": "漢字"
+  },
+  "沉浸式": {
+    "en": "immersive",
+    "ja": "没入型",
+    "pinyin": "chen2 jin4 shi4",
+    "zhuyin": "ㄔㄣˊ ㄐㄧㄣˋ ㄕˋ"
+  },
+  "没": {
+    "en": "not (past/experience)",
+    "ja": "～ない（過去・経験）"
+  },
+  "没什么": {
+    "en": "nothing; no problem",
+    "ja": "何もない；問題ない",
+    "pinyin": "mei2 shen2 me5",
+    "zhuyin": "ㄇㄟˊ ㄕㄣˊ ㄇㄜ˙"
+  },
+  "没想到": {
+    "en": "didn't expect",
+    "ja": "意外にも",
+    "pinyin": "mei2 xiang3 dao4",
+    "zhuyin": "ㄇㄟˊ ㄒㄧㄤˇ ㄉㄠˋ"
+  },
+  "没有": {
+    "en": "not have; there isn't",
+    "ja": "ない；持っていない"
+  },
+  "没错": {
+    "en": "that's right",
+    "ja": "その通り",
+    "pinyin": "mei2 cuo4",
+    "zhuyin": "ㄇㄟˊ ㄘㄨㄛˋ"
+  },
+  "没问题": {
+    "en": "no problem; it's fine",
+    "ja": "問題ない；大丈夫です",
+    "pinyin": "mei2 wen4 ti2",
+    "zhuyin": "ㄇㄟˊ ㄨㄣˋ ㄊㄧˊ"
+  },
+  "泡": {
+    "en": "soak;泡 (depends)",
+    "ja": "（お湯に）つける, 泡にする"
+  },
+  "泡面": {
+    "en": "instant noodles",
+    "ja": "インスタント麺"
+  },
+  "波": {
+    "en": "wave",
+    "ja": "波",
+    "pinyin": "bo1",
+    "zhuyin": "ㄅㄛ"
+  },
+  "注意": {
+    "en": "pay attention; notice",
+    "ja": "注意する；気をつける",
+    "pinyin": "zhu4 yi4",
+    "zhuyin": "ㄓㄨˋ ㄧˋ"
+  },
+  "注音": {
+    "en": "zhuyin; bopomofo",
+    "ja": "注音；ボポモフォ",
+    "pinyin": "zhu4 yin1",
+    "zhuyin": "ㄓㄨˋ ㄧㄣ"
+  },
+  "泳": {
+    "en": "swim",
+    "ja": "泳ぐ",
+    "pinyin": "yong3",
+    "zhuyin": "ㄩㄥˇ"
+  },
+  "洗": {
+    "en": "to wash",
+    "ja": "洗う"
+  },
+  "洗碗": {
+    "en": "wash dishes",
+    "ja": "皿を洗う"
+  },
+  "洗衣机": {
+    "en": "washing machine",
+    "ja": "洗濯機"
+  },
+  "活": {
+    "en": "activity; work; live",
+    "ja": "活動；仕事；生きる",
+    "pinyin": "huo2",
+    "zhuyin": "ㄏㄨㄛˊ"
+  },
+  "活动": {
+    "en": "activity; event",
+    "ja": "活動；イベント",
+    "pinyin": "huo2 dong4",
+    "zhuyin": "ㄏㄨㄛˊ ㄉㄨㄥˋ"
+  },
+  "浆": {
+    "en": "paste; sauce",
+    "ja": "ペースト；ソース",
+    "pinyin": "jiang1",
+    "zhuyin": "ㄐㄧㄤ"
+  },
+  "测试": {
+    "en": "test",
+    "ja": "テストする,（機械などを）試してみる"
+  },
+  "浪": {
+    "en": "wave; surf",
+    "ja": "波；サーフィン",
+    "pinyin": "lang4",
+    "zhuyin": "ㄌㄤˋ"
+  },
+  "浴室": {
+    "en": "bathroom",
+    "ja": "浴室；バスルーム"
+  },
+  "海上": {
+    "en": "at sea; on the ocean",
+    "ja": "海上；洋上",
+    "pinyin": "hai3 shang4",
+    "zhuyin": "ㄏㄞˇ ㄕㄤˋ"
+  },
+  "海边": {
+    "en": "seaside; by the sea",
+    "ja": "海辺",
+    "pinyin": "hai3 bian1",
+    "zhuyin": "ㄏㄞˇ ㄅㄧㄢ"
+  },
+  "海龟": {
+    "en": "sea turtle",
+    "ja": "ウミガメ",
+    "pinyin": "hai3 gui1",
+    "zhuyin": "ㄏㄞˇ ㄍㄨㄟ"
+  },
+  "清理": {
+    "en": "tidy up; clean up",
+    "ja": "片付ける；整理する"
+  },
+  "温": {
+    "en": "temperature; warm",
+    "ja": "温かい；温度",
+    "pinyin": "wen1",
+    "zhuyin": "ㄨㄣ"
+  },
+  "游泳": {
+    "en": "swim; swimming",
+    "ja": "泳ぐ；水泳",
+    "pinyin": "you2 yong3",
+    "zhuyin": "ㄧㄡˊ ㄩㄥˇ"
+  },
+  "游行": {
+    "en": "parade; march",
+    "ja": "パレード；行進",
+    "pinyin": "you2 xing2",
+    "zhuyin": "ㄧㄡˊ ㄒㄧㄥˊ"
+  },
+  "湾": {
+    "en": "bay; gulf",
+    "ja": "湾"
+  },
+  "滑": {
+    "en": "slip; slide",
+    "ja": "滑る；スライドする",
+    "pinyin": "hua2",
+    "zhuyin": "ㄏㄨㄚˊ"
+  },
+  "滑板": {
+    "en": "skateboard",
+    "ja": "スケートボード",
+    "pinyin": "hua2 ban3",
+    "zhuyin": "ㄏㄨㄚˊ ㄅㄢˇ"
+  },
+  "滴答": {
+    "en": "tick-tock; dripping sound",
+    "ja": "チクタク／ぽたぽた（音）"
+  },
+  "漂亮": {
+    "en": "beautiful",
+    "ja": "美しい",
+    "pinyin": "piao4 liang5",
+    "zhuyin": "ㄆㄧㄠˋ ㄌㄧㄤˊ"
+  },
+  "漫": {
+    "en": "comic; manga",
+    "ja": "漫画",
+    "pinyin": "man4",
+    "zhuyin": "ㄇㄢˋ"
+  },
+  "火灾": {
+    "en": "fire; blaze",
+    "ja": "火災"
+  },
+  "灯": {
+    "en": "lamp; light",
+    "ja": "灯り；ランプ",
+    "pinyin": "deng1",
+    "zhuyin": "ㄉㄥ"
+  },
+  "炉子": {
+    "en": "stove",
+    "ja": "コンロ；ストーブ",
+    "pinyin": "lu2 zi5",
+    "zhuyin": "ㄌㄨˊ ㄗ˙"
+  },
+  "炸": {
+    "en": "deep fry",
+    "ja": "揚げる",
+    "pinyin": "zha2",
+    "zhuyin": "ㄓㄚˊ"
+  },
+  "烤肉": {
+    "en": "barbecue; grilled meat",
+    "ja": "焼き肉；バーベキュー",
+    "pinyin": "kao3 rou4",
+    "zhuyin": "ㄎㄠˇ ㄖㄡˋ"
+  },
+  "烧": {
+    "en": "burn; cook",
+    "ja": "焼く；燃やす",
+    "pinyin": "shao1",
+    "zhuyin": "ㄕㄠ"
+  },
+  "热": {
+    "en": "hot",
+    "ja": "熱い",
+    "pinyin": "re4",
+    "zhuyin": "ㄖㄜˋ"
+  },
+  "然后": {
+    "en": "then; after that",
+    "ja": "それから"
+  },
+  "照片": {
+    "en": "photo; picture",
+    "ja": "写真",
+    "pinyin": "zhao4 pian4",
+    "zhuyin": "ㄓㄠˋ ㄆㄧㄢˋ"
+  },
+  "煮饭": {
+    "en": "cook (rice/meal)",
+    "ja": "ご飯を炊く；料理する"
+  },
+  "熟练": {
+    "en": "skilled; proficient",
+    "ja": "熟練した；上手な",
+    "pinyin": "shu2 lian4",
+    "zhuyin": "ㄕㄨˊ ㄌㄧㄢˋ"
+  },
+  "爸": {
+    "en": "dad",
+    "ja": "お父さん",
+    "pinyin": "ba4",
+    "zhuyin": "ㄅㄚˋ"
+  },
+  "爸爸": {
+    "en": "dad; father",
+    "ja": "お父さん"
+  },
+  "片": {
+    "en": "slice; piece; sheet",
+    "ja": "薄いもの・一片の助数詞"
+  },
+  "特别": {
+    "en": "special; particularly",
+    "ja": "特別な；特に",
+    "pinyin": "te4 bie2",
+    "zhuyin": "ㄊㄜˋ ㄅㄧㄝˊ"
+  },
+  "状态": {
+    "en": "state; condition",
+    "ja": "状態；コンディション",
+    "pinyin": "zhuang4 tai4",
+    "zhuyin": "ㄓㄨㄤˋ ㄊㄞˋ"
+  },
+  "猜": {
+    "en": "to guess",
+    "ja": "推測する／当てる"
+  },
+  "玩": {
+    "en": "to play; have fun",
+    "ja": "遊ぶ"
+  },
+  "现在": {
+    "en": "now",
+    "ja": "今"
+  },
+  "珊瑚礁": {
+    "en": "coral reef",
+    "ja": "珊瑚礁",
+    "pinyin": "shan1 hu2 jiao1",
+    "zhuyin": "ㄕㄢ ㄏㄨˊ ㄐㄧㄠ"
+  },
+  "球": {
+    "en": "ball",
+    "ja": "ボール",
+    "pinyin": "qiu2",
+    "zhuyin": "ㄑㄧㄡˊ"
+  },
+  "球类": {
+    "en": "ball sports",
+    "ja": "ボール競技",
+    "pinyin": "qiu2 lei4",
+    "zhuyin": "ㄑㄧㄡˊ ㄌㄟˋ"
+  },
+  "瓶": {
+    "en": "bottle",
+    "ja": "瓶を数える助数詞"
+  },
+  "生活": {
+    "en": "life",
+    "ja": "生活；暮らし",
+    "pinyin": "sheng1 huo2",
+    "zhuyin": "ㄕㄥ ㄏㄨㄛˊ"
+  },
+  "生篝火": {
+    "en": "light a campfire",
+    "ja": "たき火を起こす",
+    "pinyin": "sheng1 gou1 huo3",
+    "zhuyin": "ㄕㄥ ㄍㄡ ㄏㄨㄛˇ"
+  },
+  "用": {
+    "en": "use",
+    "ja": "使う"
+  },
+  "用心": {
+    "en": "attentive; with effort",
+    "ja": "心を込めて"
+  },
+  "电扇": {
+    "en": "electric fan",
+    "ja": "扇風機"
+  },
+  "电脑": {
+    "en": "computer",
+    "ja": "コンピューター；パソコン",
+    "pinyin": "dian4 nao3",
+    "zhuyin": "ㄉㄧㄢˋ ㄋㄠˇ"
+  },
+  "电车": {
+    "en": "train",
+    "ja": "電車"
+  },
+  "电风扇": {
+    "en": "electric fan",
+    "ja": "扇風機"
+  },
+  "男人": {
+    "en": "man",
+    "ja": "男性"
+  },
+  "画": {
+    "en": "draw; paint",
+    "ja": "描く；描画する",
+    "pinyin": "hua4",
+    "zhuyin": "ㄏㄨㄚˋ"
+  },
+  "留下": {
+    "en": "leave behind; remain",
+    "ja": "残す；残る",
+    "pinyin": "liu2 xia4",
+    "zhuyin": "ㄌㄧㄡˊ ㄒㄧㄚˋ"
+  },
+  "番": {
+    "en": "(measure word for actions, deeds, etc.)",
+    "ja": "回；度",
+    "pinyin": "fan1",
+    "zhuyin": "ㄈㄢ"
+  },
+  "疲惫": {
+    "en": "exhausted; tired",
+    "ja": "疲れ果てた；へとへと",
+    "pinyin": "pi2 bei4",
+    "zhuyin": "ㄆㄧˊ ㄅㄟˋ"
+  },
+  "疼": {
+    "en": "ache; hurt",
+    "ja": "痛い；痛む",
+    "pinyin": "teng2",
+    "zhuyin": "ㄊㄥˊ"
+  },
+  "痛": {
+    "en": "pain; painful",
+    "ja": "痛み；痛い",
+    "pinyin": "tong4",
+    "zhuyin": "ㄊㄨㄥˋ"
+  },
+  "白": {
+    "en": "white; in vain",
+    "ja": "白い；無駄に",
+    "pinyin": "bai2",
+    "zhuyin": "ㄅㄞˊ"
+  },
+  "百": {
+    "en": "hundred",
+    "ja": "百（ひゃく）"
+  },
+  "百倍": {
+    "en": "hundred times",
+    "ja": "100倍",
+    "pinyin": "bai3 bei4",
+    "zhuyin": "ㄅㄞˇ ㄅㄟˋ"
+  },
+  "百分之": {
+    "en": "percent",
+    "ja": "パーセント"
+  },
+  "的": {
+    "en": "'s; of",
+    "ja": "～の；～な"
+  },
+  "的姐": {
+    "en": "elder sister",
+    "ja": "お姉さん",
+    "pinyin": "de5 jie3",
+    "zhuyin": "ㄉㄜ˙ ㄐㄧㄝˇ"
+  },
+  "的话": {
+    "en": "if (topic/condition); talking about ~",
+    "ja": "〜なら（条件）; ~の話"
+  },
+  "皆": {
+    "en": "all",
+    "ja": "皆",
+    "pinyin": "jie1",
+    "zhuyin": "ㄐㄧㄝ"
+  },
+  "盘": {
+    "en": "plate/dish",
+    "ja": "皿料理の助数詞"
+  },
+  "目": {
+    "en": "eye",
+    "ja": "目",
+    "pinyin": "mu4",
+    "zhuyin": "ㄇㄨˋ"
+  },
+  "看": {
+    "en": "to look; to see",
+    "ja": "見る"
+  },
+  "看不懂": {
+    "en": "can't understand",
+    "ja": "理解できない",
+    "pinyin": "kan4 bu5 dong3",
+    "zhuyin": "ㄎㄢˋ ㄅㄨˋ ㄉㄨㄥˇ"
+  },
+  "看到": {
+    "en": "see",
+    "ja": "見る",
+    "pinyin": "kan4 dao4",
+    "zhuyin": "ㄎㄢˋ ㄉㄠˋ"
+  },
+  "看看": {
+    "en": "take a look; have a look",
+    "ja": "見てみる；ちょっと見る",
+    "pinyin": "kan4 kan4",
+    "zhuyin": "ㄎㄢˋ ㄎㄢˋ"
+  },
+  "看起来": {
+    "en": "seems like; looks like",
+    "ja": "～のように見える",
+    "pinyin": "kan4 qi3 lai2",
+    "zhuyin": "ㄎㄢˋ ㄑㄧˇ ㄌㄞˊ"
+  },
+  "真": {
+    "en": "really; truly",
+    "ja": "本当に",
+    "pinyin": "zhen1",
+    "zhuyin": "ㄓㄣ"
+  },
+  "真的": {
+    "en": "really",
+    "ja": "本当に"
+  },
+  "睡袋": {
+    "en": "sleeping bag",
+    "ja": "寝袋",
+    "pinyin": "shui4 dai4",
+    "zhuyin": "ㄕㄨㄟˋ ㄉㄞˋ"
+  },
+  "知道": {
+    "en": "know",
+    "ja": "知っている",
+    "pinyin": "zhi1 dao4",
+    "zhuyin": "ㄓ ㄉㄠˋ"
+  },
+  "知道了": {
+    "en": "got it; understood",
+    "ja": "わかった"
+  },
+  "短": {
+    "en": "short; brief",
+    "ja": "短い；簡潔な",
+    "pinyin": "duan3",
+    "zhuyin": "ㄉㄨㄢˇ"
+  },
+  "短板": {
+    "en": "weakness; weak point",
+    "ja": "短所；苦手な点",
+    "pinyin": "duan3 ban3",
+    "zhuyin": "ㄉㄨㄢˇ ㄅㄢˇ"
+  },
+  "研究": {
+    "en": "to research; research",
+    "ja": "研究する；研究"
+  },
+  "确定": {
+    "en": "confirm; make sure",
+    "ja": "確認する",
+    "pinyin": "que4 ding4",
+    "zhuyin": "ㄑㄩㄝˋ ㄉㄧㄥˋ"
+  },
+  "确实": {
+    "en": "indeed; really",
+    "ja": "確かに；本当に",
+    "pinyin": "que4 shi2",
+    "zhuyin": "ㄑㄩㄝˋ ㄕˊ"
+  },
+  "碗": {
+    "en": "bowl",
+    "ja": "椀を数える助数詞"
+  },
+  "礼拜": {
+    "en": "week",
+    "ja": "週（しゅう）"
+  },
+  "礼拜一": {
+    "en": "Monday",
+    "ja": "月曜日"
+  },
+  "礼拜三": {
+    "en": "Wednesday",
+    "ja": "水曜日",
+    "pinyin": "li3 bai4 san1",
+    "zhuyin": "ㄌㄧˇ ㄅㄞˋ ㄙㄢ"
+  },
+  "礼拜二": {
+    "en": "Tuesday",
+    "ja": "火曜日",
+    "pinyin": "li3 bai4 er4",
+    "zhuyin": "ㄌㄧˇ ㄅㄞˋ ㄦˋ"
+  },
+  "礼拜五": {
+    "en": "Friday",
+    "ja": "金曜日",
+    "pinyin": "li3 bai4 wu3",
+    "zhuyin": "ㄌㄧˇ ㄅㄞˋ ㄨˇ"
+  },
+  "礼拜六": {
+    "en": "Saturday",
+    "ja": "土曜日"
+  },
+  "礼拜天": {
+    "en": "Sunday",
+    "ja": "日曜日"
+  },
+  "社": {
+    "en": "society; association",
+    "ja": "協会；社会",
+    "pinyin": "she4",
+    "zhuyin": "ㄕㄜˋ"
+  },
+  "祖": {
+    "en": "ancestor",
+    "ja": "祖先",
+    "pinyin": "zu3",
+    "zhuyin": "ㄗㄨˇ"
+  },
+  "神": {
+    "en": "god; deity",
+    "ja": "神",
+    "pinyin": "shen2",
+    "zhuyin": "ㄕㄣˊ"
+  },
+  "神明": {
+    "en": "deity; god",
+    "ja": "神様",
+    "pinyin": "shen2 ming2",
+    "zhuyin": "ㄕㄣˊ ㄇㄧㄥˊ"
+  },
+  "祭典": {
+    "en": "festival",
+    "ja": "お祭り",
+    "pinyin": "ji4 dian3",
+    "zhuyin": "ㄐㄧˋ ㄉㄧㄢˇ"
+  },
+  "离": {
+    "en": "leave",
+    "ja": "離れる",
+    "pinyin": "li2",
+    "zhuyin": "ㄌㄧˊ"
+  },
+  "离开": {
+    "en": "leave; depart",
+    "ja": "去る；出発する",
+    "pinyin": "li2 kai1",
+    "zhuyin": "ㄌㄧˊ ㄎㄞ"
+  },
+  "种": {
+    "en": "kind; type",
+    "ja": "種類を数える助数詞"
+  },
+  "稍微": {
+    "en": "slightly; a bit",
+    "ja": "少し；ちょっと",
+    "pinyin": "shao1 wei1",
+    "zhuyin": "ㄕㄠ ㄨㄟ"
+  },
+  "稿": {
+    "en": "script",
+    "ja": "原稿"
+  },
+  "空": {
+    "en": "empty/free; sky",
+    "ja": "空っぽ, 空いてる; 空"
+  },
+  "笑": {
+    "en": "laugh; smile",
+    "ja": "笑う；微笑む",
+    "pinyin": "xiao4",
+    "zhuyin": "ㄒㄧㄠˋ"
+  },
+  "第一": {
+    "en": "first",
+    "ja": "第一；一番",
+    "pinyin": "di4 yi1",
+    "zhuyin": "ㄉㄧˋ ㄧ"
+  },
+  "第一次": {
+    "en": "first time",
+    "ja": "初めて；第一回",
+    "pinyin": "di4 yi1 ci4",
+    "zhuyin": "ㄉㄧˋ ㄧ ㄘˋ"
+  },
+  "等一下": {
+    "en": "wait a moment",
+    "ja": "ちょっと待って"
+  },
+  "等于": {
+    "en": "equal to",
+    "ja": "～に等しい",
+    "pinyin": "deng3 yu2",
+    "zhuyin": "ㄉㄥˇ ㄩˊ"
+  },
+  "等到": {
+    "en": "to wait until",
+    "ja": "～まで待つ"
+  },
+  "答案": {
+    "en": "answer; solution",
+    "ja": "答え；解答",
+    "pinyin": "da2 an4",
+    "zhuyin": "ㄉㄚˊ ㄢˋ"
+  },
+  "简单": {
+    "en": "simple; easy",
+    "ja": "簡単な"
+  },
+  "算是": {
+    "en": "considered as",
+    "ja": "～と見なされる",
+    "pinyin": "suan4 shi4",
+    "zhuyin": "ㄙㄨㄢˋ ㄕˋ"
+  },
+  "篝火": {
+    "en": "campfire; bonfire",
+    "ja": "たき火；かがり火",
+    "pinyin": "gou1 huo3",
+    "zhuyin": "ㄍㄡ ㄏㄨㄛˇ"
+  },
+  "篮子": {
+    "en": "basket",
+    "ja": "かご；バスケット",
+    "pinyin": "lan2 zi5",
+    "zhuyin": "ㄌㄢˊ ㄗ˙"
+  },
+  "篮球": {
+    "en": "basketball",
+    "ja": "バスケットボール",
+    "pinyin": "lan2 qiu2",
+    "zhuyin": "ㄌㄢˊ ㄑㄧㄡˊ"
+  },
+  "系统": {
+    "en": "system",
+    "ja": "システム"
+  },
+  "紧": {
+    "en": "tight",
+    "ja": "きつい；しっかり",
+    "pinyin": "jin3",
+    "zhuyin": "ㄐㄧㄣˇ"
+  },
+  "累": {
+    "en": "tired　(adj)",
+    "ja": "疲れている（形容詞）"
+  },
+  "縄": {
+    "en": "rope (Japanese character)",
+    "ja": "縄（日本語漢字）"
+  },
+  "纔": {
+    "en": "only then; just",
+    "ja": "やっと；～してこそ"
+  },
+  "红": {
+    "en": "red",
+    "ja": "赤い",
+    "pinyin": "hong2",
+    "zhuyin": "ㄏㄨㄥˊ"
+  },
+  "红色": {
+    "en": "red (color)",
+    "ja": "赤色",
+    "pinyin": "hong2 se4",
+    "zhuyin": "ㄏㄨㄥˊ ㄙㄜˋ"
+  },
+  "约": {
+    "en": "about/approximately; plan/appointment",
+    "ja": "約; 予定/約束",
+    "pinyin": "yue1",
+    "zhuyin": ""
+  },
+  "纸": {
+    "en": "paper",
+    "ja": "紙",
+    "pinyin": "zhi3",
+    "zhuyin": "ㄓˇ"
+  },
+  "线": {
+    "en": "line; cable",
+    "ja": "線；ケーブル",
+    "pinyin": "xian4",
+    "zhuyin": "ㄒㄧㄢˋ"
+  },
+  "练习": {
+    "en": "practice; exercise",
+    "ja": "練習する；トレーニング",
+    "pinyin": "lian4 xi2",
+    "zhuyin": "ㄌㄧㄢˋ ㄒㄧˊ"
+  },
+  "组": {
+    "en": "group; set; organize",
+    "ja": "グループ；セット；編成する",
+    "pinyin": "zu3",
+    "zhuyin": "ㄗㄨˇ"
+  },
+  "结果": {
+    "en": "result; outcome",
+    "ja": "結果"
+  },
+  "给": {
+    "en": "give; for",
+    "ja": "与える；～に",
+    "pinyin": "gei3",
+    "zhuyin": "ㄍㄟˇ"
+  },
+  "继续": {
+    "en": "continue",
+    "ja": "続ける"
+  },
+  "网上": {
+    "en": "online",
+    "ja": "オンライン",
+    "pinyin": "wang3 shang4",
+    "zhuyin": "ㄨㄤˇ ㄕㄤˋ"
+  },
+  "网站": {
+    "en": "website",
+    "ja": "ウェブサイト",
+    "pinyin": "wang3 zhan4",
+    "zhuyin": "ㄨㄤˇ ㄓㄢˋ"
+  },
+  "羽": {
+    "en": "feather; shuttlecock",
+    "ja": "羽；シャトル",
+    "pinyin": "yu3",
+    "zhuyin": "ㄩˇ"
+  },
+  "羽毛球": {
+    "en": "badminton",
+    "ja": "バドミントン",
+    "pinyin": "yu3 mao2 qiu2",
+    "zhuyin": "ㄩˇ ㄇㄠˊ ㄑㄧㄡˊ"
+  },
+  "羽球": {
+    "en": "badminton",
+    "ja": "バドミントン",
+    "pinyin": "yu3 qiu2",
+    "zhuyin": "ㄩˇ ㄑㄧㄡˊ"
+  },
+  "翻": {
+    "en": "to turn over/flip; to translate",
+    "ja": "ひっくり返す；めくる；翻訳する"
+  },
+  "老人家": {
+    "en": "elderly person",
+    "ja": "お年寄り",
+    "pinyin": "lao3 ren2 jia1",
+    "zhuyin": "ㄌㄠˇ ㄖㄣˊ ㄐㄧㄚ"
+  },
+  "老婆": {
+    "en": "wife",
+    "ja": "妻"
+  },
+  "而且": {
+    "en": "and; moreover; furthermore",
+    "ja": "しかも；そのうえ"
+  },
+  "耶": {
+    "en": "yeah; oh",
+    "ja": "へえ；まあ",
+    "pinyin": "ye1",
+    "zhuyin": "一ㄝ"
+  },
+  "聊": {
+    "en": "chat; talk about",
+    "ja": "話す；おしゃべりする"
+  },
+  "聊天": {
+    "en": "chat/talk",
+    "ja": "おしゃべりする；話す",
+    "pinyin": "liao2 tian1",
+    "zhuyin": "ㄌㄧㄠˊ ㄊㄧㄢ"
+  },
+  "肌肉": {
+    "en": "muscle",
+    "ja": "筋肉",
+    "pinyin": "ji1 rou4",
+    "zhuyin": "ㄐㄧ ㄖㄡˋ"
+  },
+  "肚子": {
+    "en": "belly; stomach",
+    "ja": "お腹；腹",
+    "pinyin": "du4 zi5",
+    "zhuyin": "ㄉㄨˋ ㄗ˙"
+  },
+  "胳膊": {
+    "en": "arm",
+    "ja": "腕；腕部",
+    "pinyin": "ge1 bo2",
+    "zhuyin": "ㄍㄜ ㄅㄛˊ"
+  },
+  "能": {
+    "en": "can; be able to",
+    "ja": "できる",
+    "pinyin": "neng2",
+    "zhuyin": "ㄋㄥˊ"
+  },
+  "腰": {
+    "en": "waist",
+    "ja": "腰",
+    "pinyin": "yao1",
+    "zhuyin": "ㄧㄠ"
+  },
+  "自从": {
+    "en": "since; ever since",
+    "ja": "～以来；～からずっと",
+    "pinyin": "zi4 cong2",
+    "zhuyin": "ㄗˋ ㄘㄨㄥˊ"
+  },
+  "自己": {
+    "en": "myself/yourself/etc",
+    "ja": "自分"
+  },
+  "自然": {
+    "en": "natural",
+    "ja": "自然な"
+  },
+  "自行车": {
+    "en": "bicycle",
+    "ja": "自転車",
+    "pinyin": "zi4 xing2 che1",
+    "zhuyin": "ㄗˋ ㄒㄧㄥˊ ㄔㄜ"
+  },
+  "舞蹈": {
+    "en": "dance",
+    "ja": "ダンス；踊り",
+    "pinyin": "wu3 dao3",
+    "zhuyin": "ㄨˇ ㄉㄠˇ"
+  },
+  "节": {
+    "en": "measure word for lessons; sections",
+    "ja": "授業・節の助数詞"
+  },
+  "花": {
+    "en": "to spend (time/money); flower",
+    "ja": "（時間・お金を）使う；花"
+  },
+  "英国人": {
+    "en": "British person",
+    "ja": "イギリス人",
+    "pinyin": "ying1 guo2 ren2",
+    "zhuyin": "ㄧㄥ ㄍㄨㄛˊ ㄖㄣˊ"
+  },
+  "英语": {
+    "en": "English (language)",
+    "ja": "英語",
+    "pinyin": "ying1 yu3",
+    "zhuyin": "ㄧㄥ ㄩˇ"
+  },
+  "著": {
+    "en": "~ing (state); continuing",
+    "ja": "～している状態",
+    "pinyin": "",
+    "zhuyin": ""
+  },
+  "蛤": {
+    "en": "clam; shellfish",
+    "ja": "ハマグリ；貝",
+    "pinyin": "ge2",
+    "zhuyin": "ㄍㄜˊ"
+  },
+  "蛮": {
+    "en": "quite; rather",
+    "ja": "かなり；相当",
+    "pinyin": "man2",
+    "zhuyin": "ㄇㄢˊ"
+  },
+  "螃蟹": {
+    "en": "crab",
+    "ja": "カニ",
+    "pinyin": "pang2 xie4",
+    "zhuyin": "ㄆㄤˊ ㄒㄧㄝˋ"
+  },
+  "行": {
+    "en": "OK; alright; line",
+    "ja": "OK；大丈夫；列",
+    "pinyin": "xing2",
+    "zhuyin": "ㄒㄧㄥˊ"
+  },
+  "表": {
+    "en": "express; surface; table",
+    "ja": "表す；表面；表",
+    "pinyin": "biao3",
+    "zhuyin": "ㄅㄧㄠˇ"
+  },
+  "被": {
+    "en": "be (passive)",
+    "ja": "～される"
+  },
+  "装饰": {
+    "en": "decoration; decorate",
+    "ja": "装飾；飾る",
+    "pinyin": "zhuang1 shi4",
+    "zhuyin": "ㄓㄨㄤ ㄕˋ"
+  },
+  "要": {
+    "en": "need, want to",
+    "ja": "要る, 〜したい"
+  },
+  "要不然": {
+    "en": "otherwise; if not",
+    "ja": "さもないと；そうでなければ",
+    "pinyin": "yao4 bu4 ran2",
+    "zhuyin": "ㄧㄠˋ ㄅㄨˋ ㄖㄢˊ"
+  },
+  "要有": {
+    "en": "need to have; must have",
+    "ja": "～が必要；～を持たなければならない",
+    "pinyin": "yao4 you3",
+    "zhuyin": "ㄧㄠˋ ㄧㄡˇ"
+  },
+  "见": {
+    "en": "to see; to meet",
+    "ja": "会う；見る"
+  },
+  "见面": {
+    "en": "meet; see someone",
+    "ja": "会う；面会する",
+    "pinyin": "jian4 mian4",
+    "zhuyin": "ㄐㄧㄢˋ ㄇㄧㄢˋ"
+  },
+  "观": {
+    "en": "view; outlook;",
+    "ja": "観点；道観",
+    "pinyin": "guan1",
+    "zhuyin": "ㄍㄨㄢ"
+  },
+  "观光客": {
+    "en": "tourist",
+    "ja": "観光客",
+    "pinyin": "guan1 guang1 ke4",
+    "zhuyin": "ㄍㄨㄢ ㄍㄨㄤ ㄎㄜˋ"
+  },
+  "规划": {
+    "en": "plan; program",
+    "ja": "計画する；企画する",
+    "pinyin": "gui1 hua4",
+    "zhuyin": "ㄍㄨㄟ ㄏㄨㄚˋ"
+  },
+  "觉得": {
+    "en": "feel, think",
+    "ja": "〜と思う, 感じる"
+  },
+  "解释": {
+    "en": "explain; explanation",
+    "ja": "説明する；解説",
+    "pinyin": "jie3 shi4",
+    "zhuyin": "ㄐㄧㄝˇ ㄕˋ"
+  },
+  "认真": {
+    "en": "serious; earnest",
+    "ja": "真剣な；まじめな",
+    "pinyin": "ren4 zhen1",
+    "zhuyin": "ㄖㄣˋ ㄓㄣ"
+  },
+  "让": {
+    "en": "to let; to make; to allow",
+    "ja": "～させる；～させてあげる"
+  },
+  "记录": {
+    "en": "record; note down",
+    "ja": "記録する",
+    "pinyin": "ji4 lu4",
+    "zhuyin": "ㄐㄧˋ ㄌㄨˋ"
+  },
+  "记得": {
+    "en": "remember; recall",
+    "ja": "覚えている；記憶する",
+    "pinyin": "ji4 de5",
+    "zhuyin": "ㄐㄧˋ ㄉㄜ˙"
+  },
+  "记忆": {
+    "en": "memory; remember",
+    "ja": "記憶；思い出",
+    "pinyin": "ji4 yi4",
+    "zhuyin": "ㄐㄧˋ ㄧˋ"
+  },
+  "讲": {
+    "en": "to speak; to tell",
+    "ja": "話す；言う"
+  },
+  "讲学": {
+    "en": "give a lecture; academic visit",
+    "ja": "講義する；研究発表",
+    "pinyin": "jiang3 xue2",
+    "zhuyin": "ㄐㄧㄤˇ ㄒㄩㄝˊ"
+  },
+  "词": {
+    "en": "word (single lexical item)",
+    "ja": "単語"
+  },
+  "试一试": {
+    "en": "try; give it a try",
+    "ja": "試してみる；やってみる",
+    "pinyin": "shi4 yi1 shi4",
+    "zhuyin": "ㄕˋ ㄧ ㄕˋ"
+  },
+  "试试看": {
+    "en": "try it",
+    "ja": "試してみる"
+  },
+  "话": {
+    "en": "words; speech",
+    "ja": "言葉；話",
+    "pinyin": "hua4",
+    "zhuyin": "ㄏㄨㄚˋ"
+  },
+  "语": {
+    "en": "language; speech",
+    "ja": "言語／語"
+  },
+  "语言": {
+    "en": "language",
+    "ja": "言語",
+    "pinyin": "yu3 yan2",
+    "zhuyin": "ㄩˇ ㄧㄢˊ"
+  },
+  "语音": {
+    "en": "audio, voice",
+    "ja": "音声"
+  },
+  "说": {
+    "en": "say; speak",
+    "ja": "言う；話す"
+  },
+  "说话": {
+    "en": "speak; talk",
+    "ja": "話す；会話する",
+    "pinyin": "shuo1 hua4",
+    "zhuyin": "ㄕㄨㄛ ㄏㄨㄚˋ"
+  },
+  "诶": {
+    "en": "hey; eh? (interjection)",
+    "ja": "え？／あれ？（間投詞）"
+  },
+  "请": {
+    "en": "please",
+    "ja": "〜してください"
+  },
+  "读": {
+    "en": "read",
+    "ja": "読む"
+  },
+  "课": {
+    "en": "measure word for (school) classes",
+    "ja": "授業の助数詞"
+  },
+  "谁": {
+    "en": "who",
+    "ja": "誰"
+  },
+  "调": {
+    "en": "adjust; tune",
+    "ja": "調整する",
+    "pinyin": "tiao2",
+    "zhuyin": "ㄊㄧㄠˊ"
+  },
+  "调整": {
+    "en": "adjust; regulate",
+    "ja": "調整する；修正する",
+    "pinyin": "tiao2 zheng3",
+    "zhuyin": "ㄊㄧㄠˊ ㄓㄥˇ"
+  },
+  "谢谢": {
+    "en": "thank you",
+    "ja": "ありがとう"
+  },
+  "负": {
+    "en": "negative; lose; owe",
+    "ja": "負の；負ける；負う",
+    "pinyin": "fu4",
+    "zhuyin": "ㄈㄨˋ"
+  },
+  "负责": {
+    "en": "to be responsible for",
+    "ja": "責任を持つ"
+  },
+  "贡品": {
+    "en": "offering; tribute",
+    "ja": "供え物；献上品",
+    "pinyin": "gong4 pin3",
+    "zhuyin": "ㄍㄨㄥˋ ㄆㄧㄣˇ"
+  },
+  "走": {
+    "en": "walk; go",
+    "ja": "歩く；行く",
+    "pinyin": "zou3",
+    "zhuyin": "ㄗㄡˇ"
+  },
+  "起来": {
+    "en": "start to ~; feel ~",
+    "ja": "～し始める；～感じる",
+    "pinyin": "qi3 lai5",
+    "zhuyin": "ㄑㄧˇ ㄌㄞ˙"
+  },
+  "超": {
+    "en": "super; exceed; transcend",
+    "ja": "超える；超人的",
+    "pinyin": "chao1",
+    "zhuyin": "ㄔㄠ"
+  },
+  "趟": {
+    "en": "trip (measure word for journeys)",
+    "ja": "往復・移動回数の助数詞"
+  },
+  "趣味": {
+    "en": "hobby; interest",
+    "ja": "趣味；興味",
+    "pinyin": "qu4 wei4",
+    "zhuyin": "ㄑㄩˋ ㄨㄟˋ"
+  },
+  "足": {
+    "en": "foot",
+    "ja": "足",
+    "pinyin": "zu2",
+    "zhuyin": "ㄗㄨˊ"
+  },
+  "足球": {
+    "en": "soccer; football",
+    "ja": "サッカー；フットボール",
+    "pinyin": "zu2 qiu2",
+    "zhuyin": "ㄗㄨˊ ㄑㄧㄡˊ"
+  },
+  "跑": {
+    "en": "to run",
+    "ja": "走る"
+  },
+  "跟": {
+    "en": "with, and",
+    "ja": "〜と（いっしょに）, 〜と（相手）"
+  },
+  "路上": {
+    "en": "on the road; on the way",
+    "ja": "道中；途中",
+    "pinyin": "lu4 shang4",
+    "zhuyin": "ㄌㄨˋ ㄕㄤˋ"
+  },
+  "跳": {
+    "en": "jump; leap; beat",
+    "ja": "跳ぶ；飛び跳ねる",
+    "pinyin": "tiao4",
+    "zhuyin": "ㄊㄧㄠˋ"
+  },
+  "身上": {
+    "en": "on the body; on oneself",
+    "ja": "体に；身につけて",
+    "pinyin": "shen1 shang4",
+    "zhuyin": "ㄕㄣ ㄕㄤˋ"
+  },
+  "身体": {
+    "en": "body; health",
+    "ja": "体；体調",
+    "pinyin": "shen1 ti3",
+    "zhuyin": "ㄕㄣ ㄊㄧˇ"
+  },
+  "转": {
+    "en": "turn/spin; transfer",
+    "ja": "回す／曲がる／乗り換える"
+  },
+  "轮流": {
+    "en": "take turns",
+    "ja": "交代で",
+    "pinyin": "lun2 liu2",
+    "zhuyin": "ㄌㄨㄣˊ ㄌㄧㄡˊ"
+  },
+  "轮胎": {
+    "en": "tire",
+    "ja": "タイヤ",
+    "pinyin": "lun2 tai1",
+    "zhuyin": "ㄌㄨㄣˊ ㄊㄞ"
+  },
+  "轻松": {
+    "en": "relaxed; easy",
+    "ja": "楽な；気楽な"
+  },
+  "辆": {
+    "en": "measure word for vehicles",
+    "ja": "車両の助数詞"
+  },
+  "输": {
+    "en": "lose; be defeated",
+    "ja": "負ける",
+    "pinyin": "shu1",
+    "zhuyin": "ㄕㄨ"
+  },
+  "辛苦": {
+    "en": "hard work/exhausting",
+    "ja": "大変；お疲れ様"
+  },
+  "辞书": {
+    "en": "dictionary",
+    "ja": "辞書",
+    "pinyin": "ci2 shu1",
+    "zhuyin": "ㄘˊ ㄕㄨ"
+  },
+  "边": {
+    "en": "side; edge",
+    "ja": "側；端"
+  },
+  "过": {
+    "en": "have ever (experience)",
+    "ja": "～したことがある"
+  },
+  "过后": {
+    "en": "after; afterwards",
+    "ja": "～のあとで"
+  },
+  "运": {
+    "en": "fortune; luck; move",
+    "ja": "運；運ぶ",
+    "pinyin": "yun4",
+    "zhuyin": "ㄩㄣˋ"
+  },
+  "运动": {
+    "en": "exercise; sports",
+    "ja": "運動；スポーツ",
+    "pinyin": "yun4 dong4",
+    "zhuyin": "ㄩㄣˋ ㄉㄨㄥˋ"
+  },
+  "运势": {
+    "en": "fortune; luck",
+    "ja": "運勢；運気",
+    "pinyin": "yun4 shi4",
+    "zhuyin": "ㄩㄣˋ ㄕˋ"
+  },
+  "运气": {
+    "en": "luck; fortune",
+    "ja": "運；幸運",
+    "pinyin": "yun4 qi4",
+    "zhuyin": "ㄩㄣˋ ㄑㄧˋ"
+  },
+  "还": {
+    "en": "still; also",
+    "ja": "まだ；さらに"
+  },
+  "还是": {
+    "en": "still; or (in questions)",
+    "ja": "やはり；それとも"
+  },
+  "还有": {
+    "en": "also, and",
+    "ja": "それと, まだある"
+  },
+  "这": {
+    "en": "this",
+    "ja": "これ；この"
+  },
+  "这个": {
+    "en": "this",
+    "ja": "これ；この"
+  },
+  "这么": {
+    "en": "this much; like this",
+    "ja": "こんなに；こんな"
+  },
+  "这些": {
+    "en": "these",
+    "ja": "これら",
+    "pinyin": "zhe4 xie1",
+    "zhuyin": "ㄓㄜˋ ㄒㄧㄝ"
+  },
+  "这就": {
+    "en": "then; in that case; right away",
+    "ja": "それなら；すぐに"
+  },
+  "这样": {
+    "en": "like this",
+    "ja": "このように；こう"
+  },
+  "这样子": {
+    "en": "like this; this way",
+    "ja": "こんなふうに"
+  },
+  "这边": {
+    "en": "this side; here",
+    "ja": "こちら側；この辺",
+    "pinyin": "zhe4 bian1",
+    "zhuyin": "ㄓㄜˋ ㄅㄧㄢ"
+  },
+  "这里": {
+    "en": "here",
+    "ja": "ここ"
+  },
+  "进": {
+    "en": "enter; advance",
+    "ja": "入る；進む",
+    "pinyin": "jin4",
+    "zhuyin": "ㄐㄧㄣˋ"
+  },
+  "进步": {
+    "en": "progress; improve",
+    "ja": "進歩する；上達する",
+    "pinyin": "jin4 bu4",
+    "zhuyin": "ㄐㄧㄣˋ ㄅㄨˋ"
+  },
+  "连": {
+    "en": "even",
+    "ja": "〜さえ（強調）"
+  },
+  "退步": {
+    "en": "regress; decline",
+    "ja": "退歩する；後退する",
+    "pinyin": "tui4 bu4",
+    "zhuyin": "ㄊㄨㄟˋ ㄅㄨˋ"
+  },
+  "适合": {
+    "en": "suitable; fit",
+    "ja": "適した；合う",
+    "pinyin": "shi4 he2",
+    "zhuyin": "ㄕˋ ㄏㄜˊ"
+  },
+  "适应": {
+    "en": "adapt; adjust",
+    "ja": "適応する；慣れる",
+    "pinyin": "shi4 ying4",
+    "zhuyin": "ㄕˋ ㄧㄥˋ"
+  },
+  "选": {
+    "en": "choose; select",
+    "ja": "選ぶ",
+    "pinyin": "xuan3",
+    "zhuyin": "ㄒㄩㄢˇ"
+  },
+  "逐": {
+    "en": "gradually; one by one",
+    "ja": "徐々に；一つ一つ",
+    "pinyin": "zhu2",
+    "zhuyin": "ㄓㄨˊ"
+  },
+  "通常": {
+    "en": "usually; normally",
+    "ja": "通常；ふつう"
+  },
+  "遇到": {
+    "en": "encounter; come across",
+    "ja": "出会う；遭遇する",
+    "pinyin": "yu4 dao4",
+    "zhuyin": "ㄩˋ ㄉㄠˋ"
+  },
+  "遍": {
+    "en": "one whole time (from beginning to end)",
+    "ja": "最初から最後までの一回"
+  },
+  "道": {
+    "en": "way/path; say",
+    "ja": "道；言う"
+  },
+  "邀请": {
+    "en": "invite",
+    "ja": "招待する",
+    "pinyin": "yao1 qing3",
+    "zhuyin": "ㄧㄠ ㄑㄧㄥˇ"
+  },
+  "那": {
+    "en": "that; in that case",
+    "ja": "あれ；それなら"
+  },
+  "那个": {
+    "en": "uh…; that",
+    "ja": "あの"
+  },
+  "那个人": {
+    "en": "that person",
+    "ja": "あの人"
+  },
+  "那么": {
+    "en": "so; that",
+    "ja": "そんなに；あのように",
+    "pinyin": "na4 me5",
+    "zhuyin": "ㄋㄚˋ ㄇㄜ˙"
+  },
+  "那些": {
+    "en": "those",
+    "ja": "それら；あれら"
+  },
+  "那时候": {
+    "en": "at that time; then",
+    "ja": "そのとき"
+  },
+  "那是": {
+    "en": "that is; that's",
+    "ja": "それは〜だ"
+  },
+  "那样": {
+    "en": "like that",
+    "ja": "あんなふうに"
+  },
+  "那种": {
+    "en": "that kind; that type",
+    "ja": "あの種類"
+  },
+  "那边": {
+    "en": "that side; there",
+    "ja": "あちら側；あそこの辺",
+    "pinyin": "na4 bian1",
+    "zhuyin": "ㄋㄚˋ ㄅㄧㄢ"
+  },
+  "那里": {
+    "en": "there",
+    "ja": "そこ；あそこ"
+  },
+  "邻居": {
+    "en": "neighbor",
+    "ja": "隣人；近所の人",
+    "pinyin": "lin2 ju1",
+    "zhuyin": "ㄌㄧㄣˊ ㄐㄩ"
+  },
+  "部分": {
+    "en": "part; portion",
+    "ja": "部分"
+  },
+  "都": {
+    "en": "all; both",
+    "ja": "全部；みんな；どちらも"
+  },
+  "都会": {
+    "en": "all will; all can",
+    "ja": "みんな～する；すべて～できる"
+  },
+  "酱": {
+    "en": "sauce; paste; thick liquid",
+    "ja": "ソース；ペースト",
+    "pinyin": "jiang4",
+    "zhuyin": "ㄐㄧㄤˋ"
+  },
+  "里": {
+    "en": "in",
+    "ja": "中（～の中）"
+  },
+  "里面": {
+    "en": "inside; interior",
+    "ja": "中；内部"
+  },
+  "重新": {
+    "en": "anew; again",
+    "ja": "再び；やり直し",
+    "pinyin": "chong2 xin1",
+    "zhuyin": "ㄔㄨㄥˊ ㄒㄧㄣ"
+  },
+  "重新开始": {
+    "en": "start over; restart",
+    "ja": "やり直す；再開する",
+    "pinyin": "chong2 xin1 kai1 shi3",
+    "zhuyin": "ㄔㄨㄥˊ ㄒㄧㄣ ㄎㄞ ㄕˇ"
+  },
+  "重要": {
+    "en": "important",
+    "ja": "重要な",
+    "pinyin": "zhong4 yao4",
+    "zhuyin": "ㄓㄨㄥˋ ㄧㄠˋ"
+  },
+  "重视": {
+    "en": "value; attach importance to",
+    "ja": "重視する",
+    "pinyin": "zhong4 shi4",
+    "zhuyin": "ㄓㄨㄥˋ ㄕˋ"
+  },
+  "野": {
+    "en": "wild; field",
+    "ja": "野生；原野",
+    "pinyin": "ye3",
+    "zhuyin": "ㄧㄝˇ"
+  },
+  "错乱": {
+    "en": "confused; disorderly",
+    "ja": "混乱した；順序が狂った",
+    "pinyin": "cuo4 luan4",
+    "zhuyin": "ㄘㄨㄛˋ ㄌㄨㄢˋ"
+  },
+  "错误": {
+    "en": "mistake; error",
+    "ja": "間違い／エラー"
+  },
+  "长": {
+    "en": "long; grow; chief",
+    "ja": "長い；成長する；長",
+    "pinyin": "zhang3",
+    "zhuyin": "ㄓㄤˇ"
+  },
+  "长板": {
+    "en": "strength; strong point",
+    "ja": "長所；得意な点",
+    "pinyin": "chang2 ban3",
+    "zhuyin": "ㄔㄤˊ ㄅㄢˇ"
+  },
+  "開始": {
+    "en": "start",
+    "ja": "始める"
+  },
+  "问": {
+    "en": "to ask",
+    "ja": "尋ねる；質問する"
+  },
+  "问题": {
+    "en": "question; problem",
+    "ja": "質問；問題"
+  },
+  "间": {
+    "en": "room (measure word)",
+    "ja": "部屋/間; 部屋の助数詞"
+  },
+  "阳": {
+    "en": "sun; yang (in yin-yang)",
+    "ja": "太陽；陽",
+    "pinyin": "yang2",
+    "zhuyin": "ㄧㄤˊ"
+  },
+  "阿": {
+    "en": "(prefix for names and kinship terms)",
+    "ja": "～さん；～ちゃん",
+    "pinyin": "a1",
+    "zhuyin": "ㄚ"
+  },
+  "阿公": {
+    "en": "grandpa; old man",
+    "ja": "おじいちゃん",
+    "pinyin": "a1 gong1",
+    "zhuyin": "ㄚ ㄍㄨㄥ"
+  },
+  "阿嬷": {
+    "en": "grandma; old woman",
+    "ja": "おばあちゃん",
+    "pinyin": "a1 ma3",
+    "zhuyin": "ㄚ ㄇㄚˇ"
+  },
+  "附近": {
+    "en": "nearby; around here",
+    "ja": "近く；この辺",
+    "pinyin": "fu4 jin4",
+    "zhuyin": "ㄈㄨˋ ㄐㄧㄣˋ"
+  },
+  "陆地": {
+    "en": "land; continent",
+    "ja": "陸地；大陸",
+    "pinyin": "lu4 di4",
+    "zhuyin": "ㄌㄨˋ ㄉㄧˋ"
+  },
+  "除了": {
+    "en": "except; besides",
+    "ja": "～を除いて；～のほかに"
+  },
+  "难": {
+    "en": "hard",
+    "ja": "難しい"
+  },
+  "集": {
+    "en": "gather; collection; set",
+    "ja": "集める；集合",
+    "pinyin": "ji2",
+    "zhuyin": "ㄐㄧˊ"
+  },
+  "雪": {
+    "en": "snow",
+    "ja": "雪",
+    "pinyin": "xue3",
+    "zhuyin": "ㄒㄩㄝˇ"
+  },
+  "雪板": {
+    "en": "snowboard",
+    "ja": "スノーボード",
+    "pinyin": "xue3 ban3",
+    "zhuyin": "ㄒㄩㄝˇ ㄅㄢˇ"
+  },
+  "零": {
+    "en": "zero",
+    "ja": "ゼロ／零"
+  },
+  "需要": {
+    "en": "to need; to require",
+    "ja": "必要とする；必要である"
+  },
+  "露营": {
+    "en": "camping",
+    "ja": "キャンプ；露営",
+    "pinyin": "lu4 ying2",
+    "zhuyin": "ㄌㄨˋ ㄧㄥˊ"
+  },
+  "非常": {
+    "en": "very; extremely",
+    "ja": "非常に/とても"
+  },
+  "面": {
+    "en": "noodles",
+    "ja": "麺（めん）"
+  },
+  "音": {
+    "en": "sound; tone",
+    "ja": "音；音声",
+    "pinyin": "yin1",
+    "zhuyin": "ㄧㄣ"
+  },
+  "项目": {
+    "en": "project; item",
+    "ja": "プロジェクト；項目",
+    "pinyin": "xiang4 mu4",
+    "zhuyin": "ㄒㄧㄤˋ ㄇㄨˋ"
+  },
+  "顺便": {
+    "en": "by the way; while at it",
+    "ja": "ついでに",
+    "pinyin": "shun4 bian4",
+    "zhuyin": "ㄕㄨㄣˋ ㄅㄧㄢˋ"
+  },
+  "顺利": {
+    "en": "smooth; successful",
+    "ja": "順調；成功",
+    "pinyin": "shun4 li4",
+    "zhuyin": "ㄕㄨㄣˋ ㄌㄧˋ"
+  },
+  "风": {
+    "en": "wind",
+    "ja": "風"
+  },
+  "风机": {
+    "en": "fan; blower",
+    "ja": "ファン；送風機"
+  },
+  "飞机": {
+    "en": "airplane",
+    "ja": "飛行機",
+    "pinyin": "fei1 ji1",
+    "zhuyin": "ㄈㄟ ㄐㄧ"
+  },
+  "食": {
+    "en": "eat; meal/food",
+    "ja": "食べる；食事",
+    "pinyin": "shi2",
+    "zhuyin": "ㄕˊ"
+  },
+  "食物": {
+    "en": "food",
+    "ja": "食べ物"
+  },
+  "餐厅": {
+    "en": "restaurant",
+    "ja": "レストラン",
+    "pinyin": "can1 ting1",
+    "zhuyin": "ㄘㄢ ㄊㄧㄥ"
+  },
+  "饭": {
+    "en": "rice, meal",
+    "ja": "ご飯"
+  },
+  "饼": {
+    "en": "cake; cookie",
+    "ja": "ケーキ；クッキー",
+    "pinyin": "bing3",
+    "zhuyin": "ㄅㄧㄥˇ"
+  },
+  "香港": {
+    "en": "Hong Kong",
+    "ja": "香港",
+    "pinyin": "xiang1 gang3",
+    "zhuyin": "ㄒㄧㄤ ㄍㄤˇ"
+  },
+  "骑": {
+    "en": "ride (bike)",
+    "ja": "乗る（自転車など）",
+    "pinyin": "qi2",
+    "zhuyin": "ㄑㄧˊ"
+  },
+  "高": {
+    "en": "tall; high",
+    "ja": "高い"
+  },
+  "高中生": {
+    "en": "high school student",
+    "ja": "高校生",
+    "pinyin": "gao1 zhong1 sheng1",
+    "zhuyin": "ㄍㄠ ㄓㄨㄥ ㄕㄥ"
+  },
+  "高级": {
+    "en": "advanced; high-level",
+    "ja": "高級；上級",
+    "pinyin": "gao1 ji2",
+    "zhuyin": "ㄍㄠ ㄐㄧˊ"
+  },
+  "鱼": {
+    "en": "fish",
+    "ja": "魚",
+    "pinyin": "yu2",
+    "zhuyin": "ㄩˊ"
+  },
+  "鱿鱼": {
+    "en": "squid",
+    "ja": "イカ",
+    "pinyin": "you2 yu2",
+    "zhuyin": "ㄧㄡˊ ㄩˊ"
+  },
+  "鸡": {
+    "en": "chicken",
+    "ja": "鶏",
+    "pinyin": "ji1",
+    "zhuyin": "ㄐㄧ"
+  },
+  "麻将": {
+    "en": "mahjong",
+    "ja": "マージャン",
+    "pinyin": "ma2 jiang4",
+    "zhuyin": "ㄇㄚˊ ㄐㄧㄤˋ"
+  },
+  "麻烦": {
+    "en": "trouble; bother",
+    "ja": "面倒；迷惑",
+    "pinyin": "ma2 fan5",
+    "zhuyin": "ㄇㄚˊ ㄈㄢ˙"
+  }
+}

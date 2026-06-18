@@ -1,8 +1,7 @@
-import { DocumentViewer } from "@/app/components/DocumentViewer";
-import { ContentsViewer } from "@/app/components/ContentsViewer";
+import { ViewerSwitcher } from "@/app/components/ViewerSwitcher";
 
 import { sampleDocument } from "@/app/data/sampleGrammarAnnotations";
 
 export default function SampleAnnotationPage() {
-  return <ContentsViewer document={sampleDocument} />;
+  return <ViewerSwitcher document={sampleDocument} />;
 }

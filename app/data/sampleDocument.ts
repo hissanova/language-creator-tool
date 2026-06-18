@@ -1,45 +1,35 @@
 import type { Document } from "../types/lcm";
 
-export const sampleDocument: Document = {
+export const sampleDocument = {
   metadata: {
+    specVersion: "0.4-alpha",
     title: "Chinese Conversation 01",
     documentType: "conversation",
-    targetLanguage: "zh-Hans",
-    media: {
-      src: "/media/audio/hyq_2026-05-24_nuerququle.mp3",
-      type: "audio",
-    },
-
-    textVariants: [
-      { id: "zh-Hans", label: "简体" },
-      { id: "zh-Hant", label: "繁體" },
-    ],
-
-    formTypes: [
-      { id: "none", label: "Off" },
-      { id: "pinyin", label: "Pinyin" },
-      { id: "zhuyin", label: "Bopomofo" },
-    ],
-
-    translationLanguages: [
-      { id: "none", label: "Off" },
+    defaultLanguageId: "zh-Hans",
+    defaultFormId: "surface",
+    languages: [
       { id: "en", label: "English" },
       { id: "ja", label: "日本語" },
     ],
-
-    defaultTextVariantId: "zh-Hans",
-    defaultFormTypeId: "pinyin",
-    defaultTranslationLanguageId: "en",
-
-    speakers: [
-      { id: "speaker-a", name: "A", color: "blue" },
-      { id: "speaker-b", name: "B", color: "green" },
+    forms: [
+      { id: "surface", label: "Surface" },
+      { id: "pinyin", label: "Pinyin" },
+      { id: "zhuyin", label: "Bopomofo" },
     ],
-
-    specVersion: "0.3-alpha",
+    speakers: [
+      { id: "speaker-a", name: "A" },
+      { id: "speaker-b", name: "B" },
+    ],
   },
-
-  body: [
+  resources: [
+    {
+      id: "sample-audio",
+      type: "media",
+      mediaType: "audio",
+      src: "/media/audio/hyq_2026-05-24_nuerququle.mp3",
+    },
+  ],
+  sections: [
     {
       id: "section-1",
       title: "Greeting",
@@ -47,296 +37,123 @@ export const sampleDocument: Document = {
       time: { start: 0, end: 8 },
       blocks: [
         {
-          "type": "line",
-          "line":
-          {
+          type: "text",
+          text: {
             id: "line-1",
-            speakerId: "speaker-a",
-            time: { start: 0, end: 8 },
-            text: {
+            content: {
               text: "你好，我正在学习中文。",
+              languageId: "zh-Hans",
+              formId: "surface",
             },
-            targets: [
+            refs: [
               {
-                id: "line-1-target-line",
-                kind: "line",
-                lineId: "line-1",
-                annotations: [
-                  {
-                    type: "form",
-                    formType: "zh-Hant",
-                    value: { text: "你好，我正在學習中文。" },
+                id: "line-1-speaker",
+                body: { type: "speaker", speakerId: "speaker-a" },
+              },
+              {
+                id: "line-1-alignment",
+                body: {
+                  type: "alignment",
+                  mediaRef: { resourceId: "sample-audio" },
+                  interval: { start: 0, end: 8 },
+                },
+              },
+            ],
+            transforms: [
+              {
+                id: "line-1-traditional",
+                transformType: "form",
+                output: {
+                  id: "line-1-traditional-output",
+                  content: {
+                    text: "你好，我正在學習中文。",
+                    languageId: "zh-Hant",
+                    formId: "surface",
                   },
-                  {
-                    type: "translation",
-                    language: "en",
+                  source: {
+                    type: "transform",
+                    transformId: "line-1-traditional",
+                    sourceTextNodeId: "line-1",
+                  },
+                },
+              },
+              {
+                id: "line-1-en",
+                transformType: "translation",
+                output: {
+                  id: "line-1-en-output",
+                  content: {
                     text: "Hello, I am studying Chinese.",
+                    languageId: "en",
+                    formId: "surface",
                   },
-                  {
-                    type: "translation",
-                    language: "ja",
-                    text: "こんにちは。私は中国語を勉強しています。",
+                  source: {
+                    type: "transform",
+                    transformId: "line-1-en",
+                    sourceTextNodeId: "line-1",
                   },
-                ],
+                },
               },
+            ],
+            selectors: [
               {
-                id: "a1",
-                kind: "textSpan",
-                text: "你好",
-                range: { start: 0, end: 2 },
-                annotations: [
+                id: "line-1-nihao",
+                selectorType: "span",
+                label: "你好",
+                selectedRanges: [{ start: 0, end: 2 }],
+                children: [
                   {
-                    type: "form",
-                    formType: "pinyin",
-                    value: { text: "nǐ hǎo" },
-                  },
-                  {
-                    type: "form",
-                    formType: "zhuyin",
-                    value: { text: "ㄋㄧˇ ㄏㄠˇ" },
-                  },
-                  {
-                    type: "dictionary",
-                    headword: "你好",
-                    meanings: {
-                      en: ["hello"],
-                      ja: ["こんにちは"],
+                    id: "line-1-nihao-text",
+                    content: {
+                      text: "你好",
+                      languageId: "zh-Hans",
+                      formId: "surface",
                     },
-                  },
-                ],
-              },
-              {
-                id: "a2",
-                kind: "textSpan",
-                text: "我",
-                range: { start: 3, end: 4 },
-                annotations: [
-                  {
-                    type: "form",
-                    formType: "pinyin",
-                    value: { text: "wǒ" },
-                  },
-                  {
-                    type: "form",
-                    formType: "zhuyin",
-                    value: { text: "ㄨㄛˇ" },
-                  },
-                  {
-                    type: "dictionary",
-                    headword: "我",
-                    meanings: {
-                      en: ["I / me"],
-                      ja: ["私"],
+                    source: {
+                      type: "selector",
+                      selectorId: "line-1-nihao",
+                      sourceTextNodeId: "line-1",
+                      ranges: [{ start: 0, end: 2 }],
                     },
+                    transforms: [
+                      {
+                        id: "line-1-nihao-pinyin",
+                        transformType: "form",
+                        output: {
+                          id: "line-1-nihao-pinyin-output",
+                          content: {
+                            text: "nǐ hǎo",
+                            languageId: "zh-Hans",
+                            formId: "pinyin",
+                          },
+                          source: {
+                            type: "transform",
+                            transformId: "line-1-nihao-pinyin",
+                            sourceTextNodeId: "line-1-nihao-text",
+                          },
+                        },
+                      },
+                    ],
                   },
                 ],
-              },
-              {
-                id: "a3",
-                kind: "textSpan",
-                text: "正在",
-                range: { start: 4, end: 6 },
-                annotations: [
+                refs: [
                   {
-                    type: "form",
-                    formType: "pinyin",
-                    value: { text: "zhèngzài" },
-                  },
-                  {
-                    type: "form",
-                    formType: "zhuyin",
-                    value: { text: "ㄓㄥˋ ㄗㄞˋ" },
-                  },
-                  {
-                    type: "dictionary",
-                    headword: "正在",
-                    pos: "phrase",
-                    meanings: {
-                      en: ["be currently doing"],
-                      ja: ["ちょうど〜している"],
-                    },
-                  },
-                ],
-              },
-              {
-                id: "a4",
-                kind: "textSpan",
-                text: "学习",
-                range: { start: 6, end: 8 },
-                annotations: [
-                  {
-                    type: "form",
-                    formType: "pinyin",
-                    value: { text: "xuéxí" },
-                  },
-                  {
-                    type: "form",
-                    formType: "zhuyin",
-                    value: { text: "ㄒㄩㄝˊ ㄒㄧˊ" },
-                  },
-                  {
-                    type: "dictionary",
-                    headword: "学习",
-                    meanings: {
-                      en: ["to study"],
-                      ja: ["勉強する"],
-                    },
-                  },
-                ],
-              },
-              {
-                id: "a5",
-                kind: "textSpan",
-                text: "中文",
-                range: { start: 8, end: 10 },
-                annotations: [
-                  {
-                    type: "form",
-                    formType: "pinyin",
-                    value: { text: "zhōngwén" },
-                  },
-                  {
-                    type: "form",
-                    formType: "zhuyin",
-                    value: { text: "ㄓㄨㄥ ㄨㄣˊ" },
-                  },
-                  {
-                    type: "dictionary",
-                    headword: "中文",
-                    meanings: {
-                      en: ["Chinese language"],
-                      ja: ["中国語"],
+                    id: "line-1-nihao-dictionary",
+                    body: {
+                      type: "dictionary",
+                      headword: "你好",
+                      definitions: {
+                        en: ["hello"],
+                        ja: ["こんにちは"],
+                      },
                     },
                   },
                 ],
               },
             ],
-          }
-        },
-      ],
-    },
-    {
-      id: "section-2",
-      title: "Follow-up question",
-      level: 1,
-      time: { start: 8, end: 16 },
-      blocks: [
-        {
-          "type": "line",
-          "line":
-          {
-            id: "line-2",
-            speakerId: "speaker-b",
-            time: { start: 8, end: 16 },
-            text: {
-              text: "很好！你学习多久了？",
-            },
-            targets: [
-              {
-                id: "line-2-target-line",
-                kind: "line",
-                lineId: "line-2",
-                annotations: [
-                  {
-                    type: "form",
-                    formType: "zh-Hant",
-                    value: { text: "很好！你學習多久了？" },
-                  },
-                  {
-                    type: "translation",
-                    language: "en",
-                    text: "Great! How long have you been studying?",
-                  },
-                  {
-                    type: "translation",
-                    language: "ja",
-                    text: "いいですね！どのくらい勉強しているんですか？",
-                  },
-                ],
-              },
-              {
-                id: "b1",
-                kind: "textSpan",
-                text: "很好",
-                range: { start: 0, end: 2 },
-                annotations: [
-                  { type: "form", formType: "pinyin", value: { text: "hěn hǎo" } },
-                  { type: "form", formType: "zhuyin", value: { text: "ㄏㄣˇ ㄏㄠˇ" } },
-                  {
-                    type: "dictionary",
-                    headword: "很好",
-                    meanings: { en: ["very good"], ja: ["とても良い"] },
-                  },
-                ],
-              },
-              {
-                id: "b2",
-                kind: "textSpan",
-                text: "你",
-                range: { start: 3, end: 4 },
-                annotations: [
-                  { type: "form", formType: "pinyin", value: { text: "nǐ" } },
-                  { type: "form", formType: "zhuyin", value: { text: "ㄋㄧˇ" } },
-                  {
-                    type: "dictionary",
-                    headword: "你",
-                    meanings: { en: ["you"], ja: ["あなた"] },
-                  },
-                ],
-              },
-              {
-                id: "b3",
-                kind: "textSpan",
-                text: "学习",
-                range: { start: 4, end: 6 },
-                annotations: [
-                  { type: "form", formType: "pinyin", value: { text: "xuéxí" } },
-                  { type: "form", formType: "zhuyin", value: { text: "ㄒㄩㄝˊ ㄒㄧˊ" } },
-                  {
-                    type: "dictionary",
-                    headword: "学习",
-                    meanings: { en: ["to study"], ja: ["勉強する"] },
-                  },
-                ],
-              },
-              {
-                id: "b4",
-                kind: "textSpan",
-                text: "多久",
-                range: { start: 6, end: 8 },
-                annotations: [
-                  { type: "form", formType: "pinyin", value: { text: "duō jiǔ" } },
-                  { type: "form", formType: "zhuyin", value: { text: "ㄉㄨㄛ ㄐㄧㄡˇ" } },
-                  {
-                    type: "dictionary",
-                    headword: "多久",
-                    pos: "phrase",
-                    meanings: { en: ["how long"], ja: ["どのくらい"] },
-                  },
-                ],
-              },
-              {
-                id: "b5",
-                kind: "textSpan",
-                text: "了",
-                range: { start: 8, end: 9 },
-                annotations: [
-                  { type: "form", formType: "pinyin", value: { text: "le" } },
-                  { type: "form", formType: "zhuyin", value: { text: "ㄌㄜ˙" } },
-                  {
-                    type: "dictionary",
-                    headword: "了",
-                    meanings: {
-                      en: ["particle indicating change/completion"],
-                      ja: ["変化・完了を表す助詞"],
-                    },
-                  },
-                ],
-              },
-            ],
-          }
+          },
         },
       ],
     },
   ],
-};
+} satisfies Document;

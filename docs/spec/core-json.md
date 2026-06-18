@@ -6,110 +6,166 @@ Canonical TypeScript definition: `app/types/lcm.ts`
 
 Core JSON is the canonical internal representation of Language Creator Tool content. It describes content structure and meaning, not viewer-specific presentation rules.
 
-## Current high-level shape
+## Current High-Level Shape
 
 ```text
 Document
   metadata
-  body[]
+  resources[]
+  sections[]
     Section
       blocks[]
-        line | note | figure | table
-      targets[]
-  references[]
+        text | note | figure | table
 ```
 
-## Section blocks
+Core JSON is rendered directly by the viewer with optional display style/config. Do not introduce Viewer JSON or Display JSON for the current universal/debug viewer.
 
-Sections use `blocks[]` rather than separate arrays such as `lines[]`, `notes[]`, and `figures[]`.
+## Document
 
-This preserves the intended order of mixed section-level content.
+```ts
+type Document = {
+  metadata: Metadata;
+  resources?: Resource[];
+  sections: Section[];
+};
+```
+
+Use `sections`, not `body`.
+
+## Metadata
+
+```ts
+type Metadata = {
+  specVersion: string;
+  title: string;
+  documentType?: "conversation" | "lesson" | "text" | "corpus" | string;
+  defaultLanguageId?: LanguageId;
+  defaultFormId?: FormId;
+  languages?: Language[];
+  forms?: Form[];
+  speakers?: Speaker[];
+};
+```
+
+Speaker color is not part of Core JSON. Speaker styling belongs in display style.
+
+## Section Blocks
+
+Sections use ordered `blocks[]` for mixed section content.
 
 ```ts
 type Section = {
   id: Id;
   title: string;
-  level: number;
+  level?: number;
+  time?: TimeSpan;
+  sections?: Section[];
   blocks: SectionBlock[];
 };
 
-type SectionBlock = LineBlock | NoteBlock | FigureBlock | TableBlock;
+type SectionBlock =
+  | { type: "text"; text: TextNode }
+  | { type: "note"; note: NoteBlock }
+  | { type: "figure"; figure: FigureBlock }
+  | { type: "table"; table: TableBlock };
 ```
 
-`lines[]` may be temporarily retained only for migration. New content should use `blocks[]`.
-
 ## FormedText
-
-Language expressions are represented by `FormedText`.
 
 ```ts
 type FormedText = {
   text: string;
-  formType?: FormTypeId | "surface";
-  decomposition?: Decomposition;
+  languageId: LanguageId;
+  formId: FormId;
 };
 ```
 
-Rules:
+`FormedText` identifies the language and form of a text value. Derived forms are represented as `Transform` outputs.
 
-- `text` is the default display form for the expression.
-- `formType` identifies non-default forms such as romanization, phonetic form, normalized form, or grammatical form.
-- If an annotation value is itself a language expression, it should use `FormedText` rather than plain `string`.
-
-Examples of annotation fields that use `FormedText`:
-
-- translation value
-- correction value
-- form value
-- dictionary headword / lemma / meanings
-
-Plain explanatory notes may remain `string`.
-
-## Target selectors
-
-A target may point to text either by textual matching or by index.
+## TextNode
 
 ```ts
-type TargetSelector = TextSelector | IndexSelector;
-
-type TextSelector = {
-  type: "text";
-  text: string;
-  occurrence?: number;
-  range?: { start: number; end: number };
-};
-
-type IndexSelector = {
-  type: "index";
-  index: number;
+type TextNode = {
+  id: Id;
+  content: FormedText;
+  source?: TextNodeSource;
+  selectors?: SelectorNode[];
+  refs?: TextNodeRef[];
+  transforms?: Transform[];
 };
 ```
 
-`TextSelector` is useful for human-authored markup. `IndexSelector` is useful after parsing or decomposition.
+Conceptually, a `TextNode` is `C*`: a sequence of content with language and form metadata.
 
-## Provenance
-
-Only annotations carry provenance.
-
-Targets do not carry provenance. They identify where an annotation applies; they do not describe how the annotation was created.
+## SelectorNode
 
 ```ts
-type Provenance = {
-  source: "manual" | "auto" | "imported";
-  agent?: string;
-  confidence?: number;
+type SelectorNode = {
+  id: Id;
+  selectorType: "span" | "decomposition" | "morphology" | "syntax" | string;
+  label?: string;
+  selectedRanges?: TextRange[];
+  children: TextNode[];
+  refs?: SelectorRef[];
+};
+
+type TextRange = {
+  start: number;
+  end: number;
 };
 ```
 
-Rules:
+A `SelectorNode` maps a `TextNode` to resolved ranges and optional child `TextNode`s. Core JSON stores index ranges only. Text-match selectors, occurrence selectors, and other parser-specific selector expressions belong outside Core JSON.
 
-- `provenance` belongs to `Annotation` only.
-- `Target` must not have `provenance`.
-- Core JSON does not store detailed edit history.
-- Long-term history management is delegated to Git.
+## Refs
 
-## Display separation
+Refs attach information to `TextNode` or `SelectorNode`.
 
-Core JSON must not encode Basic Viewer-specific display decisions. The current viewer direction is to render Core JSON directly with optional style/config such as `displayStyle.yaml`.
+```ts
+type BaseRef<TBody> = {
+  id: Id;
+  body: TBody;
+  provenance?: Provenance;
+};
+```
 
-Do not introduce a Viewer JSON or Display JSON layer for the current universal/debug viewer.
+Common ref bodies include notes, tags, resource references, custom payloads, and dictionary entries. `TextNode`-only refs include alignment and speaker. `SelectorNode`-only refs include relations.
+
+`StructureBody` is not used; selector structure is represented by `SelectorNode.selectorType`.
+
+## Transform
+
+```ts
+type Transform = {
+  id: Id;
+  transformType:
+    | "translation"
+    | "form"
+    | "correction"
+    | "transliteration"
+    | "romanization"
+    | "phonemization"
+    | "representation"
+    | string;
+  output: TextNode;
+  provenance?: Provenance;
+};
+```
+
+The source is the `TextNode` that owns the transform. Transform output is always another `TextNode`.
+
+## Resources
+
+```ts
+type Resource = MediaResource | ImageResource | ExternalResource;
+
+type ResourceRef = {
+  resourceId: ResourceId;
+};
+```
+
+Resources are top-level reusable objects. Media and dictionary sources belong in `resources`, not `metadata`.
+
+## Display Separation
+
+Core JSON must not encode viewer-specific display decisions. Display style may define how annotations, speakers, translations, notes, and other blocks are presented.

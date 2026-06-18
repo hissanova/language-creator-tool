@@ -1,8 +1,8 @@
 export type Id = string;
 export type LanguageId = string;
 export type OptionId = string;
-export type FormTypeId = string;
-export type DictionaryRef = string;
+export type FormId = string;
+export type ResourceId = string;
 
 export type TimeSpan = {
   start: number;
@@ -14,167 +14,109 @@ export type DisplayOption = {
   label: string;
 };
 
+export type Language = {
+  id: LanguageId;
+  label?: string;
+};
+
+export type Form = {
+  id: FormId;
+  label?: string;
+};
+
 export type Speaker = {
   id: Id;
   name: string;
-  color?: string;
-};
-
-export type Media = {
-  src: string;
-  type: "audio" | "video";
-};
-
-export type DictionarySource = {
-  id: Id;
-  type: "json" | "extension" | "api" | "online";
-  path?: string;
-  url?: string;
-  name?: string;
 };
 
 export type Metadata = {
-  title: string;
-  documentType?: string;
-  targetLanguage: LanguageId;
-  textVariants?: DisplayOption[];
-  translationLanguages?: DisplayOption[];
-  formTypes?: DisplayOption[];
-  defaultTextVariantId?: OptionId;
-  defaultFormTypeId?: FormTypeId | "none";
-  defaultTranslationLanguageId?: LanguageId | "none";
-  speakers?: Speaker[];
-  dictionarySources?: DictionarySource[];
-  media?: Media | null;
   specVersion: string;
+  title: string;
+  documentType?: "conversation" | "lesson" | "text" | "corpus" | string;
+  defaultLanguageId?: LanguageId;
+  defaultFormId?: FormId;
+  languages?: Language[];
+  forms?: Form[];
+  speakers?: Speaker[];
 };
 
 export type Document = {
   metadata: Metadata;
-  body: Section[];
-  references?: Reference[];
+  resources?: Resource[];
+  sections: Section[];
 };
 
 export type Section = {
   id: Id;
   title: string;
-  level: number;
-  time: {
-    start: number;
-    end?: number;
-  };
+  level?: number;
+  time?: TimeSpan;
   sections?: Section[];
-  blocks?: SectionBlock[];
-  targets?: Target[];
-
-  /** @deprecated Use blocks with LineBlock instead. Kept only for migration. */
-  lines?: Line[];
+  blocks: SectionBlock[];
 };
 
-export type SectionBlock = LineBlock | NoteBlock | FigureBlock | TableBlock;
+export type SectionBlock =
+  | { type: "text"; text: TextNode }
+  | { type: "note"; note: NoteBlock }
+  | { type: "figure"; figure: FigureBlock }
+  | { type: "table"; table: TableBlock };
 
-export type LineBlock = {
-  type: "line";
-  line: Line;
-};
-
-export type NoteBlock = {
-  type: "note";
-  note: Note;
-};
-
-export type FigureBlock = {
-  type: "figure";
-  figure: Figure;
-};
-
-export type TableBlock = {
-  type: "table";
-  table: Table;
-};
-
-export type Line = {
-  id: Id;
-  speakerId?: Id;
-  time?: TimeSpan;
-  text: FormedText;
-  targets?: Target[];
-};
-
-/**
- * A language expression with an optional form type.
- *
- * `surface` is the default form and should be used for the ordinary displayed
- * expression. Additional forms can be represented by setting `formType`.
- */
 export type FormedText = {
-  formType?: FormTypeId;
   text: string;
-  decomposition?: Decomposition;
-};
-export type Decomposition = {
-  units: FormedTextUnit[];
+  languageId: LanguageId;
+  formId: FormId;
 };
 
-export type FormedTextUnit = {
+export type TextNode = {
   id: Id;
-  text: FormedText;
-  time?: TimeSpan;
-  targets?: Target[];
+  content: FormedText;
+  source?: TextNodeSource;
+  selectors?: SelectorNode[];
+  refs?: TextNodeRef[];
+  transforms?: Transform[];
 };
 
-export type TargetSelector = TextSelector | IndexSelector;
+export type TextNodeSource =
+  | {
+      type: "selector";
+      selectorId: Id;
+      sourceTextNodeId: Id;
+      ranges: TextRange[];
+    }
+  | {
+      type: "transform";
+      transformId: Id;
+      sourceTextNodeId: Id;
+    }
+  | {
+      type: "external";
+      label?: string;
+    };
 
-export type TextSelector = {
-  type: "text";
-  text: string;
-  occurrence?: number;
-  range?: {
-    start: number;
-    end: number;
-  };
-};
-
-export type IndexSelector = {
-  type: "index";
+export type TextRange = {
   start: number;
   end: number;
 };
 
-export type Target = SectionTarget | LineTarget | TextSpanTarget | UnitTarget;
-
-export type BaseTarget = {
+export type SelectorNode = {
   id: Id;
-  time?: TimeSpan;
-  annotations?: Annotation[];
-  resources?: Resource[];
-};
-
-export type SectionTarget = BaseTarget & {
-  kind: "section";
-  sectionId: Id;
-};
-
-export type LineTarget = BaseTarget & {
-  kind: "line";
-  lineId: Id;
-};
-
-export type TextSpanTarget = BaseTarget & {
-  kind: "textSpan";
-  selector?: TargetSelector;
-  /** @deprecated Use selector.text instead. Kept for older fixtures. */
-  text?: string;
-  /** @deprecated Use selector.range or an index selector instead. */
-  range?: {
-    start: number;
-    end: number;
-  };
-};
-
-export type UnitTarget = BaseTarget & {
-  kind: "unit";
-  unitId: Id;
+  selectorType:
+    | "span"
+    | "decomposition"
+    | "morphology"
+    | "syntax"
+    | "phonology"
+    | "prosody"
+    | "translationUnit"
+    | "namedEntity"
+    | "languageSwitch"
+    | "nonSpeech"
+    | "custom"
+    | string;
+  label?: string;
+  selectedRanges?: TextRange[];
+  children: TextNode[];
+  refs?: SelectorRef[];
 };
 
 export type Provenance = {
@@ -183,124 +125,151 @@ export type Provenance = {
   confidence?: number;
 };
 
-export type Annotation =
-  | DictionaryAnnotation
-  | TranslationAnnotation
-  | FormAnnotation
-  | NoteAnnotation
-  | CorrectionAnnotation
-  | TagAnnotation
-  | LanguageAnnotation
-  | SoundAnnotation;
-
-export type BaseAnnotation = {
+export type BaseRef<TBody> = {
+  id: Id;
+  body: TBody;
   provenance?: Provenance;
 };
 
-export type DictionaryAnnotation = BaseAnnotation & {
-  type: "dictionary";
-  ref?: DictionaryRef;
-  headword?: FormedText | string;
-  lemma?: FormedText | string;
-  pos?: string;
-  meanings?: Record<LanguageId, FormedText[] | string[] | string>;
-  notes?: string[];
-  tags?: string[];
-};
+export type CommonRefBody =
+  | NoteBody
+  | TagBody
+  | ResourceRefBody
+  | CustomBody
+  | DictionaryBody;
 
-export type TranslationAnnotation = BaseAnnotation & {
-  type: "translation";
-  language: LanguageId;
-  value?: FormedText;
-  /** @deprecated Use value instead. Kept for older fixtures. */
-  text?: string;
-};
+export type TextNodeRef = BaseRef<CommonRefBody | TextNodeOnlyRefBody>;
 
-export type FormAnnotation = BaseAnnotation & {
-  type: "form";
-  formType: FormTypeId;
-  value: FormedText;
-};
+export type SelectorRef = BaseRef<CommonRefBody | SelectorOnlyRefBody>;
 
-export type NoteAnnotation = BaseAnnotation & {
+export type TextNodeOnlyRefBody = AlignmentRefBody | SpeakerBody;
+
+export type SelectorOnlyRefBody = RelationBody;
+
+export type NoteBody = {
   type: "note";
+  noteType?: "learner" | "grammar" | "usage" | "cultural" | "editorial" | string;
   text: string;
+  refs?: ResourceRef[];
 };
 
-export type CorrectionAnnotation = BaseAnnotation & {
-  type: "correction";
-  value: FormedText;
-  note?: string;
-};
-
-export type TagAnnotation = BaseAnnotation & {
+export type TagBody = {
   type: "tag";
   tags: string[];
 };
 
-export type LanguageAnnotation = BaseAnnotation & {
-  type: "language";
-  language: LanguageId;
+export type ResourceRefBody = {
+  type: "resourceRef";
+  refs: ResourceRef[];
 };
 
-export type SoundAnnotation = BaseAnnotation & {
-  type: "sound";
-  label: string;
-  description?: string;
+export type CustomBody = {
+  type: "custom";
+  schema?: string;
+  value: unknown;
 };
 
-export type Note = {
+export type AlignmentRefBody = {
+  type: "alignment";
+  mediaRef: ResourceRef;
+  interval: TimeSpan;
+};
+
+export type SpeakerBody = {
+  type: "speaker";
+  speakerId: Id;
+};
+
+export type DictionaryBody = {
+  type: "dictionary";
+  ref?: ResourceRef;
+  headword?: FormedText | string;
+  lemma?: FormedText | string;
+  pos?: string;
+  definitions?: Record<LanguageId, FormedText[] | string[] | string>;
+  tags?: string[];
+  refs?: ResourceRef[];
+};
+
+export type RelationBody = {
+  type: "relation";
+  relationType: string;
+  label?: string;
+  refs?: ResourceRef[];
+};
+
+export type TransformType =
+  | "translation"
+  | "form"
+  | "correction"
+  | "transliteration"
+  | "romanization"
+  | "phonemization"
+  | "representation"
+  | string;
+
+export type Transform = {
+  id: Id;
+  transformType: TransformType;
+  output: TextNode;
+  provenance?: Provenance;
+};
+
+export type Resource = MediaResource | ImageResource | ExternalResource;
+
+export type ResourceRef = {
+  resourceId: ResourceId;
+};
+
+export type MediaResource = {
+  id: ResourceId;
+  type: "media";
+  mediaType: "audio" | "video";
+  src: string;
+  label?: string;
+};
+
+export type ImageResource = {
+  id: ResourceId;
+  type: "image";
+  src: string;
+  alt?: string;
+  caption?: Record<LanguageId, FormedText>;
+};
+
+export type ExternalResource = {
+  id: ResourceId;
+  type: "external";
+  resourceType?:
+    | "url"
+    | "bibliography"
+    | "dataset"
+    | "dictionary"
+    | "note"
+    | string;
+  title?: string;
+  uri?: string;
+  citation?: string;
+  data?: unknown;
+};
+
+export type NoteBlock = {
   id: Id;
   title?: string;
   text: string;
 };
 
-export type Figure = {
+export type FigureBlock = {
   id: Id;
-  src: string;
+  resourceRef?: ResourceRef;
+  src?: string;
   alt?: string;
   caption?: Record<LanguageId, FormedText>;
 };
 
-export type Table = {
+export type TableBlock = {
   id: Id;
   caption?: Record<LanguageId, FormedText>;
   columns: string[];
   rows: FormedText[][];
-};
-
-export type Reference = {
-  id: Id;
-  label?: string;
-  citation: string;
-  url?: string;
-};
-
-export type Resource = ImageResource | AudioResource | VideoResource | UrlResource;
-
-export type BaseResource = {
-  id: Id;
-  caption?: Record<LanguageId, FormedText>;
-};
-
-export type ImageResource = BaseResource & {
-  type: "image";
-  src: string;
-  alt?: string;
-};
-
-export type AudioResource = BaseResource & {
-  type: "audio";
-  src: string;
-};
-
-export type VideoResource = BaseResource & {
-  type: "video";
-  src: string;
-};
-
-export type UrlResource = BaseResource & {
-  type: "url";
-  href: string;
-  label?: string;
 };

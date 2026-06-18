@@ -1,188 +1,152 @@
 import type {
-  Annotation,
-  DictionaryAnnotation,
-  FormAnnotation,
-  FormedText,
-  FormedTextUnit,
-  Line,
+  DictionaryBody,
   Resource,
+  SelectorNode,
   Speaker,
-  Target,
-  TextSpanTarget,
+  TextNode,
+  TextNodeRef,
+  TimeSpan,
+  Transform,
 } from "../types/lcm";
 import type { ViewerStyle } from "../types/viewerStyle";
 import { HoverWord } from "./HoverWord";
 
+type SpeakerRef = TextNodeRef & {
+  body: { type: "speaker"; speakerId: string };
+};
+
+type AlignmentRef = TextNodeRef & {
+  body: { type: "alignment"; interval: TimeSpan };
+};
+
+type ResourceListRef = TextNodeRef & {
+  body: { type: "resourceRef"; refs: { resourceId: string }[] };
+};
+
+type TagSelectorRef = NonNullable<SelectorNode["refs"]>[number] & {
+  body: { type: "tag"; tags: string[] };
+};
+
 type Props = {
-  line: Line;
+  textNode: TextNode;
   speakers: Speaker[];
-  textVariantId: string;
-  formTypeId: string;
+  resources?: Resource[];
+  formId: string;
   translationLanguageId: string;
   style: ViewerStyle;
+  annotationMode?: "learner" | "developer";
   canPlay?: boolean;
-  onPlay?: (line: Line) => void;
+  onPlay?: (interval: TimeSpan) => void;
 };
 
-type TextRange = {
-  start: number;
-  end: number;
-};
-
-function getLineTarget(line: Line): Target | undefined {
-  return line.targets?.find((target) => target.kind === "line");
+function getSpeakerRef(refs: TextNodeRef[] | undefined) {
+  return refs?.find((ref): ref is SpeakerRef => ref.body.type === "speaker");
 }
 
-function getText(value: FormedText | string | undefined): string | undefined {
+function getAlignmentRef(refs: TextNodeRef[] | undefined) {
+  return refs?.find((ref): ref is AlignmentRef => ref.body.type === "alignment");
+}
+
+function isResourceListRef(ref: TextNodeRef): ref is ResourceListRef {
+  return ref.body.type === "resourceRef";
+}
+
+function isTagSelectorRef(ref: NonNullable<SelectorNode["refs"]>[number]): ref is TagSelectorRef {
+  return ref.body.type === "tag";
+}
+
+function getText(value: { text: string } | string | undefined): string | undefined {
   if (value == null) return undefined;
   return typeof value === "string" ? value : value.text;
 }
 
-function getLineForm(line: Line, textVariantId: string): FormedText {
-  if (!textVariantId || textVariantId === "none") return line.text;
-
-  const lineTarget = getLineTarget(line);
-  const form = lineTarget?.annotations?.find(
-    (annotation): annotation is FormAnnotation =>
-      annotation.type === "form" && annotation.formType === textVariantId
-  );
-
-  return form?.value ?? line.text;
-}
-
-function getLineTranslation(line: Line, languageId: string): string | undefined {
-  if (!languageId || languageId === "none") return undefined;
-
-  const lineTarget = getLineTarget(line);
-  const translation = lineTarget?.annotations?.find(
-    (annotation) =>
-      annotation.type === "translation" && annotation.language === languageId
-  );
-
-  return translation?.type === "translation"
-    ? translation.value?.text ?? translation.text
-    : undefined;
-}
-
-function formatFormedTextList(values: FormedText[] | string[] | string | undefined) {
+function formatFormedTextList(values: { text: string }[] | string[] | string | undefined) {
   if (values == null) return undefined;
   if (typeof values === "string") return values;
   return values.map((value) => getText(value)).filter(Boolean).join(", ");
 }
 
-function getMeaning(annotation: DictionaryAnnotation, languageId: string) {
+function getDisplayTransform(textNode: TextNode, formId: string): Transform | undefined {
+  if (!formId || formId === "none" || formId === textNode.content.formId) return undefined;
+
+  return textNode.transforms?.find(
+    (transform) =>
+      (transform.transformType === "form" ||
+        transform.transformType === "transliteration" ||
+        transform.transformType === "romanization" ||
+        transform.transformType === "phonemization" ||
+        transform.transformType === "representation") &&
+      transform.output.content.formId === formId
+  );
+}
+
+function getTranslation(textNode: TextNode, languageId: string): string | undefined {
   if (!languageId || languageId === "none") return undefined;
-  return formatFormedTextList(annotation.meanings?.[languageId]);
+
+  return textNode.transforms?.find(
+    (transform) =>
+      transform.transformType === "translation" &&
+      transform.output.content.languageId === languageId
+  )?.output.content.text;
 }
 
-function getForm(annotation: Annotation, formTypeId: string): string | undefined {
-  if (!formTypeId || formTypeId === "none") return undefined;
-  if (annotation.type !== "form") return undefined;
-  if (annotation.formType !== formTypeId) return undefined;
-  return annotation.value.text;
+function getSelectorForm(selector: SelectorNode, formId: string): string | undefined {
+  if (!formId || formId === "none") return undefined;
+
+  return selector.children
+    .flatMap((child) => child.transforms ?? [])
+    .find(
+      (transform) =>
+        transform.transformType === "form" && transform.output.content.formId === formId
+    )?.output.content.text;
 }
 
-function annotationText(annotation: Annotation, translationLanguageId: string): string {
-  switch (annotation.type) {
-    case "dictionary": {
-      const parts = [
-        annotation.ref ? `ref: ${annotation.ref}` : undefined,
-        getText(annotation.headword) ? `headword: ${getText(annotation.headword)}` : undefined,
-        getText(annotation.lemma) ? `lemma: ${getText(annotation.lemma)}` : undefined,
-        annotation.pos ? `pos: ${annotation.pos}` : undefined,
-        getMeaning(annotation, translationLanguageId)
-          ? `meaning: ${getMeaning(annotation, translationLanguageId)}`
-          : undefined,
-        annotation.notes?.length ? `notes: ${annotation.notes.join("; ")}` : undefined,
-        annotation.tags?.length ? `tags: ${annotation.tags.join(", ")}` : undefined,
-      ];
-      return parts.filter(Boolean).join(" | ");
-    }
-    case "translation":
-      return `${annotation.language}: ${annotation.value?.text ?? annotation.text ?? ""}`;
-    case "form":
-      return `${annotation.formType}: ${annotation.value.text}`;
-    case "note":
-      return annotation.text;
-    case "correction":
-      return [annotation.value.text, annotation.note].filter(Boolean).join(" | ");
-    case "tag":
-      return annotation.tags.join(", ");
-    case "language":
-      return annotation.language;
-    case "sound":
-      return [annotation.label, annotation.description].filter(Boolean).join(" | ");
-  }
+function dictionaryText(body: DictionaryBody, translationLanguageId: string) {
+  const definition =
+    translationLanguageId === "none"
+      ? undefined
+      : formatFormedTextList(body.definitions?.[translationLanguageId]);
+
+  const parts = [
+    body.ref ? `ref: ${body.ref.resourceId}` : undefined,
+    getText(body.headword) ? `headword: ${getText(body.headword)}` : undefined,
+    getText(body.lemma) ? `lemma: ${getText(body.lemma)}` : undefined,
+    body.pos ? `pos: ${body.pos}` : undefined,
+    definition ? `definition: ${definition}` : undefined,
+    body.tags?.length ? `tags: ${body.tags.join(", ")}` : undefined,
+  ];
+
+  return parts.filter(Boolean).join(" | ");
 }
 
-function annotationTitle(annotation: Annotation): string {
-  switch (annotation.type) {
+function refText(ref: TextNodeRef | NonNullable<SelectorNode["refs"]>[number], translationLanguageId: string) {
+  switch (ref.body.type) {
     case "dictionary":
-      return "Dictionary";
-    case "translation":
-      return `Translation (${annotation.language})`;
-    case "form":
-      return `Form (${annotation.formType})`;
+      return dictionaryText(ref.body, translationLanguageId);
     case "note":
-      return "Note";
-    case "correction":
-      return "Correction";
+      return ref.body.text;
     case "tag":
-      return "Tags";
-    case "language":
-      return "Language";
-    case "sound":
-      return "Sound";
+      return ref.body.tags.join(", ");
+    case "resourceRef":
+      return ref.body.refs.map((resourceRef) => resourceRef.resourceId).join(", ");
+    case "custom":
+      return ref.body.schema ?? "Custom";
+    case "relation":
+      return ref.body.label ?? ref.body.relationType;
+    case "alignment":
+    case "speaker":
+      return undefined;
   }
 }
 
-function getTargetPopupTitle(target: Target, translationLanguageId: string) {
-  return target.annotations
-    ?.map((annotation) => annotationText(annotation, translationLanguageId))
+function selectorTitle(selector: SelectorNode, translationLanguageId: string) {
+  return selector.refs
+    ?.map((ref) => refText(ref, translationLanguageId))
     .filter(Boolean)
     .join("\n");
 }
 
-function getTargetForm(target: Target, formTypeId: string) {
-  return target.annotations
-    ?.map((annotation) => getForm(annotation, formTypeId))
-    .find(Boolean);
-}
-
-function findOccurrenceRange(text: string, needle: string, occurrence = 1): TextRange | undefined {
-  if (!needle) return undefined;
-
-  let fromIndex = 0;
-  for (let count = 1; count <= occurrence; count += 1) {
-    const start = text.indexOf(needle, fromIndex);
-    if (start === -1) return undefined;
-    if (count === occurrence) return { start, end: start + needle.length };
-    fromIndex = start + needle.length;
-  }
-
-  return undefined;
-}
-
-function getTextSpanRange(target: TextSpanTarget, text: string): TextRange | undefined {
-  if (target.range) return target.range;
-
-  if (target.selector?.type === "index") {
-    return { start: target.selector.start, end: target.selector.end };
-  }
-
-  if (target.selector?.type === "text") {
-    return (
-      target.selector.range ??
-      findOccurrenceRange(text, target.selector.text, target.selector.occurrence)
-    );
-  }
-
-  if (target.text) return findOccurrenceRange(text, target.text);
-
-  return undefined;
-}
-
-function isValidRange(range: TextRange | undefined, text: string) {
+function isValidRange(range: { start: number; end: number } | undefined, text: string) {
   return Boolean(
     range &&
       range.start >= 0 &&
@@ -193,50 +157,51 @@ function isValidRange(range: TextRange | undefined, text: string) {
 
 function renderAnnotatedText({
   text,
-  targets,
-  formTypeId,
+  selectors,
+  formId,
   translationLanguageId,
   style,
 }: {
   text: string;
-  targets: Target[];
-  formTypeId: string;
+  selectors: SelectorNode[];
+  formId: string;
   translationLanguageId: string;
   style: ViewerStyle;
 }) {
-  const textTargets = targets
-    .filter((target): target is TextSpanTarget => target.kind === "textSpan")
-    .map((target) => ({ target, range: getTextSpanRange(target, text) }))
+  const selected = selectors
+    .flatMap((selector) =>
+      (selector.selectedRanges ?? []).map((range) => ({ selector, range }))
+    )
     .filter(({ range }) => isValidRange(range, text))
-    .sort((a, b) => a.range!.start - b.range!.start || b.range!.end - a.range!.end);
+    .sort((a, b) => a.range.start - b.range.start || b.range.end - a.range.end);
 
   const nodes: React.ReactNode[] = [];
   let cursor = 0;
 
-  for (const { target, range } of textTargets) {
-    if (!range || range.start < cursor) continue;
+  for (const { selector, range } of selected) {
+    if (range.start < cursor) continue;
 
     if (cursor < range.start) {
       nodes.push(<span key={`plain-${cursor}`}>{text.slice(cursor, range.start)}</span>);
     }
 
-    const annotatedText = text.slice(range.start, range.end);
-    const form = getTargetForm(target, formTypeId);
-    const title = getTargetPopupTitle(target, translationLanguageId);
+    const selectedText = text.slice(range.start, range.end);
+    const form = getSelectorForm(selector, formId);
+    const title = selectorTitle(selector, translationLanguageId);
     const hasTitle = Boolean(title);
 
     const hoverText = form ? (
       <ruby>
-        {annotatedText}
+        {selectedText}
         <rt className="text-xs text-gray-500">{form}</rt>
       </ruby>
     ) : (
-      annotatedText
+      selectedText
     );
 
     nodes.push(
       <HoverWord
-        key={target.id}
+        key={`${selector.id}-${range.start}-${range.end}`}
         text={hoverText}
         title={title}
         className={hasTitle ? style.text.annotated : style.text.annotationWithoutPopup}
@@ -253,124 +218,319 @@ function renderAnnotatedText({
   return nodes;
 }
 
-function AnnotationView({
-  annotation,
+function RefView({
+  refValue,
   translationLanguageId,
   style,
 }: {
-  annotation: Annotation;
+  refValue: TextNodeRef | NonNullable<SelectorNode["refs"]>[number];
   translationLanguageId: string;
   style: ViewerStyle;
 }) {
+  const text = refText(refValue, translationLanguageId);
+  if (!text) return null;
+
   return (
     <div className={style.text.annotationBox}>
-      <div className={style.text.annotationTitle}>{annotationTitle(annotation)}</div>
-      <div>{annotationText(annotation, translationLanguageId)}</div>
-      {annotation.type === "form" && (
-        <FormedTextDecomposition
-          formedText={annotation.value}
-          translationLanguageId={translationLanguageId}
-          style={style}
-        />
-      )}
-      {annotation.type === "correction" && (
-        <FormedTextDecomposition
-          formedText={annotation.value}
-          translationLanguageId={translationLanguageId}
-          style={style}
-        />
-      )}
+      <div className={style.text.annotationTitle}>{refValue.body.type}</div>
+      <div>{text}</div>
     </div>
   );
 }
 
-function TargetView({
-  target,
-  translationLanguageId,
-  style,
-}: {
-  target: Target;
-  translationLanguageId: string;
-  style: ViewerStyle;
-}) {
-  if (!target.annotations?.length && !target.resources?.length) return null;
-
-  return (
-    <div className={style.text.targetBlock}>
-      <div className={style.text.annotationTitle}>{target.kind}</div>
-      {target.annotations?.map((annotation, index) => (
-        <AnnotationView
-          key={`${target.id}-annotation-${index}`}
-          annotation={annotation}
-          translationLanguageId={translationLanguageId}
-          style={style}
-        />
-      ))}
-      {target.resources?.map((resource) => (
-        <ResourceView
-          key={resource.id}
-          resource={resource}
-          translationLanguageId={translationLanguageId}
-          style={style}
-        />
-      ))}
-    </div>
-  );
+function formatRanges(ranges: SelectorNode["selectedRanges"]) {
+  if (!ranges?.length) return "no ranges";
+  return ranges.map((range) => `${range.start}-${range.end}`).join(", ");
 }
 
-function FormedTextDecomposition({
-  formedText,
-  translationLanguageId,
-  style,
-}: {
-  formedText: FormedText;
-  translationLanguageId: string;
-  style: ViewerStyle;
-}) {
-  if (!formedText.decomposition?.units.length) return null;
+function formatSource(source: TextNode["source"]) {
+  if (!source) return undefined;
 
-  return (
-    <div className={style.text.form}>
-      <div className={style.text.annotationTitle}>Decomposition</div>
-      <div className="mt-2 space-y-2">
-        {formedText.decomposition.units.map((unit) => (
-          <FormedTextUnitView
-            key={unit.id}
-            unit={unit}
-            translationLanguageId={translationLanguageId}
-            style={style}
-          />
-        ))}
+  switch (source.type) {
+    case "selector":
+      return `selector ${source.selectorId} from ${source.sourceTextNodeId}`;
+    case "transform":
+      return `transform ${source.transformId} from ${source.sourceTextNodeId}`;
+    case "external":
+      return source.label ? `external: ${source.label}` : "external";
+  }
+}
+
+function RefDetailView({
+  refValue,
+  translationLanguageId,
+}: {
+  refValue: TextNodeRef | NonNullable<SelectorNode["refs"]>[number];
+  translationLanguageId: string;
+}) {
+  const text = refText(refValue, translationLanguageId);
+
+  if (text) {
+    return (
+      <div className="rounded border border-gray-200 bg-white px-2 py-1 text-gray-950">
+        <span className="font-semibold text-gray-900">{refValue.body.type}: </span>
+        <span>{text}</span>
       </div>
-    </div>
-  );
+    );
+  }
+
+  if (refValue.body.type === "alignment") {
+    return (
+      <div className="rounded border border-gray-200 bg-white px-2 py-1 text-gray-950">
+        <span className="font-semibold text-gray-900">alignment: </span>
+        <span>
+          {refValue.body.interval.start}
+          {refValue.body.interval.end != null ? `-${refValue.body.interval.end}` : ""}
+        </span>
+      </div>
+    );
+  }
+
+  if (refValue.body.type === "speaker") {
+    return (
+      <div className="rounded border border-gray-200 bg-white px-2 py-1 text-gray-950">
+        <span className="font-semibold text-gray-900">speaker: </span>
+        <span>{refValue.body.speakerId}</span>
+      </div>
+    );
+  }
+
+  return null;
 }
 
-function FormedTextUnitView({
-  unit,
+function TransformDetailView({
+  transformValue,
   translationLanguageId,
   style,
+  depth,
 }: {
-  unit: FormedTextUnit;
+  transformValue: Transform;
   translationLanguageId: string;
   style: ViewerStyle;
+  depth: number;
 }) {
   return (
-    <div className="border-l-2 border-gray-300 pl-3">
-      <div className="font-medium text-gray-900">{unit.text.text}</div>
-      {unit.targets?.map((target) => (
-        <TargetView
-          key={target.id}
-          target={target}
-          translationLanguageId={translationLanguageId}
-          style={style}
-        />
-      ))}
-      <FormedTextDecomposition
-        formedText={unit.text}
+    <div className="rounded border border-emerald-200 bg-emerald-50/60 p-2 text-gray-950">
+      <div className="mb-1 flex flex-wrap items-center gap-2">
+        <span className="rounded bg-emerald-100 px-2 py-0.5 text-xs font-semibold text-emerald-900">
+          transform
+        </span>
+        <span className="font-semibold text-gray-900">{transformValue.transformType}</span>
+        <span className="text-xs text-gray-700">{transformValue.id}</span>
+      </div>
+      <TextNodeDetailView
+        textNode={transformValue.output}
         translationLanguageId={translationLanguageId}
         style={style}
+        depth={depth + 1}
+        label="output"
       />
+    </div>
+  );
+}
+
+function TextNodeDetailView({
+  textNode,
+  translationLanguageId,
+  style,
+  depth,
+  label = "text node",
+}: {
+  textNode: TextNode;
+  translationLanguageId: string;
+  style: ViewerStyle;
+  depth: number;
+  label?: string;
+}) {
+  const source = formatSource(textNode.source);
+
+  return (
+    <div
+      className="rounded border border-gray-200 bg-white/95 p-2 text-gray-950"
+      style={{ marginLeft: depth ? `${Math.min(depth, 4) * 0.75}rem` : undefined }}
+    >
+      <div className="mb-1 flex flex-wrap items-center gap-2">
+        <span className="rounded bg-gray-100 px-2 py-0.5 text-xs font-semibold text-gray-900">
+          {label}
+        </span>
+        <span className="text-xs text-gray-700">{textNode.id}</span>
+      </div>
+      <div className="rounded bg-gray-50 px-2 py-1 font-medium text-gray-950">
+        {textNode.content.text}
+      </div>
+      <div className="mt-1 flex flex-wrap gap-2 text-xs text-gray-800">
+        <span>language: {textNode.content.languageId}</span>
+        <span>form: {textNode.content.formId}</span>
+        {source && <span>source: {source}</span>}
+      </div>
+
+      {textNode.refs?.length ? (
+        <div className="mt-2 space-y-1">
+          {textNode.refs.map((refValue) => (
+            <RefDetailView
+              key={refValue.id}
+              refValue={refValue}
+              translationLanguageId={translationLanguageId}
+            />
+          ))}
+        </div>
+      ) : null}
+
+      {textNode.transforms?.length ? (
+        <div className="mt-2 space-y-2">
+          {textNode.transforms.map((transformValue) => (
+            <TransformDetailView
+              key={transformValue.id}
+              transformValue={transformValue}
+              translationLanguageId={translationLanguageId}
+              style={style}
+              depth={depth + 1}
+            />
+          ))}
+        </div>
+      ) : null}
+
+      {textNode.selectors?.length ? (
+        <div className="mt-2 space-y-2">
+          {textNode.selectors.map((selector) => (
+            <SelectorView
+              key={selector.id}
+              selector={selector}
+              translationLanguageId={translationLanguageId}
+              style={style}
+              depth={depth + 1}
+            />
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function SelectorView({
+  selector,
+  translationLanguageId,
+  style,
+  depth = 0,
+}: {
+  selector: SelectorNode;
+  translationLanguageId: string;
+  style: ViewerStyle;
+  depth?: number;
+}) {
+  if (!selector.refs?.length && !selector.children.length) return null;
+
+  return (
+    <div
+      className="rounded border border-sky-200 bg-sky-50/70 p-3 text-gray-950"
+      style={{ marginLeft: depth ? `${Math.min(depth, 4) * 0.75}rem` : undefined }}
+    >
+      <div className="mb-2 flex flex-wrap items-center gap-2">
+        <span className="rounded bg-sky-100 px-2 py-0.5 text-xs font-semibold text-sky-950">
+          selector
+        </span>
+        <span className="font-semibold text-gray-950">
+          {selector.label ?? selector.selectorType}
+        </span>
+        <span className="text-xs text-gray-700">{selector.selectorType}</span>
+        <span className="text-xs text-gray-700">ranges: {formatRanges(selector.selectedRanges)}</span>
+      </div>
+
+      {selector.refs?.length ? (
+        <div className="mb-2 space-y-1">
+          {selector.refs.map((refValue) => (
+            <RefDetailView
+              key={refValue.id}
+              refValue={refValue}
+              translationLanguageId={translationLanguageId}
+            />
+          ))}
+        </div>
+      ) : null}
+
+      {selector.children.length ? (
+        <div className="space-y-2">
+          {selector.children.map((child) => (
+            <TextNodeDetailView
+              key={child.id}
+              textNode={child}
+              translationLanguageId={translationLanguageId}
+              style={style}
+              depth={depth + 1}
+              label="child text"
+            />
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function transformLabel(transformValue: Transform) {
+  if (transformValue.transformType === "translation") {
+    return transformValue.output.content.languageId;
+  }
+
+  return transformValue.transformType;
+}
+
+function LearnerSelectorView({
+  selector,
+}: {
+  selector: SelectorNode;
+}) {
+  const tags =
+    selector.refs
+      ?.filter(isTagSelectorRef)
+      .flatMap((refValue) => refValue.body.tags) ?? [];
+  const childTransforms = selector.children.flatMap((child) => child.transforms ?? []);
+
+  if (!tags.length && !childTransforms.length && !selector.children.length) return null;
+
+  return (
+    <div className="rounded border border-gray-200 bg-white p-3 text-gray-950 shadow-sm">
+      <div className="mb-2 font-semibold text-gray-950">
+        {selector.label ?? selector.children[0]?.content.text ?? selector.selectorType}
+      </div>
+
+      {tags.length ? (
+        <div className="mb-2 flex flex-wrap gap-1">
+          {tags.map((tag) => (
+            <span
+              key={tag}
+              className="rounded bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-950"
+            >
+              {tag}
+            </span>
+          ))}
+        </div>
+      ) : null}
+
+      {childTransforms.length ? (
+        <div className="space-y-1">
+          {childTransforms.map((transformValue) => (
+            <div
+              key={transformValue.id}
+              className="grid gap-1 rounded bg-gray-50 px-2 py-1 sm:grid-cols-[minmax(4rem,auto)_1fr]"
+            >
+              <span className="text-xs font-semibold uppercase text-gray-700">
+                {transformLabel(transformValue)}
+              </span>
+              <span>{transformValue.output.content.text}</span>
+            </div>
+          ))}
+        </div>
+      ) : null}
+
+      {selector.children.some((child) => child.selectors?.length) ? (
+        <div className="mt-2 space-y-2 border-l border-gray-200 pl-3">
+          {selector.children.flatMap((child) =>
+            (child.selectors ?? []).map((childSelector) => (
+              <LearnerSelectorView key={childSelector.id} selector={childSelector} />
+            ))
+          )}
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -398,51 +558,57 @@ function ResourceView({
     );
   }
 
-  if (resource.type === "audio") {
+  if (resource.type === "media" && resource.mediaType === "audio") {
     return <audio controls src={resource.src} className="mt-3 w-full" />;
   }
 
-  if (resource.type === "video") {
+  if (resource.type === "media" && resource.mediaType === "video") {
     return <video controls src={resource.src} className="mt-3 max-h-64 w-full" />;
   }
 
-  return (
-    <a href={resource.href} target="_blank" rel="noreferrer" className="underline">
-      {resource.label ?? resource.href}
-    </a>
-  );
+  if (resource.type === "external" && resource.uri) {
+    return (
+      <a href={resource.uri} target="_blank" rel="noreferrer" className="underline">
+        {resource.title ?? resource.uri}
+      </a>
+    );
+  }
+
+  return null;
 }
 
 export function ScriptLine({
-  line,
+  textNode,
   speakers,
-  textVariantId,
-  formTypeId,
+  resources = [],
+  formId,
   translationLanguageId,
   style,
+  annotationMode = "learner",
   canPlay = false,
   onPlay,
 }: Props) {
-  const speaker = speakers.find((s) => s.id === line.speakerId);
-  const speakerStyle =
-    (speaker?.color ? style.speaker.colors[speaker.color] : undefined) ??
-    style.speaker.default;
-  const displayText = getLineForm(line, textVariantId);
-  const text = displayText.text;
-  const translation = getLineTranslation(line, translationLanguageId);
-  const targets = line.targets ?? [];
-  const lineTargets = targets.filter((target) => target.kind === "line");
-  const inspectableTargets = targets.filter(
-    (target) =>
-      target.kind !== "line" && (target.annotations?.length || target.resources?.length)
-  );
+  const speakerId = getSpeakerRef(textNode.refs)?.body.speakerId;
+  const speaker = speakers.find((s) => s.id === speakerId);
+  const speakerStyle = style.speaker.default;
+  const displayText = getDisplayTransform(textNode, formId)?.output ?? textNode;
+  const text = displayText.content.text;
+  const translation = getTranslation(textNode, translationLanguageId);
+  const alignment = getAlignmentRef(textNode.refs)?.body.interval;
+  const resourceRefs =
+    textNode.refs
+      ?.filter(isResourceListRef)
+      .flatMap((ref) => ref.body.refs) ?? [];
+  const nodeResources = resourceRefs
+    .map((resourceRef) => resources.find((resource) => resource.id === resourceRef.resourceId))
+    .filter((resource): resource is Resource => Boolean(resource));
 
   return (
     <div className={speakerStyle.container}>
       <p className={style.text.line}>
-        {canPlay && (
+        {canPlay && alignment && (
           <button
-            onClick={() => onPlay?.(line)}
+            onClick={() => onPlay?.(alignment)}
             className={`${style.layout.playButton} mr-2 align-middle`}
             aria-label="Play line"
             title="Play line"
@@ -462,8 +628,8 @@ export function ScriptLine({
         {speaker && <span className={speakerStyle.name}>{speaker.name}: </span>}
         {renderAnnotatedText({
           text,
-          targets,
-          formTypeId,
+          selectors: displayText.selectors ?? [],
+          formId,
           translationLanguageId,
           style,
         })}
@@ -471,40 +637,43 @@ export function ScriptLine({
 
       {translation && <p className={style.text.translation}>{translation}</p>}
 
-      <FormedTextDecomposition
-        formedText={displayText}
-        translationLanguageId={translationLanguageId}
-        style={style}
-      />
+      {textNode.refs?.map((refValue) => (
+        <RefView
+          key={refValue.id}
+          refValue={refValue}
+          translationLanguageId={translationLanguageId}
+          style={style}
+        />
+      ))}
 
-      {lineTargets.length > 0 && (
-        <div className="mt-3">
-          {lineTargets.map((target) => (
-            <TargetView
-              key={target.id}
-              target={target}
-              translationLanguageId={translationLanguageId}
-              style={style}
-            />
-          ))}
-        </div>
-      )}
-
-      {inspectableTargets.length > 0 && (
+      {displayText.selectors?.length ? (
         <details className="mt-3 text-sm">
-          <summary className="cursor-pointer text-gray-600">Annotations</summary>
+          <summary className="cursor-pointer text-gray-800">Annotations</summary>
           <div className="mt-2 space-y-2">
-            {inspectableTargets.map((target) => (
-              <TargetView
-                key={target.id}
-                target={target}
-                translationLanguageId={translationLanguageId}
-                style={style}
-              />
+            {displayText.selectors.map((selector) => (
+              annotationMode === "developer" ? (
+                <SelectorView
+                  key={selector.id}
+                  selector={selector}
+                  translationLanguageId={translationLanguageId}
+                  style={style}
+                />
+              ) : (
+                <LearnerSelectorView key={selector.id} selector={selector} />
+              )
             ))}
           </div>
         </details>
-      )}
+      ) : null}
+
+      {nodeResources.map((resource) => (
+        <ResourceView
+          key={resource.id}
+          resource={resource}
+          translationLanguageId={translationLanguageId}
+          style={style}
+        />
+      ))}
     </div>
   );
 }

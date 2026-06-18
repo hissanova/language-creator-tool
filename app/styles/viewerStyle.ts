@@ -48,8 +48,8 @@ export const viewerStyle: ViewerStyle = {
     translation: "mt-3 text-sm text-gray-600",
     form: "mt-2 text-sm text-gray-500",
     targetBlock: "mt-3 border-l-4 border-gray-200 pl-3",
-    annotationBox: "mt-2 rounded bg-white/70 p-2 text-sm",
-    annotationTitle: "font-semibold text-gray-700",
+    annotationBox: "mt-2 rounded bg-white/90 p-2 text-sm text-gray-950",
+    annotationTitle: "font-semibold text-gray-900",
   },
   resource: {
     figure: "mt-4 rounded-lg border bg-white p-3",

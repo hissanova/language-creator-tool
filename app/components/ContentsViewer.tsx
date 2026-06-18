@@ -3,14 +3,14 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type {
   Document,
-  DisplayOption,
-  Figure,
-  Line,
-  Note,
+  FigureBlock,
+  FormedText,
+  NoteBlock,
   OptionId,
   Section,
   SectionBlock,
-  Table,
+  TableBlock,
+  TimeSpan,
 } from "../types/lcm";
 import type { ViewerStyle } from "../types/viewerStyle";
 import { ScriptLine } from "./ScriptLine";
@@ -21,9 +21,19 @@ type Props = {
   style?: ViewerStyle;
 };
 
-const noneOption: DisplayOption = { id: "none", label: "Off" };
+type ViewerShellProps = Props & {
+  annotationMode: "learner" | "developer";
+  showMetadata?: boolean;
+};
 
-function withNone(options: DisplayOption[] | undefined): DisplayOption[] {
+type SelectOption = {
+  id: string;
+  label?: string;
+};
+
+const noneOption: SelectOption = { id: "none", label: "Off" };
+
+function withNone(options: SelectOption[] | undefined): SelectOption[] {
   if (!options || options.length === 0) return [noneOption];
   return options.some((option) => option.id === "none")
     ? options
@@ -47,12 +57,11 @@ function normalizeMediaSrc(src: string) {
   return src;
 }
 
-function getSectionBlocks(section: Section): SectionBlock[] {
-  if (section.blocks) return section.blocks;
-  return section.lines?.map((line) => ({ type: "line" as const, line })) ?? [];
+function firstCaption(caption: Record<string, FormedText> | undefined) {
+  return Object.values(caption ?? {})[0]?.text;
 }
 
-function NoteBlockView({ note }: { note: Note }) {
+function NoteBlockView({ note }: { note: NoteBlock }) {
   return (
     <aside className="rounded border-l-4 border-gray-300 bg-gray-50 p-3 text-sm">
       {note.title && <div className="font-semibold text-gray-800">{note.title}</div>}
@@ -61,8 +70,8 @@ function NoteBlockView({ note }: { note: Note }) {
   );
 }
 
-function FigureBlockView({ figure }: { figure: Figure }) {
-  const caption = Object.values(figure.caption ?? {})[0]?.text;
+function FigureBlockView({ figure }: { figure: FigureBlock }) {
+  const caption = firstCaption(figure.caption);
 
   return (
     <figure className="rounded border bg-white p-3">
@@ -74,8 +83,8 @@ function FigureBlockView({ figure }: { figure: Figure }) {
   );
 }
 
-function TableBlockView({ table }: { table: Table }) {
-  const caption = Object.values(table.caption ?? {})[0]?.text;
+function TableBlockView({ table }: { table: TableBlock }) {
+  const caption = firstCaption(table.caption);
 
   return (
     <div className="overflow-x-auto rounded border">
@@ -106,46 +115,89 @@ function TableBlockView({ table }: { table: Table }) {
   );
 }
 
-export function ContentsViewer({ document, style = defaultStyle }: Props) {
+function MetadataDetails({ document }: { document: Document }) {
+  return (
+    <details className="mb-6 rounded border bg-white p-4 text-sm text-gray-950">
+      <summary className="cursor-pointer font-semibold text-gray-950">Metadata</summary>
+      <dl className="mt-3 grid gap-2 sm:grid-cols-[10rem_1fr]">
+        <dt className="font-medium text-gray-700">Spec version</dt>
+        <dd>{document.metadata.specVersion}</dd>
+
+        <dt className="font-medium text-gray-700">Document type</dt>
+        <dd>{document.metadata.documentType ?? "document"}</dd>
+
+        <dt className="font-medium text-gray-700">Default language</dt>
+        <dd>{document.metadata.defaultLanguageId ?? "none"}</dd>
+
+        <dt className="font-medium text-gray-700">Default form</dt>
+        <dd>{document.metadata.defaultFormId ?? "none"}</dd>
+
+        <dt className="font-medium text-gray-700">Languages</dt>
+        <dd>
+          {(document.metadata.languages ?? [])
+            .map((language) => language.label ? `${language.label} (${language.id})` : language.id)
+            .join(", ") || "none"}
+        </dd>
+
+        <dt className="font-medium text-gray-700">Forms</dt>
+        <dd>
+          {(document.metadata.forms ?? [])
+            .map((form) => form.label ? `${form.label} (${form.id})` : form.id)
+            .join(", ") || "none"}
+        </dd>
+
+        <dt className="font-medium text-gray-700">Speakers</dt>
+        <dd>
+          {(document.metadata.speakers ?? [])
+            .map((speaker) => `${speaker.name} (${speaker.id})`)
+            .join(", ") || "none"}
+        </dd>
+
+        <dt className="font-medium text-gray-700">Resources</dt>
+        <dd>{document.resources?.length ?? 0}</dd>
+
+        <dt className="font-medium text-gray-700">Sections</dt>
+        <dd>{document.sections.length}</dd>
+      </dl>
+    </details>
+  );
+}
+
+export function ViewerShell({
+  document,
+  style = defaultStyle,
+  annotationMode,
+  showMetadata = false,
+}: ViewerShellProps) {
   const mediaRef = useRef<HTMLMediaElement | null>(null);
 
-  const textVariantOptions = document.metadata.textVariants ?? [];
-  const formTypeOptions = withNone(document.metadata.formTypes);
-  const translationLanguageOptions = withNone(document.metadata.translationLanguages);
+  const formOptions = withNone(document.metadata.forms);
+  const translationLanguageOptions = withNone(document.metadata.languages);
 
-  const [textVariantId, setTextVariantId] = useState<OptionId>(
-    document.metadata.defaultTextVariantId ??
-      textVariantOptions[0]?.id ??
-      document.metadata.targetLanguage
-  );
-
-  const [formTypeId, setFormTypeId] = useState<OptionId>(
-    document.metadata.defaultFormTypeId ?? "none"
+  const [formId, setFormId] = useState<OptionId>(
+    document.metadata.defaultFormId ?? "none"
   );
 
   const [translationLanguageId, setTranslationLanguageId] = useState<OptionId>(
-    document.metadata.defaultTranslationLanguageId ?? "none"
+    "none"
   );
 
   const [playbackEndTime, setPlaybackEndTime] = useState<number | null>(null);
 
-  const media = document.metadata.media;
+  const media = document.resources?.find((resource) => resource.type === "media");
   const mediaSrc = media ? normalizeMediaSrc(media.src) : undefined;
 
-  const playSection = (section: Section) => {
+  const playSpan = (span: TimeSpan) => {
     if (!mediaRef.current) return;
 
-    mediaRef.current.currentTime = section.time.start;
-    setPlaybackEndTime(section.time.end ?? null);
+    mediaRef.current.currentTime = span.start;
+    setPlaybackEndTime(span.end ?? null);
     mediaRef.current.play();
   };
 
-  const playLine = (line: Line) => {
-    if (!mediaRef.current || !line.time) return;
-
-    mediaRef.current.currentTime = line.time.start;
-    setPlaybackEndTime(line.time.end ?? null);
-    mediaRef.current.play();
+  const playSection = (section: Section) => {
+    if (!section.time) return;
+    playSpan(section.time);
   };
 
   useEffect(() => {
@@ -170,18 +222,19 @@ export function ContentsViewer({ document, style = defaultStyle }: Props) {
 
   const renderBlock = (block: SectionBlock) => {
     switch (block.type) {
-      case "line":
+      case "text":
         return (
           <ScriptLine
-            key={block.line.id}
-            line={block.line}
+            key={block.text.id}
+            textNode={block.text}
             speakers={speakers}
-            textVariantId={textVariantId}
-            formTypeId={formTypeId}
+            resources={document.resources}
+            formId={formId}
             translationLanguageId={translationLanguageId}
             style={style}
-            canPlay={Boolean(media && block.line.time)}
-            onPlay={playLine}
+            annotationMode={annotationMode}
+            canPlay={Boolean(media)}
+            onPlay={playSpan}
           />
         );
       case "note":
@@ -197,7 +250,9 @@ export function ContentsViewer({ document, style = defaultStyle }: Props) {
     <main className={style.layout.main}>
       <h1 className={style.layout.headerTitle}>{document.metadata.title}</h1>
 
-      {media?.type === "audio" && (
+      {showMetadata && <MetadataDetails document={document} />}
+
+      {media?.mediaType === "audio" && (
         <audio
           ref={(element) => {
             mediaRef.current = element;
@@ -208,7 +263,7 @@ export function ContentsViewer({ document, style = defaultStyle }: Props) {
         />
       )}
 
-      {media?.type === "video" && (
+      {media?.mediaType === "video" && (
         <video
           ref={(element) => {
             mediaRef.current = element;
@@ -220,33 +275,16 @@ export function ContentsViewer({ document, style = defaultStyle }: Props) {
       )}
 
       <div className={style.layout.controls}>
-        {textVariantOptions.length > 0 && (
-          <label className="flex items-center gap-2">
-            <span className="text-sm font-medium">Script</span>
-            <select
-              className="rounded border px-2 py-1"
-              value={textVariantId}
-              onChange={(e) => setTextVariantId(e.target.value)}
-            >
-              {textVariantOptions.map((variant) => (
-                <option key={variant.id} value={variant.id}>
-                  {variant.label}
-                </option>
-              ))}
-            </select>
-          </label>
-        )}
-
         <label className="flex items-center gap-2">
           <span className="text-sm font-medium">Form</span>
           <select
-            className="rounded border px-2 py-1"
-            value={formTypeId}
-            onChange={(e) => setFormTypeId(e.target.value)}
+            className="rounded border bg-white px-2 py-1 text-gray-950"
+            value={formId}
+            onChange={(event) => setFormId(event.target.value)}
           >
-            {formTypeOptions.map((formType) => (
-              <option key={formType.id} value={formType.id}>
-                {formType.label}
+            {formOptions.map((form) => (
+              <option key={form.id} value={form.id} className="bg-white text-gray-950">
+                {form.label ?? form.id}
               </option>
             ))}
           </select>
@@ -255,13 +293,13 @@ export function ContentsViewer({ document, style = defaultStyle }: Props) {
         <label className="flex items-center gap-2">
           <span className="text-sm font-medium">Translation / Meaning</span>
           <select
-            className="rounded border px-2 py-1"
+            className="rounded border bg-white px-2 py-1 text-gray-950"
             value={translationLanguageId}
-            onChange={(e) => setTranslationLanguageId(e.target.value)}
+            onChange={(event) => setTranslationLanguageId(event.target.value)}
           >
             {translationLanguageOptions.map((language) => (
-              <option key={language.id} value={language.id}>
-                {language.label}
+              <option key={language.id} value={language.id} className="bg-white text-gray-950">
+                {language.label ?? language.id}
               </option>
             ))}
           </select>
@@ -269,11 +307,11 @@ export function ContentsViewer({ document, style = defaultStyle }: Props) {
       </div>
 
       <div className="space-y-8">
-        {document.body.map((section) => (
+        {document.sections.map((section) => (
           <section key={section.id} className={style.layout.section}>
             <div className={style.layout.sectionHeader}>
               <div className="flex items-center gap-3">
-                {media && (
+                {media && section.time && (
                   <button
                     onClick={() => playSection(section)}
                     className={style.layout.playButton}
@@ -288,16 +326,18 @@ export function ContentsViewer({ document, style = defaultStyle }: Props) {
 
                 <div>
                   <h2 className={style.layout.sectionTitle}>{section.title}</h2>
-                  <p className={style.layout.sectionTime}>
-                    {formatTime(section.time.start)}
-                    {section.time.end != null ? ` – ${formatTime(section.time.end)}` : ""}
-                  </p>
+                  {section.time && (
+                    <p className={style.layout.sectionTime}>
+                      {formatTime(section.time.start)}
+                      {section.time.end != null ? ` - ${formatTime(section.time.end)}` : ""}
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
 
             <div className={style.layout.lines}>
-              {getSectionBlocks(section).map((block) => renderBlock(block))}
+              {section.blocks.map((block) => renderBlock(block))}
             </div>
 
             {section.sections?.map((child) => (
@@ -305,7 +345,7 @@ export function ContentsViewer({ document, style = defaultStyle }: Props) {
                 <section className={style.layout.section}>
                   <h3 className={style.layout.sectionTitle}>{child.title}</h3>
                   <div className={style.layout.lines}>
-                    {getSectionBlocks(child).map((block) => renderBlock(block))}
+                    {child.blocks.map((block) => renderBlock(block))}
                   </div>
                 </section>
               </div>
@@ -316,3 +356,9 @@ export function ContentsViewer({ document, style = defaultStyle }: Props) {
     </main>
   );
 }
+
+export function ConversationViewer(props: Props) {
+  return <ViewerShell {...props} annotationMode="learner" />;
+}
+
+export const ContentsViewer = ConversationViewer;
