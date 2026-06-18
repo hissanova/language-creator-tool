@@ -1,7 +1,28 @@
+export type TagDisplayStyle = {
+  label?: string;
+  className?: string;
+  style?: {
+    color?: string;
+    backgroundColor?: string;
+    borderColor?: string;
+  };
+};
+
+export type SpeakerDisplayStyle = {
+  nameColor?: string;
+  className?: string;
+  style?: {
+    color?: string;
+  };
+};
+
 export type ViewerStyle = {
+  tags?: Record<string, TagDisplayStyle>;
+  speakers?: Record<string, SpeakerDisplayStyle>;
   layout: {
     main: string;
     headerTitle: string;
+    mediaBar: string;
     controls: string;
     section: string;
     sectionHeader: string;

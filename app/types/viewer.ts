@@ -8,7 +8,6 @@ export type DisplayOption = {
 export type Speaker = {
   id: string;
   name: string;
-  color: "blue" | "green" | "purple" | "orange";
 };
 
 export type TextAnnotation = {

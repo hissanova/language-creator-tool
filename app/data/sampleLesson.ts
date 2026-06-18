@@ -26,8 +26,8 @@ export const sampleLesson: Document = {
   defaultTranslationLanguageId: "en",
 
   speakers: [
-    { id: "speaker-a", name: "A", color: "blue" },
-    { id: "speaker-b", name: "B", color: "green" },
+    { id: "speaker-a", name: "A" },
+    { id: "speaker-b", name: "B" },
   ],
 
   sections: [

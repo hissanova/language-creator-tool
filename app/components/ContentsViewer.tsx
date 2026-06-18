@@ -252,26 +252,30 @@ export function ViewerShell({
 
       {showMetadata && <MetadataDetails document={document} />}
 
-      {media?.mediaType === "audio" && (
-        <audio
-          ref={(element) => {
-            mediaRef.current = element;
-          }}
-          className="mb-6 w-full"
-          controls
-          src={mediaSrc}
-        />
-      )}
+      {media && (
+        <div className={style.layout.mediaBar}>
+          {media.mediaType === "audio" && (
+            <audio
+              ref={(element) => {
+                mediaRef.current = element;
+              }}
+              className="w-full"
+              controls
+              src={mediaSrc}
+            />
+          )}
 
-      {media?.mediaType === "video" && (
-        <video
-          ref={(element) => {
-            mediaRef.current = element;
-          }}
-          className="mb-6 w-full"
-          controls
-          src={mediaSrc}
-        />
+          {media.mediaType === "video" && (
+            <video
+              ref={(element) => {
+                mediaRef.current = element;
+              }}
+              className="max-h-64 w-full"
+              controls
+              src={mediaSrc}
+            />
+          )}
+        </div>
       )}
 
       <div className={style.layout.controls}>

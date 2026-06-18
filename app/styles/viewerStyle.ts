@@ -6,9 +6,36 @@ import type { ViewerStyle } from "../types/viewerStyle";
  * style.yaml と同じ内容にしておく。
  */
 export const viewerStyle: ViewerStyle = {
+  tags: {
+    grammar: {
+      label: "Grammar",
+      style: {
+        color: "#1e3a8a",
+        backgroundColor: "#dbeafe",
+        borderColor: "#93c5fd",
+      },
+    },
+    unnatural: {
+      label: "Unnatural",
+      style: {
+        color: "#7c2d12",
+        backgroundColor: "#ffedd5",
+        borderColor: "#fdba74",
+      },
+    },
+  },
+  speakers: {
+    simon: {
+      nameColor: "#7c3aed",
+    },
+    lan: {
+      nameColor: "#047857",
+    },
+  },
   layout: {
     main: "mx-auto max-w-4xl p-6",
     headerTitle: "mb-4 text-3xl font-bold",
+    mediaBar: "sticky top-0 z-30 mb-6 rounded-xl border bg-white p-3 shadow-sm",
     controls: "mb-6 flex flex-wrap gap-3 rounded-xl border p-4",
     section: "rounded-2xl border p-5 shadow-sm",
     sectionHeader: "mb-4 flex items-center justify-between gap-4",
@@ -20,24 +47,24 @@ export const viewerStyle: ViewerStyle = {
   speaker: {
     default: {
       container: "rounded-xl border p-1 border-gray-300 bg-gray-50",
-      name: "mb-2 font-bold text-gray-700",
+      name: "mb-2 font-bold",
     },
     colors: {
       kanaa: {
         container: "rounded-xl border p-2 border-blue-300 bg-blue-50",
-        name: "mb-2 font-bold text-blue-700",
+        name: "mb-2 font-bold",
       },
       green: {
         container: "rounded-xl border p-2 border-green-300 bg-green-50",
-        name: "mb-2 font-bold text-green-700",
+        name: "mb-2 font-bold",
       },
       purple: {
         container: "rounded-xl border p-2 border-purple-300 bg-purple-50",
-        name: "mb-2 font-bold text-purple-700",
+        name: "mb-2 font-bold",
       },
       orange: {
         container: "rounded-xl border p-2 border-orange-300 bg-orange-50",
-        name: "mb-2 font-bold text-orange-700",
+        name: "mb-2 font-bold",
       },
     },
   },

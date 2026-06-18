@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import type {
   DictionaryBody,
   Resource,
@@ -21,6 +22,10 @@ type AlignmentRef = TextNodeRef & {
 
 type ResourceListRef = TextNodeRef & {
   body: { type: "resourceRef"; refs: { resourceId: string }[] };
+};
+
+type TagTextNodeRef = TextNodeRef & {
+  body: { type: "tag"; tags: string[] };
 };
 
 type TagSelectorRef = NonNullable<SelectorNode["refs"]>[number] & {
@@ -51,8 +56,51 @@ function isResourceListRef(ref: TextNodeRef): ref is ResourceListRef {
   return ref.body.type === "resourceRef";
 }
 
+function isTagTextNodeRef(ref: TextNodeRef): ref is TagTextNodeRef {
+  return ref.body.type === "tag";
+}
+
 function isTagSelectorRef(ref: NonNullable<SelectorNode["refs"]>[number]): ref is TagSelectorRef {
   return ref.body.type === "tag";
+}
+
+function tagDisplayStyle(tag: string, style: ViewerStyle) {
+  return style.tags?.[tag];
+}
+
+function tagLabel(tag: string, style: ViewerStyle) {
+  return tagDisplayStyle(tag, style)?.label ?? tag;
+}
+
+function tagInlineStyle(tag: string, style: ViewerStyle): CSSProperties | undefined {
+  const configuredStyle = tagDisplayStyle(tag, style)?.style;
+  if (!configuredStyle) return undefined;
+
+  return {
+    color: configuredStyle.color,
+    backgroundColor: configuredStyle.backgroundColor,
+    borderColor: configuredStyle.borderColor,
+  };
+}
+
+function TagChip({ tag, style }: { tag: string; style: ViewerStyle }) {
+  const configuredStyle = tagDisplayStyle(tag, style);
+  const className =
+    configuredStyle?.className ??
+    "border-gray-300 bg-gray-100 text-gray-900";
+
+  return (
+    <span
+      className={`inline-flex items-center rounded border px-2 py-0.5 text-xs font-medium ${className}`}
+      style={tagInlineStyle(tag, style)}
+    >
+      {tagLabel(tag, style)}
+    </span>
+  );
+}
+
+function collectTextNodeTags(textNode: TextNode) {
+  return textNode.refs?.filter(isTagTextNodeRef).flatMap((refValue) => refValue.body.tags) ?? [];
 }
 
 function getText(value: { text: string } | string | undefined): string | undefined {
@@ -480,8 +528,10 @@ function transformLabel(transformValue: Transform) {
 
 function LearnerSelectorView({
   selector,
+  style,
 }: {
   selector: SelectorNode;
+  style: ViewerStyle;
 }) {
   const tags =
     selector.refs
@@ -500,12 +550,7 @@ function LearnerSelectorView({
       {tags.length ? (
         <div className="mb-2 flex flex-wrap gap-1">
           {tags.map((tag) => (
-            <span
-              key={tag}
-              className="rounded bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-950"
-            >
-              {tag}
-            </span>
+            <TagChip key={tag} tag={tag} style={style} />
           ))}
         </div>
       ) : null}
@@ -530,7 +575,7 @@ function LearnerSelectorView({
         <div className="mt-2 space-y-2 border-l border-gray-200 pl-3">
           {selector.children.flatMap((child) =>
             (child.selectors ?? []).map((childSelector) => (
-              <LearnerSelectorView key={childSelector.id} selector={childSelector} />
+              <LearnerSelectorView key={childSelector.id} selector={childSelector} style={style} />
             ))
           )}
         </div>
@@ -595,10 +640,18 @@ export function ScriptLine({
   const speakerId = getSpeakerRef(textNode.refs)?.body.speakerId;
   const speaker = speakers.find((s) => s.id === speakerId);
   const speakerStyle = style.speaker.default;
+  const speakerDisplayStyle = speakerId ? style.speakers?.[speakerId] : undefined;
+  const speakerNameStyle: CSSProperties | undefined = speakerDisplayStyle
+    ? {
+        ...speakerDisplayStyle.style,
+        color: speakerDisplayStyle.nameColor ?? speakerDisplayStyle.style?.color,
+      }
+    : undefined;
   const displayText = getDisplayTransform(textNode, formId)?.output ?? textNode;
   const text = displayText.content.text;
   const translation = getTranslation(textNode, translationLanguageId);
   const alignment = getAlignmentRef(textNode.refs)?.body.interval;
+  const textNodeTags = collectTextNodeTags(textNode);
   const resourceRefs =
     textNode.refs
       ?.filter(isResourceListRef)
@@ -629,7 +682,16 @@ export function ScriptLine({
             </svg>
           </button>
         )}
-        {speaker && <span className={speakerStyle.name}>{speaker.name}: </span>}
+        {speaker && (
+          <span
+            className={[speakerStyle.name, speakerDisplayStyle?.className]
+              .filter(Boolean)
+              .join(" ")}
+            style={speakerNameStyle}
+          >
+            {speaker.name}:{" "}
+          </span>
+        )}
         {renderAnnotatedText({
           text,
           selectors: displayText.selectors ?? [],
@@ -641,13 +703,23 @@ export function ScriptLine({
 
       {translation && <p className={style.text.translation}>{translation}</p>}
 
+      {textNodeTags.length ? (
+        <div className="mt-2 flex flex-wrap gap-1">
+          {textNodeTags.map((tag) => (
+            <TagChip key={tag} tag={tag} style={style} />
+          ))}
+        </div>
+      ) : null}
+
       {textNode.refs?.map((refValue) => (
-        <RefView
-          key={refValue.id}
-          refValue={refValue}
-          translationLanguageId={translationLanguageId}
-          style={style}
-        />
+        refValue.body.type === "tag" ? null : (
+          <RefView
+            key={refValue.id}
+            refValue={refValue}
+            translationLanguageId={translationLanguageId}
+            style={style}
+          />
+        )
       ))}
 
       {displayText.selectors?.length ? (
@@ -663,7 +735,7 @@ export function ScriptLine({
                   style={style}
                 />
               ) : (
-                <LearnerSelectorView key={selector.id} selector={selector} />
+                <LearnerSelectorView key={selector.id} selector={selector} style={style} />
               )
             ))}
           </div>
