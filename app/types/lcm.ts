@@ -79,14 +79,7 @@ export type TextNode = {
 export type TextNodeSource =
   | {
       type: "selector";
-      selectorId: Id;
-      sourceTextNodeId: Id;
       ranges: TextRange[];
-    }
-  | {
-      type: "transform";
-      transformId: Id;
-      sourceTextNodeId: Id;
     }
   | {
       type: "external";
@@ -114,7 +107,6 @@ export type SelectorNode = {
     | "custom"
     | string;
   label?: string;
-  selectedRanges?: TextRange[];
   children: TextNode[];
   refs?: SelectorRef[];
 };

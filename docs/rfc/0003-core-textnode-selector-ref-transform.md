@@ -27,7 +27,7 @@ Ref = information attached to TextNode or SelectorNode
 Transform = TextNode -> TextNode
 ```
 
-`SelectorNode.selectedRanges` stores resolved index ranges only. Occurrence selectors and text-match selectors belong to markup or parser internals, not Core JSON.
+Selector-created child `TextNode.source.ranges` stores resolved index ranges. Occurrence selectors and text-match selectors belong to markup or parser internals, not Core JSON.
 
 ## Decisions
 

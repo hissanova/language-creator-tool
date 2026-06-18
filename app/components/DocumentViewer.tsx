@@ -153,13 +153,17 @@ function TextNodeView({ textNode, resources }: { textNode: TextNode; resources: 
 }
 
 function SelectorView({ selector, resources }: { selector: SelectorNode; resources: Resource[] }) {
+  const ranges = selector.children.flatMap((child) =>
+    child.source?.type === "selector" ? child.source.ranges : []
+  );
+
   return (
     <div className="mt-3 border-l-4 border-gray-200 pl-3">
       <div className="text-sm font-semibold text-gray-700">
         {selector.label ?? selector.selectorType}
-        {selector.selectedRanges?.length ? (
+        {ranges.length ? (
           <span className="ml-2 font-normal text-gray-500">
-            {selector.selectedRanges.map((range) => `${range.start}-${range.end}`).join(", ")}
+            {ranges.map((range) => `${range.start}-${range.end}`).join(", ")}
           </span>
         ) : null}
       </div>

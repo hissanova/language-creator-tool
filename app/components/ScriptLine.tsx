@@ -155,6 +155,12 @@ function isValidRange(range: { start: number; end: number } | undefined, text: s
   );
 }
 
+function getSelectorRanges(selector: SelectorNode) {
+  return selector.children.flatMap((child) =>
+    child.source?.type === "selector" ? child.source.ranges : []
+  );
+}
+
 function renderAnnotatedText({
   text,
   selectors,
@@ -170,7 +176,7 @@ function renderAnnotatedText({
 }) {
   const selected = selectors
     .flatMap((selector) =>
-      (selector.selectedRanges ?? []).map((range) => ({ selector, range }))
+      getSelectorRanges(selector).map((range) => ({ selector, range }))
     )
     .filter(({ range }) => isValidRange(range, text))
     .sort((a, b) => a.range.start - b.range.start || b.range.end - a.range.end);
@@ -238,7 +244,7 @@ function RefView({
   );
 }
 
-function formatRanges(ranges: SelectorNode["selectedRanges"]) {
+function formatRanges(ranges: ReturnType<typeof getSelectorRanges>) {
   if (!ranges?.length) return "no ranges";
   return ranges.map((range) => `${range.start}-${range.end}`).join(", ");
 }
@@ -248,9 +254,7 @@ function formatSource(source: TextNode["source"]) {
 
   switch (source.type) {
     case "selector":
-      return `selector ${source.selectorId} from ${source.sourceTextNodeId}`;
-    case "transform":
-      return `transform ${source.transformId} from ${source.sourceTextNodeId}`;
+      return `selector ranges ${formatRanges(source.ranges)}`;
     case "external":
       return source.label ? `external: ${source.label}` : "external";
   }
@@ -433,7 +437,7 @@ function SelectorView({
           {selector.label ?? selector.selectorType}
         </span>
         <span className="text-xs text-gray-700">{selector.selectorType}</span>
-        <span className="text-xs text-gray-700">ranges: {formatRanges(selector.selectedRanges)}</span>
+        <span className="text-xs text-gray-700">ranges: {formatRanges(getSelectorRanges(selector))}</span>
       </div>
 
       {selector.refs?.length ? (

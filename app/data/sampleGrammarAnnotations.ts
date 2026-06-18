@@ -61,11 +61,6 @@ export const sampleDocument = {
                     languageId: "ja",
                     formId: "surface",
                   },
-                  source: {
-                    type: "transform",
-                    transformId: "line-1-ja",
-                    sourceTextNodeId: "line-1",
-                  },
                 },
               },
               {
@@ -78,11 +73,6 @@ export const sampleDocument = {
                     languageId: "uch",
                     formId: "kana",
                   },
-                  source: {
-                    type: "transform",
-                    transformId: "line-1-kana",
-                    sourceTextNodeId: "line-1",
-                  },
                 },
               },
             ],
@@ -90,8 +80,6 @@ export const sampleDocument = {
               {
                 id: "selector-ami",
                 selectorType: "morphology",
-                label: "雨",
-                selectedRanges: [{ start: 0, end: 1 }],
                 children: [
                   {
                     id: "selector-ami-child",
@@ -102,8 +90,6 @@ export const sampleDocument = {
                     },
                     source: {
                       type: "selector",
-                      selectorId: "selector-ami",
-                      sourceTextNodeId: "line-1",
                       ranges: [{ start: 0, end: 1 }],
                     },
                     transforms: [
@@ -116,11 +102,6 @@ export const sampleDocument = {
                             text: "ami",
                             languageId: "uch",
                             formId: "phoneme",
-                          },
-                          source: {
-                            type: "transform",
-                            transformId: "selector-ami-phoneme",
-                            sourceTextNodeId: "selector-ami-child",
                           },
                         },
                       },

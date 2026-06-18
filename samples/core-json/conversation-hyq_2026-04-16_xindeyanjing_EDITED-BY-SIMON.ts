@@ -306,7 +306,6 @@ export const conversation = {
               {
                 "id": "section-0002-line-0007-selector-0001",
                 "selectorType": "span",
-                "label": "聽我",
                 "children": [
                   {
                     "id": "section-0002-line-0007-selector-0001-text",
@@ -317,8 +316,6 @@ export const conversation = {
                     },
                     "source": {
                       "type": "selector",
-                      "selectorId": "section-0002-line-0007-selector-0001",
-                      "sourceTextNodeId": "section-0002-line-0007",
                       "ranges": [
                         {
                           "start": 0,
@@ -326,12 +323,6 @@ export const conversation = {
                         }
                       ]
                     }
-                  }
-                ],
-                "selectedRanges": [
-                  {
-                    "start": 0,
-                    "end": 2
                   }
                 ],
                 "refs": [
@@ -417,7 +408,6 @@ export const conversation = {
               {
                 "id": "section-0002-line-0009-selector-0001",
                 "selectorType": "span",
-                "label": "聽我",
                 "children": [
                   {
                     "id": "section-0002-line-0009-selector-0001-text",
@@ -428,8 +418,6 @@ export const conversation = {
                     },
                     "source": {
                       "type": "selector",
-                      "selectorId": "section-0002-line-0009-selector-0001",
-                      "sourceTextNodeId": "section-0002-line-0009",
                       "ranges": [
                         {
                           "start": 0,
@@ -437,12 +425,6 @@ export const conversation = {
                         }
                       ]
                     }
-                  }
-                ],
-                "selectedRanges": [
-                  {
-                    "start": 0,
-                    "end": 2
                   }
                 ],
                 "refs": [
@@ -594,7 +576,6 @@ export const conversation = {
               {
                 "id": "section-0002-line-0013-selector-0001",
                 "selectorType": "span",
-                "label": "日本人の皆さん",
                 "children": [
                   {
                     "id": "section-0002-line-0013-selector-0001-text",
@@ -605,8 +586,6 @@ export const conversation = {
                     },
                     "source": {
                       "type": "selector",
-                      "selectorId": "section-0002-line-0013-selector-0001",
-                      "sourceTextNodeId": "section-0002-line-0013",
                       "ranges": [
                         {
                           "start": 0,
@@ -624,11 +603,6 @@ export const conversation = {
                             "text": "大家日本人",
                             "languageId": "zh-Hant",
                             "formId": "surface"
-                          },
-                          "source": {
-                            "type": "transform",
-                            "transformId": "section-0002-line-0013-selector-0001-text-transform-0001",
-                            "sourceTextNodeId": "section-0002-line-0013-selector-0001-text"
                           }
                         }
                       },
@@ -641,21 +615,10 @@ export const conversation = {
                             "text": "Japanese people!",
                             "languageId": "en",
                             "formId": "surface"
-                          },
-                          "source": {
-                            "type": "transform",
-                            "transformId": "section-0002-line-0013-selector-0001-text-transform-0002",
-                            "sourceTextNodeId": "section-0002-line-0013-selector-0001-text"
                           }
                         }
                       }
                     ]
-                  }
-                ],
-                "selectedRanges": [
-                  {
-                    "start": 0,
-                    "end": 7
                   }
                 ]
               }
@@ -730,7 +693,6 @@ export const conversation = {
               {
                 "id": "section-0002-line-0015-selector-0001",
                 "selectorType": "span",
-                "label": "「質問の聞く」のは",
                 "children": [
                   {
                     "id": "section-0002-line-0015-selector-0001-text",
@@ -741,8 +703,6 @@ export const conversation = {
                     },
                     "source": {
                       "type": "selector",
-                      "selectorId": "section-0002-line-0015-selector-0001",
-                      "sourceTextNodeId": "section-0002-line-0015",
                       "ranges": [
                         {
                           "start": 0,
@@ -760,21 +720,10 @@ export const conversation = {
                             "text": "聽一個問題是",
                             "languageId": "zh-Hant",
                             "formId": "surface"
-                          },
-                          "source": {
-                            "type": "transform",
-                            "transformId": "section-0002-line-0015-selector-0001-text-transform-0001",
-                            "sourceTextNodeId": "section-0002-line-0015-selector-0001-text"
                           }
                         }
                       }
                     ]
-                  }
-                ],
-                "selectedRanges": [
-                  {
-                    "start": 0,
-                    "end": 9
                   }
                 ]
               }
@@ -816,7 +765,6 @@ export const conversation = {
               {
                 "id": "section-0002-line-0016-selector-0001",
                 "selectorType": "span",
-                "label": "「音楽を聞く」のは",
                 "children": [
                   {
                     "id": "section-0002-line-0016-selector-0001-text",
@@ -827,8 +775,6 @@ export const conversation = {
                     },
                     "source": {
                       "type": "selector",
-                      "selectorId": "section-0002-line-0016-selector-0001",
-                      "sourceTextNodeId": "section-0002-line-0016",
                       "ranges": [
                         {
                           "start": 0,
@@ -846,21 +792,10 @@ export const conversation = {
                             "text": "聽音樂是",
                             "languageId": "zh-Hant",
                             "formId": "surface"
-                          },
-                          "source": {
-                            "type": "transform",
-                            "transformId": "section-0002-line-0016-selector-0001-text-transform-0001",
-                            "sourceTextNodeId": "section-0002-line-0016-selector-0001-text"
                           }
                         }
                       }
                     ]
-                  }
-                ],
-                "selectedRanges": [
-                  {
-                    "start": 0,
-                    "end": 9
                   }
                 ]
               }
@@ -1430,7 +1365,6 @@ export const conversation = {
               {
                 "id": "section-0002-line-0033-selector-0001",
                 "selectorType": "span",
-                "label": "目は",
                 "children": [
                   {
                     "id": "section-0002-line-0033-selector-0001-text",
@@ -1441,8 +1375,6 @@ export const conversation = {
                     },
                     "source": {
                       "type": "selector",
-                      "selectorId": "section-0002-line-0033-selector-0001",
-                      "sourceTextNodeId": "section-0002-line-0033",
                       "ranges": [
                         {
                           "start": 3,
@@ -1460,21 +1392,10 @@ export const conversation = {
                             "text": "眼睛是？",
                             "languageId": "zh-Hant",
                             "formId": "surface"
-                          },
-                          "source": {
-                            "type": "transform",
-                            "transformId": "section-0002-line-0033-selector-0001-text-transform-0001",
-                            "sourceTextNodeId": "section-0002-line-0033-selector-0001-text"
                           }
                         }
                       }
                     ]
-                  }
-                ],
-                "selectedRanges": [
-                  {
-                    "start": 3,
-                    "end": 5
                   }
                 ]
               }
@@ -1582,7 +1503,6 @@ export const conversation = {
               {
                 "id": "section-0002-line-0036-selector-0001",
                 "selectorType": "span",
-                "label": "はいはいはい",
                 "children": [
                   {
                     "id": "section-0002-line-0036-selector-0001-text",
@@ -1593,8 +1513,6 @@ export const conversation = {
                     },
                     "source": {
                       "type": "selector",
-                      "selectorId": "section-0002-line-0036-selector-0001",
-                      "sourceTextNodeId": "section-0002-line-0036",
                       "ranges": [
                         {
                           "start": 0,
@@ -1612,11 +1530,6 @@ export const conversation = {
                             "text": "對對對",
                             "languageId": "zh-Hant",
                             "formId": "surface"
-                          },
-                          "source": {
-                            "type": "transform",
-                            "transformId": "section-0002-line-0036-selector-0001-text-transform-0001",
-                            "sourceTextNodeId": "section-0002-line-0036-selector-0001-text"
                           }
                         }
                       },
@@ -1629,21 +1542,10 @@ export const conversation = {
                             "text": "yes yes yes",
                             "languageId": "en",
                             "formId": "surface"
-                          },
-                          "source": {
-                            "type": "transform",
-                            "transformId": "section-0002-line-0036-selector-0001-text-transform-0002",
-                            "sourceTextNodeId": "section-0002-line-0036-selector-0001-text"
                           }
                         }
                       }
                     ]
-                  }
-                ],
-                "selectedRanges": [
-                  {
-                    "start": 0,
-                    "end": 6
                   }
                 ]
               }
@@ -2180,7 +2082,6 @@ export const conversation = {
               {
                 "id": "section-0002-line-0052-selector-0001",
                 "selectorType": "span",
-                "label": "先週",
                 "children": [
                   {
                     "id": "section-0002-line-0052-selector-0001-text",
@@ -2191,8 +2092,6 @@ export const conversation = {
                     },
                     "source": {
                       "type": "selector",
-                      "selectorId": "section-0002-line-0052-selector-0001",
-                      "sourceTextNodeId": "section-0002-line-0052",
                       "ranges": [
                         {
                           "start": 3,
@@ -2210,11 +2109,6 @@ export const conversation = {
                             "text": "下週",
                             "languageId": "zh-Hant",
                             "formId": "surface"
-                          },
-                          "source": {
-                            "type": "transform",
-                            "transformId": "section-0002-line-0052-selector-0001-text-transform-0001",
-                            "sourceTextNodeId": "section-0002-line-0052-selector-0001-text"
                           }
                         }
                       },
@@ -2227,21 +2121,10 @@ export const conversation = {
                             "text": "last week",
                             "languageId": "en",
                             "formId": "surface"
-                          },
-                          "source": {
-                            "type": "transform",
-                            "transformId": "section-0002-line-0052-selector-0001-text-transform-0002",
-                            "sourceTextNodeId": "section-0002-line-0052-selector-0001-text"
                           }
                         }
                       }
                     ]
-                  }
-                ],
-                "selectedRanges": [
-                  {
-                    "start": 3,
-                    "end": 5
                   }
                 ]
               }
@@ -2316,7 +2199,6 @@ export const conversation = {
               {
                 "id": "section-0002-line-0054-selector-0001",
                 "selectorType": "span",
-                "label": "春休み",
                 "children": [
                   {
                     "id": "section-0002-line-0054-selector-0001-text",
@@ -2327,8 +2209,6 @@ export const conversation = {
                     },
                     "source": {
                       "type": "selector",
-                      "selectorId": "section-0002-line-0054-selector-0001",
-                      "sourceTextNodeId": "section-0002-line-0054",
                       "ranges": [
                         {
                           "start": 5,
@@ -2346,11 +2226,6 @@ export const conversation = {
                             "text": "春假",
                             "languageId": "zh-Hant",
                             "formId": "surface"
-                          },
-                          "source": {
-                            "type": "transform",
-                            "transformId": "section-0002-line-0054-selector-0001-text-transform-0001",
-                            "sourceTextNodeId": "section-0002-line-0054-selector-0001-text"
                           }
                         }
                       },
@@ -2363,21 +2238,10 @@ export const conversation = {
                             "text": "spring vacation",
                             "languageId": "en",
                             "formId": "surface"
-                          },
-                          "source": {
-                            "type": "transform",
-                            "transformId": "section-0002-line-0054-selector-0001-text-transform-0002",
-                            "sourceTextNodeId": "section-0002-line-0054-selector-0001-text"
                           }
                         }
                       }
                     ]
-                  }
-                ],
-                "selectedRanges": [
-                  {
-                    "start": 5,
-                    "end": 8
                   }
                 ]
               }
@@ -2551,7 +2415,6 @@ export const conversation = {
               {
                 "id": "section-0002-line-0059-selector-0001",
                 "selectorType": "span",
-                "label": "老人",
                 "children": [
                   {
                     "id": "section-0002-line-0059-selector-0001-text",
@@ -2562,8 +2425,6 @@ export const conversation = {
                     },
                     "source": {
                       "type": "selector",
-                      "selectorId": "section-0002-line-0059-selector-0001",
-                      "sourceTextNodeId": "section-0002-line-0059",
                       "ranges": [
                         {
                           "start": 0,
@@ -2581,11 +2442,6 @@ export const conversation = {
                             "text": "老人",
                             "languageId": "zh-Hant",
                             "formId": "surface"
-                          },
-                          "source": {
-                            "type": "transform",
-                            "transformId": "section-0002-line-0059-selector-0001-text-transform-0001",
-                            "sourceTextNodeId": "section-0002-line-0059-selector-0001-text"
                           }
                         }
                       },
@@ -2598,21 +2454,10 @@ export const conversation = {
                             "text": "elderly people",
                             "languageId": "en",
                             "formId": "surface"
-                          },
-                          "source": {
-                            "type": "transform",
-                            "transformId": "section-0002-line-0059-selector-0001-text-transform-0002",
-                            "sourceTextNodeId": "section-0002-line-0059-selector-0001-text"
                           }
                         }
                       }
                     ]
-                  }
-                ],
-                "selectedRanges": [
-                  {
-                    "start": 0,
-                    "end": 2
                   }
                 ]
               }
@@ -2654,7 +2499,6 @@ export const conversation = {
               {
                 "id": "section-0002-line-0060-selector-0001",
                 "selectorType": "span",
-                "label": "老人メガネ,じゃなくて",
                 "children": [
                   {
                     "id": "section-0002-line-0060-selector-0001-text",
@@ -2665,8 +2509,6 @@ export const conversation = {
                     },
                     "source": {
                       "type": "selector",
-                      "selectorId": "section-0002-line-0060-selector-0001",
-                      "sourceTextNodeId": "section-0002-line-0060",
                       "ranges": [
                         {
                           "start": 0,
@@ -2684,11 +2526,6 @@ export const conversation = {
                             "text": "老人眼鏡...不是！",
                             "languageId": "zh-Hant",
                             "formId": "surface"
-                          },
-                          "source": {
-                            "type": "transform",
-                            "transformId": "section-0002-line-0060-selector-0001-text-transform-0001",
-                            "sourceTextNodeId": "section-0002-line-0060-selector-0001-text"
                           }
                         }
                       },
@@ -2701,21 +2538,10 @@ export const conversation = {
                             "text": "old people glasses...that's not right...",
                             "languageId": "en",
                             "formId": "surface"
-                          },
-                          "source": {
-                            "type": "transform",
-                            "transformId": "section-0002-line-0060-selector-0001-text-transform-0002",
-                            "sourceTextNodeId": "section-0002-line-0060-selector-0001-text"
                           }
                         }
                       }
                     ]
-                  }
-                ],
-                "selectedRanges": [
-                  {
-                    "start": 0,
-                    "end": 11
                   }
                 ]
               }
@@ -2856,7 +2682,6 @@ export const conversation = {
               {
                 "id": "section-0002-line-0064-selector-0001",
                 "selectorType": "span",
-                "label": "ちょっと待って",
                 "children": [
                   {
                     "id": "section-0002-line-0064-selector-0001-text",
@@ -2867,8 +2692,6 @@ export const conversation = {
                     },
                     "source": {
                       "type": "selector",
-                      "selectorId": "section-0002-line-0064-selector-0001",
-                      "sourceTextNodeId": "section-0002-line-0064",
                       "ranges": [
                         {
                           "start": 0,
@@ -2886,11 +2709,6 @@ export const conversation = {
                             "text": "等一下",
                             "languageId": "zh-Hant",
                             "formId": "surface"
-                          },
-                          "source": {
-                            "type": "transform",
-                            "transformId": "section-0002-line-0064-selector-0001-text-transform-0001",
-                            "sourceTextNodeId": "section-0002-line-0064-selector-0001-text"
                           }
                         }
                       },
@@ -2903,21 +2721,10 @@ export const conversation = {
                             "text": "just a minute",
                             "languageId": "en",
                             "formId": "surface"
-                          },
-                          "source": {
-                            "type": "transform",
-                            "transformId": "section-0002-line-0064-selector-0001-text-transform-0002",
-                            "sourceTextNodeId": "section-0002-line-0064-selector-0001-text"
                           }
                         }
                       }
                     ]
-                  }
-                ],
-                "selectedRanges": [
-                  {
-                    "start": 0,
-                    "end": 7
                   }
                 ]
               }
@@ -2959,7 +2766,6 @@ export const conversation = {
               {
                 "id": "section-0002-line-0065-selector-0001",
                 "selectorType": "span",
-                "label": "「何というの」は",
                 "children": [
                   {
                     "id": "section-0002-line-0065-selector-0001-text",
@@ -2970,8 +2776,6 @@ export const conversation = {
                     },
                     "source": {
                       "type": "selector",
-                      "selectorId": "section-0002-line-0065-selector-0001",
-                      "sourceTextNodeId": "section-0002-line-0065",
                       "ranges": [
                         {
                           "start": 0,
@@ -2989,11 +2793,6 @@ export const conversation = {
                             "text": "「怎嗎說」是",
                             "languageId": "zh-Hant",
                             "formId": "surface"
-                          },
-                          "source": {
-                            "type": "transform",
-                            "transformId": "section-0002-line-0065-selector-0001-text-transform-0001",
-                            "sourceTextNodeId": "section-0002-line-0065-selector-0001-text"
                           }
                         }
                       },
@@ -3006,21 +2805,10 @@ export const conversation = {
                             "text": "\"How do you say\" is",
                             "languageId": "en",
                             "formId": "surface"
-                          },
-                          "source": {
-                            "type": "transform",
-                            "transformId": "section-0002-line-0065-selector-0001-text-transform-0002",
-                            "sourceTextNodeId": "section-0002-line-0065-selector-0001-text"
                           }
                         }
                       }
                     ]
-                  }
-                ],
-                "selectedRanges": [
-                  {
-                    "start": 0,
-                    "end": 8
                   }
                 ]
               }
@@ -3068,11 +2856,6 @@ export const conversation = {
                     "text": "不是「什麼說」，是「什麼說」對不對？",
                     "languageId": "zh-Hant",
                     "formId": "surface"
-                  },
-                  "source": {
-                    "type": "transform",
-                    "transformId": "section-0002-line-0066-transform-0001",
-                    "sourceTextNodeId": "section-0002-line-0066"
                   }
                 }
               },
@@ -3085,11 +2868,6 @@ export const conversation = {
                     "text": "it's not “什麼說” it's \"怎麼說\", correct?",
                     "languageId": "en",
                     "formId": "surface"
-                  },
-                  "source": {
-                    "type": "transform",
-                    "transformId": "section-0002-line-0066-transform-0002",
-                    "sourceTextNodeId": "section-0002-line-0066"
                   }
                 }
               }
@@ -3164,7 +2942,6 @@ export const conversation = {
               {
                 "id": "section-0002-line-0068-selector-0001",
                 "selectorType": "span",
-                "label": "老眼メガネ",
                 "children": [
                   {
                     "id": "section-0002-line-0068-selector-0001-text",
@@ -3175,8 +2952,6 @@ export const conversation = {
                     },
                     "source": {
                       "type": "selector",
-                      "selectorId": "section-0002-line-0068-selector-0001",
-                      "sourceTextNodeId": "section-0002-line-0068",
                       "ranges": [
                         {
                           "start": 5,
@@ -3194,11 +2969,6 @@ export const conversation = {
                             "text": "老花眼鏡",
                             "languageId": "zh-Hant",
                             "formId": "surface"
-                          },
-                          "source": {
-                            "type": "transform",
-                            "transformId": "section-0002-line-0068-selector-0001-text-transform-0001",
-                            "sourceTextNodeId": "section-0002-line-0068-selector-0001-text"
                           }
                         }
                       },
@@ -3211,21 +2981,10 @@ export const conversation = {
                             "text": "reading glasses",
                             "languageId": "en",
                             "formId": "surface"
-                          },
-                          "source": {
-                            "type": "transform",
-                            "transformId": "section-0002-line-0068-selector-0001-text-transform-0002",
-                            "sourceTextNodeId": "section-0002-line-0068-selector-0001-text"
                           }
                         }
                       }
                     ]
-                  }
-                ],
-                "selectedRanges": [
-                  {
-                    "start": 5,
-                    "end": 10
                   }
                 ]
               }
@@ -3399,7 +3158,6 @@ export const conversation = {
               {
                 "id": "section-0002-line-0073-selector-0001",
                 "selectorType": "span",
-                "label": "老眼",
                 "children": [
                   {
                     "id": "section-0002-line-0073-selector-0001-text",
@@ -3410,8 +3168,6 @@ export const conversation = {
                     },
                     "source": {
                       "type": "selector",
-                      "selectorId": "section-0002-line-0073-selector-0001",
-                      "sourceTextNodeId": "section-0002-line-0073",
                       "ranges": [
                         {
                           "start": 1,
@@ -3429,11 +3185,6 @@ export const conversation = {
                             "text": "老花",
                             "languageId": "zh-Hant",
                             "formId": "surface"
-                          },
-                          "source": {
-                            "type": "transform",
-                            "transformId": "section-0002-line-0073-selector-0001-text-transform-0001",
-                            "sourceTextNodeId": "section-0002-line-0073-selector-0001-text"
                           }
                         }
                       },
@@ -3446,21 +3197,10 @@ export const conversation = {
                             "text": "age-related presbyopia",
                             "languageId": "en",
                             "formId": "surface"
-                          },
-                          "source": {
-                            "type": "transform",
-                            "transformId": "section-0002-line-0073-selector-0001-text-transform-0002",
-                            "sourceTextNodeId": "section-0002-line-0073-selector-0001-text"
                           }
                         }
                       }
                     ]
-                  }
-                ],
-                "selectedRanges": [
-                  {
-                    "start": 1,
-                    "end": 3
                   }
                 ]
               }
@@ -3964,7 +3704,6 @@ export const conversation = {
               {
                 "id": "section-0002-line-0088-selector-0001",
                 "selectorType": "span",
-                "label": "老眼メガネ",
                 "children": [
                   {
                     "id": "section-0002-line-0088-selector-0001-text",
@@ -3975,8 +3714,6 @@ export const conversation = {
                     },
                     "source": {
                       "type": "selector",
-                      "selectorId": "section-0002-line-0088-selector-0001",
-                      "sourceTextNodeId": "section-0002-line-0088",
                       "ranges": [
                         {
                           "start": 0,
@@ -3994,11 +3731,6 @@ export const conversation = {
                             "text": "老花眼鏡",
                             "languageId": "zh-Hant",
                             "formId": "surface"
-                          },
-                          "source": {
-                            "type": "transform",
-                            "transformId": "section-0002-line-0088-selector-0001-text-transform-0001",
-                            "sourceTextNodeId": "section-0002-line-0088-selector-0001-text"
                           }
                         }
                       },
@@ -4011,21 +3743,10 @@ export const conversation = {
                             "text": "reading glasses",
                             "languageId": "en",
                             "formId": "surface"
-                          },
-                          "source": {
-                            "type": "transform",
-                            "transformId": "section-0002-line-0088-selector-0001-text-transform-0002",
-                            "sourceTextNodeId": "section-0002-line-0088-selector-0001-text"
                           }
                         }
                       }
                     ]
-                  }
-                ],
-                "selectedRanges": [
-                  {
-                    "start": 0,
-                    "end": 5
                   }
                 ]
               }
@@ -4238,11 +3959,6 @@ export const conversation = {
                     "text": "感覺，啊，不是感覺，習慣了",
                     "languageId": "zh-Hant",
                     "formId": "surface"
-                  },
-                  "source": {
-                    "type": "transform",
-                    "transformId": "section-0002-line-0094-transform-0001",
-                    "sourceTextNodeId": "section-0002-line-0094"
                   }
                 }
               },
@@ -4255,11 +3971,6 @@ export const conversation = {
                     "text": "感覺, ah wait, not 感覺, I got used to",
                     "languageId": "en",
                     "formId": "surface"
-                  },
-                  "source": {
-                    "type": "transform",
-                    "transformId": "section-0002-line-0094-transform-0002",
-                    "sourceTextNodeId": "section-0002-line-0094"
                   }
                 }
               }
@@ -4604,11 +4315,6 @@ export const conversation = {
                     "text": "學期",
                     "languageId": "zh-Hant",
                     "formId": "surface"
-                  },
-                  "source": {
-                    "type": "transform",
-                    "transformId": "section-0002-line-0104-transform-0001",
-                    "sourceTextNodeId": "section-0002-line-0104"
                   }
                 }
               },
@@ -4621,11 +4327,6 @@ export const conversation = {
                     "text": "school year",
                     "languageId": "en",
                     "formId": "surface"
-                  },
-                  "source": {
-                    "type": "transform",
-                    "transformId": "section-0002-line-0104-transform-0002",
-                    "sourceTextNodeId": "section-0002-line-0104"
                   }
                 }
               }
@@ -4871,11 +4572,6 @@ export const conversation = {
                     "text": "經過和經過,我都把鏡頭）\n老花眼鏡一直戴上拿下、戴上拿下、戴上拿下，來來回回",
                     "languageId": "zh-Hant",
                     "formId": "surface"
-                  },
-                  "source": {
-                    "type": "transform",
-                    "transformId": "section-0002-line-0111-transform-0001",
-                    "sourceTextNodeId": "section-0002-line-0111"
                   }
                 }
               },
@@ -4888,11 +4584,6 @@ export const conversation = {
                     "text": "I kept having to put my reading glasses on, then take them off, then put them on again, then take them off again",
                     "languageId": "en",
                     "formId": "surface"
-                  },
-                  "source": {
-                    "type": "transform",
-                    "transformId": "section-0002-line-0111-transform-0002",
-                    "sourceTextNodeId": "section-0002-line-0111"
                   }
                 }
               }
@@ -4940,11 +4631,6 @@ export const conversation = {
                     "text": "看學生的時候，老花眼鏡戴太遠就看不清楚，但看電腦或筆記本的時候又非戴不可，一天得戴上拿下一百次！",
                     "languageId": "zh-Hant",
                     "formId": "surface"
-                  },
-                  "source": {
-                    "type": "transform",
-                    "transformId": "section-0002-line-0112-transform-0001",
-                    "sourceTextNodeId": "section-0002-line-0112"
                   }
                 }
               },
@@ -4957,11 +4643,6 @@ export const conversation = {
                     "text": "everytime I wanted to be able to see far away, to see the students, I had to take them off, but every time I wanted to look at my computer or my notes, I had to put them on.",
                     "languageId": "en",
                     "formId": "surface"
-                  },
-                  "source": {
-                    "type": "transform",
-                    "transformId": "section-0002-line-0112-transform-0002",
-                    "sourceTextNodeId": "section-0002-line-0112"
                   }
                 }
               }
@@ -5333,7 +5014,6 @@ export const conversation = {
               {
                 "id": "section-0002-line-0123-selector-0001",
                 "selectorType": "span",
-                "label": "すぐ",
                 "children": [
                   {
                     "id": "section-0002-line-0123-selector-0001-text",
@@ -5344,8 +5024,6 @@ export const conversation = {
                     },
                     "source": {
                       "type": "selector",
-                      "selectorId": "section-0002-line-0123-selector-0001",
-                      "sourceTextNodeId": "section-0002-line-0123",
                       "ranges": [
                         {
                           "start": 0,
@@ -5363,11 +5041,6 @@ export const conversation = {
                             "text": "馬上",
                             "languageId": "zh-Hant",
                             "formId": "surface"
-                          },
-                          "source": {
-                            "type": "transform",
-                            "transformId": "section-0002-line-0123-selector-0001-text-transform-0001",
-                            "sourceTextNodeId": "section-0002-line-0123-selector-0001-text"
                           }
                         }
                       },
@@ -5380,21 +5053,10 @@ export const conversation = {
                             "text": "straight away",
                             "languageId": "en",
                             "formId": "surface"
-                          },
-                          "source": {
-                            "type": "transform",
-                            "transformId": "section-0002-line-0123-selector-0001-text-transform-0002",
-                            "sourceTextNodeId": "section-0002-line-0123-selector-0001-text"
                           }
                         }
                       }
                     ]
-                  }
-                ],
-                "selectedRanges": [
-                  {
-                    "start": 0,
-                    "end": 2
                   }
                 ]
               }
@@ -5436,7 +5098,6 @@ export const conversation = {
               {
                 "id": "section-0002-line-0124-selector-0001",
                 "selectorType": "span",
-                "label": "すぐ",
                 "children": [
                   {
                     "id": "section-0002-line-0124-selector-0001-text",
@@ -5447,8 +5108,6 @@ export const conversation = {
                     },
                     "source": {
                       "type": "selector",
-                      "selectorId": "section-0002-line-0124-selector-0001",
-                      "sourceTextNodeId": "section-0002-line-0124",
                       "ranges": [
                         {
                           "start": 1,
@@ -5466,11 +5125,6 @@ export const conversation = {
                             "text": "馬上",
                             "languageId": "zh-Hant",
                             "formId": "surface"
-                          },
-                          "source": {
-                            "type": "transform",
-                            "transformId": "section-0002-line-0124-selector-0001-text-transform-0001",
-                            "sourceTextNodeId": "section-0002-line-0124-selector-0001-text"
                           }
                         }
                       },
@@ -5483,21 +5137,10 @@ export const conversation = {
                             "text": "straight away",
                             "languageId": "en",
                             "formId": "surface"
-                          },
-                          "source": {
-                            "type": "transform",
-                            "transformId": "section-0002-line-0124-selector-0001-text-transform-0002",
-                            "sourceTextNodeId": "section-0002-line-0124-selector-0001-text"
                           }
                         }
                       }
                     ]
-                  }
-                ],
-                "selectedRanges": [
-                  {
-                    "start": 1,
-                    "end": 3
                   }
                 ]
               }

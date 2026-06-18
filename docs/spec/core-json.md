@@ -104,7 +104,6 @@ type SelectorNode = {
   id: Id;
   selectorType: "span" | "decomposition" | "morphology" | "syntax" | string;
   label?: string;
-  selectedRanges?: TextRange[];
   children: TextNode[];
   refs?: SelectorRef[];
 };
@@ -115,7 +114,7 @@ type TextRange = {
 };
 ```
 
-A `SelectorNode` maps a `TextNode` to resolved ranges and optional child `TextNode`s. Core JSON stores index ranges only. Text-match selectors, occurrence selectors, and other parser-specific selector expressions belong outside Core JSON.
+A `SelectorNode` maps a `TextNode` to optional child `TextNode`s. Selector-created children store resolved index ranges in `child.source.ranges`; the selector itself does not duplicate those ranges. Text-match selectors, occurrence selectors, and other parser-specific selector expressions belong outside Core JSON.
 
 ## Refs
 

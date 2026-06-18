@@ -70,11 +70,6 @@ export const sampleDocument = {
                     languageId: "zh-Hant",
                     formId: "surface",
                   },
-                  source: {
-                    type: "transform",
-                    transformId: "line-1-traditional",
-                    sourceTextNodeId: "line-1",
-                  },
                 },
               },
               {
@@ -87,11 +82,6 @@ export const sampleDocument = {
                     languageId: "en",
                     formId: "surface",
                   },
-                  source: {
-                    type: "transform",
-                    transformId: "line-1-en",
-                    sourceTextNodeId: "line-1",
-                  },
                 },
               },
             ],
@@ -99,8 +89,6 @@ export const sampleDocument = {
               {
                 id: "line-1-nihao",
                 selectorType: "span",
-                label: "你好",
-                selectedRanges: [{ start: 0, end: 2 }],
                 children: [
                   {
                     id: "line-1-nihao-text",
@@ -111,8 +99,6 @@ export const sampleDocument = {
                     },
                     source: {
                       type: "selector",
-                      selectorId: "line-1-nihao",
-                      sourceTextNodeId: "line-1",
                       ranges: [{ start: 0, end: 2 }],
                     },
                     transforms: [
@@ -125,11 +111,6 @@ export const sampleDocument = {
                             text: "nǐ hǎo",
                             languageId: "zh-Hans",
                             formId: "pinyin",
-                          },
-                          source: {
-                            type: "transform",
-                            transformId: "line-1-nihao-pinyin",
-                            sourceTextNodeId: "line-1-nihao-text",
                           },
                         },
                       },
