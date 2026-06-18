@@ -127,7 +127,7 @@ resources:
         -> lang:ja
           破れてしまっているよ
         -> form:phoneme
-          jaritooteesaa
+          jaritooteesa
             -> jarit|oot|ee|sa
               @"jarit"
                 +tag 音便語幹:
