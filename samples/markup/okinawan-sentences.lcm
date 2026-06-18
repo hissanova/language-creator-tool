@@ -1,0 +1,147 @@
+---
+specVersion: 0.4-alpha
+title: 沖縄語文法用例集
+documentType: text
+defaultLanguageId: uch
+defaultFormId: surface
+
+languages:
+  - id: ja
+    label: 日本語
+  - id: en
+    label: English
+
+forms:
+  - id: surface
+    label: Surface
+  - id: kana
+    label: かな
+  - id: phoneme
+    label: 音素
+  - id: ipa
+    label: IPA
+
+speakers: null
+
+resources:
+  - id: uch-local
+    type: external
+    resourceType: dictionary
+    title: 沖縄語辞典
+    uri: /dictionaries/uch.json
+---
+
+# トーン形の例
+## 旧記法
+>: 雨ぬ降とーん。
+  @line
+    +translation ja:
+      雨が降っている。
+    @transform kana:
+      あみぬふとーん。
+      @"あみ"
+        @transform phoneme:
+          ami
+        @translation:
+          ja: 雨
+          en: rain
+      @"ふとーん"
+        @translation:
+          ja: 降っている
+          en: is raining
+        @transform phoneme:
+          hutooN
+          @decompose
+            hut|ooN
+            @"hut"
+              +tag 音便語幹:
+            @"ooN"
+              +tag 
+                - ooN接尾
+                - aspect:continuous
+
+## 新記法
+>: 雨ぬ降とーん。
+  -> lang:ja
+      雨が降っている。
+  @"雨"
+    -> form:kana
+      あみ
+  @"降"
+    -> form:kana
+      ふ
+
+  -> form:kana
+      あみぬふとーん。
+      @"あみ"
+      -> form:phoneme
+          ami
+      -> lang:
+          ja 雨
+          en rain
+      @"ふとーん"
+      -> lang:
+          ja "降っている"
+          en "is raining"
+      -> form:phoneme
+          "hutooN"
+          -> decomp:"hut"|"ooN"
+            @"hut"
+              +tag 音便語幹:
+            @"ooN"
+              +tag 
+                - ooN接尾
+                - aspect:continuous
+
+# テーン形の例
+
+>: あき あき、何が。くぬ着物破りとーてーさ。
+  -> lang:ja
+    あれ、あれ、どうしたんだ。この着物は破れていたんだ。
+  @"何"
+    -> form:kana
+      ぬー
+  @"着物"
+    -> form:kana
+      ちのー
+  @"破"
+    -> form:kana
+      や
+  -> form:kana
+    あき あき、ぬーが。くぬちのーやりとーてーさ。
+      @"ちのー"
+        -> forms:
+          phoneme: ciNoo
+          lemma: ちん や
+        -> decomp:
+          ciN|oo
+          @"ciN"
+            -> translations:
+              ja: 着物
+          @"oo"
+            -> forms:
+              lemma: や
+            +note:
+              助詞「や」。/N/ に接続する形。        
+      @"やりとーてーさ"
+        -> lang:ja
+          破れてしまっているよ
+        -> form:phoneme
+          jaritooteesaa
+            -> jarit|oot|ee|sa
+              @"jarit"
+                +tag 音便語幹:
+              @"oot"
+                +tag 
+                  - ooN形
+                  - aspect:resultative
+                  - tense:past
+              @"ee"
+                +tag
+                  - eeN形
+                  - mode:recognition
+              @"sa"
+                +tag 
+                  - surprise
+
+  
