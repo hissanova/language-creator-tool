@@ -1,12 +1,17 @@
-export type TagDisplayStyle = {
+export type TagTextDisplayStyle = {
   label?: string;
   className?: string;
   style?: {
+    fontStyle?: "normal" | "italic";
+    fontWeight?: "normal" | "bold" | number;
+    textDecoration?: string;
     color?: string;
     backgroundColor?: string;
     borderColor?: string;
   };
 };
+
+export type TagDisplayStyle = TagTextDisplayStyle;
 
 export type SpeakerDisplayStyle = {
   nameColor?: string;
@@ -17,7 +22,7 @@ export type SpeakerDisplayStyle = {
 };
 
 export type ViewerStyle = {
-  tags?: Record<string, TagDisplayStyle>;
+  tags?: Record<string, TagTextDisplayStyle>;
   speakers?: Record<string, SpeakerDisplayStyle>;
   layout: {
     main: string;
@@ -50,6 +55,8 @@ export type ViewerStyle = {
     annotationWithoutPopup: string;
     translation: string;
     form: string;
+    languageSwitch: string;
+    languageBadge: string;
     targetBlock: string;
     annotationBox: string;
     annotationTitle: string;

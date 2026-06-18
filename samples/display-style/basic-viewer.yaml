@@ -1,5 +1,26 @@
 viewer: basic
 
+tags:
+  grammar:
+    style:
+      fontStyle: "italic"
+  important:
+    style:
+      backgroundColor: "#fff3a3"
+  newWord:
+    style:
+      fontWeight: "bold"
+  properNoun:
+    style:
+      color: "#2563eb"
+  emphasis:
+    style:
+      textDecoration: "underline"
+
+speakers:
+  simon:
+    nameColor: "#2563eb"
+
 annotationDisplay:
   order:
     - translation

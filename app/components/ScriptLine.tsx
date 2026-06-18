@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import type {
   DictionaryBody,
+  Language,
   Resource,
   SelectorNode,
   Speaker,
@@ -9,7 +10,7 @@ import type {
   TimeSpan,
   Transform,
 } from "../types/lcm";
-import type { ViewerStyle } from "../types/viewerStyle";
+import type { TagTextDisplayStyle, ViewerStyle } from "../types/viewerStyle";
 import { HoverWord } from "./HoverWord";
 
 type SpeakerRef = TextNodeRef & {
@@ -36,6 +37,8 @@ type Props = {
   textNode: TextNode;
   speakers: Speaker[];
   resources?: Resource[];
+  defaultLanguageId?: string;
+  languages?: Language[];
   formId: string;
   translationLanguageId: string;
   style: ViewerStyle;
@@ -83,6 +86,28 @@ function tagInlineStyle(tag: string, style: ViewerStyle): CSSProperties | undefi
   };
 }
 
+function mergeTagTextDisplayStyles(tags: string[], style: ViewerStyle) {
+  const configuredStyles = tags
+    .map((tag) => tagDisplayStyle(tag, style))
+    .filter((tagStyle): tagStyle is TagTextDisplayStyle => Boolean(tagStyle));
+  const className = configuredStyles
+    .map((configuredStyle) => configuredStyle.className)
+    .filter(Boolean)
+    .join(" ");
+  const inlineStyle = configuredStyles.reduce<CSSProperties>(
+    (mergedStyle, configuredStyle) => ({
+      ...mergedStyle,
+      ...configuredStyle.style,
+    }),
+    {}
+  );
+
+  return {
+    className: className || undefined,
+    style: Object.keys(inlineStyle).length ? inlineStyle : undefined,
+  };
+}
+
 function TagChip({ tag, style }: { tag: string; style: ViewerStyle }) {
   const configuredStyle = tagDisplayStyle(tag, style);
   const className =
@@ -101,6 +126,33 @@ function TagChip({ tag, style }: { tag: string; style: ViewerStyle }) {
 
 function collectTextNodeTags(textNode: TextNode) {
   return textNode.refs?.filter(isTagTextNodeRef).flatMap((refValue) => refValue.body.tags) ?? [];
+}
+
+function collectSelectorTags(selector: SelectorNode) {
+  return selector.refs?.filter(isTagSelectorRef).flatMap((refValue) => refValue.body.tags) ?? [];
+}
+
+function isNonDefaultLanguage(languageId: string | undefined, defaultLanguageId: string | undefined) {
+  return Boolean(languageId && defaultLanguageId && languageId !== defaultLanguageId);
+}
+
+function languageLabel(languageId: string, languages: Language[] | undefined) {
+  return languages?.find((language) => language.id === languageId)?.label ?? languageId;
+}
+
+function selectorLanguageIds(selector: SelectorNode, defaultLanguageId: string | undefined) {
+  return Array.from(
+    new Set(
+      selector.children
+        .map((child) => child.content.languageId)
+        .filter((languageId) => isNonDefaultLanguage(languageId, defaultLanguageId))
+    )
+  );
+}
+
+function languageTitle(languageIds: string[], languages: Language[] | undefined) {
+  if (!languageIds.length) return undefined;
+  return `Language: ${languageIds.map((languageId) => languageLabel(languageId, languages)).join(", ")}`;
 }
 
 function getText(value: { text: string } | string | undefined): string | undefined {
@@ -214,12 +266,16 @@ function renderAnnotatedText({
   selectors,
   formId,
   translationLanguageId,
+  defaultLanguageId,
+  languages,
   style,
 }: {
   text: string;
   selectors: SelectorNode[];
   formId: string;
   translationLanguageId: string;
+  defaultLanguageId?: string;
+  languages?: Language[];
   style: ViewerStyle;
 }) {
   const selected = selectors
@@ -242,7 +298,13 @@ function renderAnnotatedText({
     const selectedText = text.slice(range.start, range.end);
     const form = getSelectorForm(selector, formId);
     const title = selectorTitle(selector, translationLanguageId);
-    const hasTitle = Boolean(title);
+    const selectorLanguages = selectorLanguageIds(selector, defaultLanguageId);
+    const languageHint = languageTitle(selectorLanguages, languages);
+    const combinedTitle = [title, languageHint].filter(Boolean).join("\n") || undefined;
+    const hasTitle = Boolean(combinedTitle);
+    const selectorTagStyle = mergeTagTextDisplayStyles(collectSelectorTags(selector), style);
+    const annotationClassName = hasTitle ? style.text.annotated : style.text.annotationWithoutPopup;
+    const languageClassName = selectorLanguages.length ? style.text.languageSwitch : undefined;
 
     const hoverText = form ? (
       <ruby>
@@ -257,8 +319,11 @@ function renderAnnotatedText({
       <HoverWord
         key={`${selector.id}-${range.start}-${range.end}`}
         text={hoverText}
-        title={title}
-        className={hasTitle ? style.text.annotated : style.text.annotationWithoutPopup}
+        title={combinedTitle}
+        className={[annotationClassName, languageClassName, selectorTagStyle.className]
+          .filter(Boolean)
+          .join(" ")}
+        style={selectorTagStyle.style}
       />
     );
 
@@ -529,15 +594,20 @@ function transformLabel(transformValue: Transform) {
 function LearnerSelectorView({
   selector,
   style,
+  defaultLanguageId,
+  languages,
 }: {
   selector: SelectorNode;
   style: ViewerStyle;
+  defaultLanguageId?: string;
+  languages?: Language[];
 }) {
   const tags =
     selector.refs
       ?.filter(isTagSelectorRef)
       .flatMap((refValue) => refValue.body.tags) ?? [];
   const childTransforms = selector.children.flatMap((child) => child.transforms ?? []);
+  const selectorLanguages = selectorLanguageIds(selector, defaultLanguageId);
 
   if (!tags.length && !childTransforms.length && !selector.children.length) return null;
 
@@ -545,6 +615,11 @@ function LearnerSelectorView({
     <div className="rounded border border-gray-200 bg-white p-3 text-gray-950 shadow-sm">
       <div className="mb-2 font-semibold text-gray-950">
         {selector.label ?? selector.children[0]?.content.text ?? selector.selectorType}
+        {selectorLanguages.map((languageId) => (
+          <span key={languageId} className={style.text.languageBadge}>
+            {languageLabel(languageId, languages)}
+          </span>
+        ))}
       </div>
 
       {tags.length ? (
@@ -575,7 +650,13 @@ function LearnerSelectorView({
         <div className="mt-2 space-y-2 border-l border-gray-200 pl-3">
           {selector.children.flatMap((child) =>
             (child.selectors ?? []).map((childSelector) => (
-              <LearnerSelectorView key={childSelector.id} selector={childSelector} style={style} />
+              <LearnerSelectorView
+                key={childSelector.id}
+                selector={childSelector}
+                style={style}
+                defaultLanguageId={defaultLanguageId}
+                languages={languages}
+              />
             ))
           )}
         </div>
@@ -630,6 +711,8 @@ export function ScriptLine({
   textNode,
   speakers,
   resources = [],
+  defaultLanguageId,
+  languages,
   formId,
   translationLanguageId,
   style,
@@ -649,9 +732,14 @@ export function ScriptLine({
     : undefined;
   const displayText = getDisplayTransform(textNode, formId)?.output ?? textNode;
   const text = displayText.content.text;
+  const isLineNonDefaultLanguage = isNonDefaultLanguage(displayText.content.languageId, defaultLanguageId);
+  const lineLanguageLabel = isLineNonDefaultLanguage
+    ? languageLabel(displayText.content.languageId, languages)
+    : undefined;
   const translation = getTranslation(textNode, translationLanguageId);
   const alignment = getAlignmentRef(textNode.refs)?.body.interval;
   const textNodeTags = collectTextNodeTags(textNode);
+  const tagTextStyle = mergeTagTextDisplayStyles(textNodeTags, style);
   const resourceRefs =
     textNode.refs
       ?.filter(isResourceListRef)
@@ -692,13 +780,25 @@ export function ScriptLine({
             {speaker.name}:{" "}
           </span>
         )}
-        {renderAnnotatedText({
-          text,
-          selectors: displayText.selectors ?? [],
-          formId,
-          translationLanguageId,
-          style,
-        })}
+        {lineLanguageLabel && (
+          <span className={style.text.languageBadge}>{lineLanguageLabel}</span>
+        )}
+        <span
+          className={[isLineNonDefaultLanguage ? style.text.languageSwitch : undefined, tagTextStyle.className]
+            .filter(Boolean)
+            .join(" ")}
+          style={tagTextStyle.style}
+        >
+          {renderAnnotatedText({
+            text,
+            selectors: displayText.selectors ?? [],
+            formId,
+            translationLanguageId,
+            defaultLanguageId,
+            languages,
+            style,
+          })}
+        </span>
       </p>
 
       {translation && <p className={style.text.translation}>{translation}</p>}
@@ -735,7 +835,13 @@ export function ScriptLine({
                   style={style}
                 />
               ) : (
-                <LearnerSelectorView key={selector.id} selector={selector} style={style} />
+                <LearnerSelectorView
+                  key={selector.id}
+                  selector={selector}
+                  style={style}
+                  defaultLanguageId={defaultLanguageId}
+                  languages={languages}
+                />
               )
             ))}
           </div>

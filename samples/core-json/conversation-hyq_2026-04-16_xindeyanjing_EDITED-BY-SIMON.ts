@@ -514,7 +514,7 @@ export const conversation = {
             "id": "section-0002-line-0012",
             "content": {
               "text": "問と....",
-              "languageId": "zh-Hant",
+              "languageId": "ja",
               "formId": "surface"
             },
             "refs": [
@@ -547,7 +547,7 @@ export const conversation = {
             "id": "section-0002-line-0013",
             "content": {
               "text": "日本人の皆さん！",
-              "languageId": "zh-Hant",
+              "languageId": "ja",
               "formId": "surface"
             },
             "refs": [
@@ -581,7 +581,7 @@ export const conversation = {
                     "id": "section-0002-line-0013-selector-0001-text",
                     "content": {
                       "text": "日本人の皆さん",
-                      "languageId": "zh-Hant",
+                      "languageId": "ja",
                       "formId": "surface"
                     },
                     "source": {
@@ -664,7 +664,7 @@ export const conversation = {
             "id": "section-0002-line-0015",
             "content": {
               "text": "「質問の聞く」のは「問」。",
-              "languageId": "zh-Hant",
+              "languageId": "ja",
               "formId": "surface"
             },
             "refs": [
@@ -698,7 +698,7 @@ export const conversation = {
                     "id": "section-0002-line-0015-selector-0001-text",
                     "content": {
                       "text": "「質問の聞く」のは",
-                      "languageId": "zh-Hant",
+                      "languageId": "ja",
                       "formId": "surface"
                     },
                     "source": {
@@ -736,7 +736,7 @@ export const conversation = {
             "id": "section-0002-line-0016",
             "content": {
               "text": "「音楽を聞く」のは「聽」。",
-              "languageId": "zh-Hant",
+              "languageId": "ja",
               "formId": "surface"
             },
             "refs": [
@@ -770,7 +770,7 @@ export const conversation = {
                     "id": "section-0002-line-0016-selector-0001-text",
                     "content": {
                       "text": "「音楽を聞く」のは",
-                      "languageId": "zh-Hant",
+                      "languageId": "ja",
                       "formId": "surface"
                     },
                     "source": {

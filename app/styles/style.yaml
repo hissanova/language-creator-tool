@@ -2,9 +2,25 @@ tags:
   grammar:
     label: "Grammar"
     style:
+      fontStyle: "italic"
       color: "#1e3a8a"
-      backgroundColor: "#dbeafe"
       borderColor: "#93c5fd"
+  important:
+    label: "Important"
+    style:
+      backgroundColor: "#fff3a3"
+  newWord:
+    label: "New word"
+    style:
+      fontWeight: "bold"
+  properNoun:
+    label: "Proper noun"
+    style:
+      color: "#2563eb"
+  emphasis:
+    label: "Emphasis"
+    style:
+      textDecoration: "underline"
   unnatural:
     label: "Unnatural"
     style:
@@ -60,6 +76,8 @@ text:
   annotationWithoutPopup: "px-0.5"
   translation: "mt-3 text-sm text-gray-600"
   form: "mt-2 text-sm text-gray-500"
+  languageSwitch: "rounded bg-amber-50 px-1 text-amber-950 ring-1 ring-amber-200"
+  languageBadge: "ml-2 mr-2 inline-flex items-center rounded border border-amber-300 bg-amber-50 px-1.5 py-0.5 align-middle text-xs font-semibold text-amber-900"
   targetBlock: "mt-3 border-l-4 border-gray-200 pl-3"
   annotationBox: "mt-2 rounded bg-white/90 p-2 text-sm text-gray-950"
   annotationTitle: "font-semibold text-gray-900"

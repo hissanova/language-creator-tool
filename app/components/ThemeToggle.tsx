@@ -6,34 +6,40 @@ type Theme = "system" | "light" | "dark";
 
 const STORAGE_KEY = "lct:theme";
 
+function isTheme(value: string | null): value is Theme {
+  return value === "system" || value === "light" || value === "dark";
+}
+
+function readStoredTheme(): Theme {
+  if (typeof window === "undefined") return "system";
+  const stored = localStorage.getItem(STORAGE_KEY);
+  return isTheme(stored) ? stored : "system";
+}
+
+function applyTheme(theme: Theme) {
+  const html = document.documentElement;
+  html.classList.remove("dark");
+  html.classList.remove("light");
+
+  if (theme === "dark") html.classList.add("dark");
+  else if (theme === "light") html.classList.add("light");
+  // system -> no class, relies on prefers-color-scheme
+}
+
 export default function ThemeToggle() {
-  const [theme, setThemeState] = useState<Theme>("system");
+  const [theme, setThemeState] = useState<Theme>(readStoredTheme);
 
   useEffect(() => {
-    const stored = typeof window !== "undefined" ? localStorage.getItem(STORAGE_KEY) : null;
-    const initial = (stored as Theme) ?? "system";
-    setThemeState(initial);
-    applyTheme(initial);
-  }, []);
-
-  function applyTheme(t: Theme) {
-    const html = document.documentElement;
-    html.classList.remove("dark");
-    html.classList.remove("light");
-
-    if (t === "dark") html.classList.add("dark");
-    else if (t === "light") html.classList.add("light");
-    // system -> no class, relies on prefers-color-scheme
-  }
+    applyTheme(theme);
+  }, [theme]);
 
   function onChange(next: Theme) {
     setThemeState(next);
     try {
       localStorage.setItem(STORAGE_KEY, next);
-    } catch (e) {
+    } catch {
       /* ignore */
     }
-    applyTheme(next);
   }
 
   return (

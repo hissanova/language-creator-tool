@@ -229,6 +229,8 @@ export function ViewerShell({
             textNode={block.text}
             speakers={speakers}
             resources={document.resources}
+            defaultLanguageId={document.metadata.defaultLanguageId}
+            languages={document.metadata.languages}
             formId={formId}
             translationLanguageId={translationLanguageId}
             style={style}
