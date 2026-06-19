@@ -8,7 +8,6 @@ This document defines the recommended workflow for changing the Language Creator
 Markup
   -> Core JSON
   -> Core JSON + displayStyle.yaml
-  -> Display JSON
   -> Viewer
 ```
 
@@ -48,16 +47,6 @@ Stored in:
 samples/display-style/
 ```
 
-### Display JSON
-
-Viewer-ready representation generated from Core JSON and Display Style.
-
-Stored in:
-
-```text
-samples/display-json/
-```
-
 ## Recommended Change Flow
 
 Use this order when making non-trivial structural or presentation changes:
@@ -66,7 +55,6 @@ Use this order when making non-trivial structural or presentation changes:
 2. Add or update a markup sample in `samples/markup/`.
 3. Add or update the expected Core JSON in `samples/core-json/`.
 4. Add or update a Display Style YAML file in `samples/display-style/`.
-5. Add or update the expected Display JSON in `samples/display-json/`.
 6. Update TypeScript types in `app/types/`.
 7. Update parser and transformation logic.
 8. Update the viewer.
@@ -81,11 +69,4 @@ Use matching base names across sample stages.
 samples/markup/basic-conversation.lct
 samples/core-json/basic-conversation.json
 samples/display-style/basic-viewer.yaml
-samples/display-json/basic-conversation.basic-viewer.json
-```
-
-For Display JSON, use:
-
-```text
-<content-name>.<style-name>.json
 ```
