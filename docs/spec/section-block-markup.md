@@ -15,8 +15,8 @@ The markup should allow lines, notes, figures, and tables to appear in the same 
 
 >: はいさい。
 
-@note Greeting note
-  A section-level note can appear between lines.
+[note] 沖縄語の挨拶に関して
+  沖縄語の首里・那覇方言では、男性は「はいさい」、女性は「はいたい」という習慣がある。
 
 >: ちゃーがんじゅーやみ？
 ```
