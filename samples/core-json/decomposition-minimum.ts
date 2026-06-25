@@ -1,4 +1,4 @@
-import type { Document } from "@/app/types/lcm-v2";
+import type { Document } from "@/app/types/core/document";
 
 export const sample = {
     metadata: {
