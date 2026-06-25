@@ -71,8 +71,8 @@
 		-> lang: ja
 			-> lang: zh 
 				聽音樂是
-		-> lang: en
-			listen to music is
+      -> lang: en
+        listen to music is
 		+note
 			in Japanese both "ask" and "listen" use the same word, pronounced "kiku"
 		+resource url:
@@ -83,8 +83,7 @@
 
 00:00:48,648 --> 00:00:49,349
 >simon: はっ！
-	@line
-		-> lang: ja
+  -> lang: ja
 
 00:00:49,949 --> 00:00:51,051
 >lan: 那我來問了。
@@ -136,7 +135,7 @@
 		-> lang: zh 
 			眼睛 
 		-> lang: en 
-				glasses are
+			glasses are
 
 00:01:33,793 --> 00:01:35,295
 >lan: メガネは眼鏡。 
