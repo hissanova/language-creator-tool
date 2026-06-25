@@ -8,7 +8,7 @@
 import type { 
   TextLineRef,
   SelectionRef,
- } from "./refences";
+ } from "./references";
 
 // -----------------------------------------------------------------------------
 // TextLine
@@ -52,7 +52,7 @@ export type TextRangeSelector = {
 };
 
 export type TextPositionSelector = {
-  selectorType: "position";
+  selectorType: "positions";
   positions: number[];
 };
 
@@ -133,10 +133,10 @@ export type RefAttachmentBundle = {
  * @property {SelectionType} selectionType - The type/category of this selection.
  * @property {string} [label] - Optional human-readable label for this selection.
  * @property {TextMappingBundle[]} [textMappingBundles] - Optional text mappings for individual selectors.
- *   Each mapping's source.selectorId must reference a selector in selectorIds.
+ *   Each mapping's selectorId must reference a selector in selectorIds.
  * @property {RefAttachmentBundle[]} [refAttachmentBundles] - Optional reference attachments for individual selectors.
- *   Each attachment's source.selectorId must reference a selector in selectorIds.
- * @property {TextLine[]} [selectionTexts] - Optional text lines attached to the selection as a whole,
+ *   Each attachment's selectorId must reference a selector in selectorIds.
+ * @property {TextMappingPayload[]} [textMappings] - Optional text mappings attached to the selection as a whole,
  *   rather than to individual selectors. Use this for text that applies to the entire selection.
  * @property {SelectionRef[]} [refs] - Optional references attached to the selection as a whole,
  *   rather than to individual selectors.

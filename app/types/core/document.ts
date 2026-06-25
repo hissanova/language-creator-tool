@@ -12,7 +12,7 @@ import type {
 import type { 
   TextLineRef,
   ResourceRef,
-} from "./refences";
+} from "./references";
 
 // -----------------------------------------------------------------------------
 // Document structure

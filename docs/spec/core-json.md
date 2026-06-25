@@ -168,3 +168,12 @@ Resources are top-level reusable objects. Media and dictionary sources belong in
 ## Display Separation
 
 Core JSON must not encode viewer-specific display decisions. Display style may define how annotations, speakers, translations, notes, and other blocks are presented.
+
+# For new core-Json
+## Text Range
+TextRange.start and TextRange.end are zero-based UTF-16 code unit offsets in TextLine.content.text.
+The end offset is exclusive.
+TextRange.start and TextRange.end must be within TextLine.content.text.
+TextRange.start must be <= TextRange.end.
+For selectionType: "decomposition", selectorIds order is meaningful.
+For decomposition, ranges should usually be ordered and non-overlapping.

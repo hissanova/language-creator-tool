@@ -1,6 +1,6 @@
 import type { 
   ResourceRef,
- } from "./refences";
+ } from "./references";
 
 // -----------------------------------------------------------------------------
 // Primitive IDs
