@@ -4,11 +4,8 @@ import type {
   ResourceId,
   TimeSpan, 
   Provenance,
-} from "./common";
-import type {
   FormedText,
-  TextLine,
-} from "./textLine";
+} from "./common";
 
 export type BaseRef<TBody> = {
   id: Id;

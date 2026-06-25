@@ -1,12 +1,12 @@
 import type {
-  FormId,
   Id,
+  FormId,
   LanguageId,
   ResourceId,
   TimeSpan,
+  FormedText,
 } from "./common";
 import type {
-  FormedText,
   TextLine,
 } from "./textLine";
 import type { 

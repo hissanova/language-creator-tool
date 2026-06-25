@@ -13,6 +13,17 @@ export type SelectorId = string;
 export type SelectionId = string;
 
 // -----------------------------------------------------------------------------
+// FormedText
+// -----------------------------------------------------------------------------
+
+export type FormedText = {
+  text: string;
+  languageId: LanguageId;
+  formId: FormId;
+};
+
+
+// -----------------------------------------------------------------------------
 // Provenance
 // -----------------------------------------------------------------------------
 
@@ -30,6 +41,6 @@ export type Provenance = {
 
 export type TimeSpan = {
   start: number;
-  end: number;
+  end?: number;
 };
 
