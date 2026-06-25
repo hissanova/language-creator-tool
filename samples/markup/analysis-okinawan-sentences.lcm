@@ -32,38 +32,9 @@ resources:
 ---
 
 # トーン形の例
-## 旧記法
->: 雨ぬ降とーん。
-  @line
-    +translation ja:
-      雨が降っている。
-    @transform kana:
-      あみぬふとーん。
-      @"あみ"
-        @transform phoneme:
-          ami
-        @translation:
-          ja: 雨
-          en: rain
-      @"ふとーん"
-        @translation:
-          ja: 降っている
-          en: is raining
-        @transform phoneme:
-          hutooN
-          @decompose
-            hut|ooN
-            @"hut"
-              +tag 音便語幹:
-            @"ooN"
-              +tag 
-                - ooN接尾
-                - aspect:continuous
-
-## 新記法
 >: 雨ぬ降とーん。
   -> lang:ja
-      雨が降っている。
+    雨が降っている。
   @"雨"
     -> form:kana
       あみ
@@ -74,27 +45,26 @@ resources:
   -> form:kana
       あみぬふとーん。
       @"あみ"
-      -> form:phoneme
+        -> form:phoneme
           ami
-      -> lang:
-          ja 雨
-          en rain
+        -> lang:
+          ja: 雨
+          en: rain
       @"ふとーん"
-      -> lang:
-          ja "降っている"
-          en "is raining"
-      -> form:phoneme
-          "hutooN"
-          -> decomp:"hut"|"ooN"
-            @"hut"
-              +tag 音便語幹:
-            @"ooN"
-              +tag 
-                - ooN接尾
-                - aspect:continuous
+        -> lang:
+          ja: "降っている"
+          en: "is raining"
+        -> form:phoneme
+            "hutooN"
+            @"hut"|"ooN"
+              @"hut"
+                +tag 音便語幹:
+              @"ooN"
+                +tag 
+                  - ooN接尾
+                  - aspect:continuous
 
 # テーン形の例
-
 >: あき あき、何が。くぬ着物破りとーてーさ。
   -> lang:ja
     あれ、あれ、どうしたんだ。この着物は破れていたんだ。
@@ -110,25 +80,24 @@ resources:
   -> form:kana
     あき あき、ぬーが。くぬちのーやりとーてーさ。
       @"ちのー"
-        -> forms:
-          phoneme: ciNoo
-          lemma: ちん や
-        -> decomp:
-          ciN|oo
-          @"ciN"
-            -> translations:
-              ja: 着物
-          @"oo"
-            -> forms:
-              lemma: や
-            +note:
-              助詞「や」。/N/ に接続する形。        
+        -> forms: phoneme
+          ciNoo
+            + lemma: ちん や
+          @"ciN"|"oo"
+            @"ciN"
+              -> lang: ja
+                着物
+            @"oo"
+              -> lemma: form:kana
+                 や
+              +note:
+                助詞「や」。/N/ に接続する形。        
       @"やりとーてーさ"
         -> lang:ja
           破れてしまっているよ
         -> form:phoneme
           jaritooteesa
-            -> jarit|oot|ee|sa
+            @"jarit"|"oot"|"ee"|"sa"
               @"jarit"
                 +tag 音便語幹:
               @"oot"
