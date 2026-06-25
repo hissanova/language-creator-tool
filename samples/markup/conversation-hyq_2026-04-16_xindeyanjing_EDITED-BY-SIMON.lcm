@@ -58,9 +58,10 @@
 00:01:36,329 --> 00:01:37,764
 >simon: 日本人の皆さん！
  @"日本人の皆さん"
-  +translation zh-Hant
+  <- lang: ja
+  -> lang: zh-Hant
    大家日本人
-  +translation en
+  -> lang: en
    Japanese people!
 
 
@@ -71,14 +72,14 @@
 00:01:38,098 --> 00:01:41,501
 >simon: 「質問の聞く」のは「問」。
  @"「質問の聞く」のは"
-  +translation zh-Hant
+  -> lang: zh-Hant
    聽一個問題是
 
 
 00:01:43,169 --> 00:01:45,905
 >simon: 「音楽を聞く」のは「聽」。
  @"「音楽を聞く」のは"
-  +translation zh-Hant
+  -> lang: zh-Hant
    聽音樂是
 
 
@@ -142,25 +143,25 @@
 00:02:31,284 --> 00:02:32,619
 >simon: メガネは眼鏡。
  @"メガネは“
-  +translation zh-Hant
+  -> lang: zh-Hant
    眼睛
-  +translation en
+  -> lang: en
    glasses are
 
 
 00:02:33,553 --> 00:02:35,054
 >lan: メガネは眼鏡。
  @"メガネは“
-  +translation zh-Hant
+  -> lang: zh-Hant
    眼睛
-  +translation en
+  -> lang: en
    glasses are
 
 
 00:02:35,388 --> 00:02:37,390
 >simon: 眼鏡。目は？
  @"目は"
-  +translation zh-Hant
+  -> lang: zh-Hant
    眼睛是？
 
 
@@ -175,9 +176,9 @@
 00:02:42,000 --> 00:02:44,000
 >simon: はいはいはい...
  @"はいはいはい"
-  +translation zh-Hant
+  -> lang: zh-Hant
    對對對
-  +translation en
+  -> lang: en
    yes yes yes
 
 
@@ -244,9 +245,9 @@
 00:03:16,095 --> 00:03:17,664
 >simon: 下週(先週)。
  @"先週"
-  +translation zh-Hant
+  -> lang: zh-Hant
    下週
-  +translation en
+  -> lang: en
    last week
 
 
@@ -257,9 +258,9 @@
 00:03:22,669 --> 00:03:24,904
 >simon: 我...「春休み」怎麼說?
  @"春休み"
-  +translation zh-Hant
+  -> lang: zh-Hant
    春假
-  +translation en
+  -> lang: en
    spring vacation
 
 
@@ -282,18 +283,18 @@
 00:03:32,912 --> 00:03:33,880
 >simon: 老人
  @"老人"
-  +translation zh-Hant
+  -> lang: zh-Hant
    老人
-  +translation en
+  -> lang: en
    elderly people
 
 
 00:03:34,047 --> 00:03:36,015
 >simon:　老人メガネ,じゃなくて...
  @"老人メガネ,じゃなくて"
-  +translation zh-Hant
+  -> lang: zh-Hant
    老人眼鏡...不是！
-  +translation en
+  -> lang: en
    old people glasses...that's not right...
 
 
@@ -313,27 +314,27 @@
 00:03:42,922 --> 00:03:44,791
 >simon: ちょっと待って
  @"ちょっと待って"
-  +translation zh-Hant
+  -> lang: zh-Hant
    等一下
-  +translation en
+  -> lang: en
    just a minute 
 
 
 00:03:45,325 --> 00:03:46,259
 >simon:　「何というの」は
  @"「何というの」は"
-  +translation zh-Hant
+  -> lang: zh-Hant
    「怎嗎說」是
-  +translation en
+  -> lang: en
    "How do you say" is
 
 
 00:03:46,893 --> 00:03:49,195
 >simon: 什麼說じゃないよね、怎麼說だよね?当たっているよね？
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    不是「什麼說」，是「什麼說」對不對？
-  +translation en
+  -> lang: en
    it's not “什麼說” it's "怎麼說", correct?
 
 
@@ -344,9 +345,9 @@
 00:03:50,797 --> 00:03:54,100
 >simon: 怎麼說。「老眼メガネ」是怎麼說?
  @"老眼メガネ"
-  +translation zh-Hant
+  -> lang: zh-Hant
    老花眼鏡
-  +translation en
+  -> lang: en
    reading glasses
 
 
@@ -369,9 +370,9 @@
 00:04:02,041 --> 00:04:03,643
 >lan: 「老眼」就是老花。
  @"老眼"
-  +translation zh-Hant
+  -> lang: zh-Hant
         老花
-  +translation en
+  -> lang: en
    age-related presbyopia
 
 
@@ -434,9 +435,9 @@
 00:04:32,272 --> 00:04:33,373
 >simon: 老眼メガネ？
  @"老眼メガネ"
-  +translation zh-Hant
+  -> lang: zh-Hant
    老花眼鏡
-  +translation en
+  -> lang: en
    reading glasses
 
 
@@ -463,9 +464,9 @@
 00:04:44,584 --> 00:04:47,020
 >simon: 感覺,あ、感覺じゃない。慣れた
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    感覺，啊，不是感覺，習慣了
-  +translation en
+  -> lang: en
    感覺, ah wait, not 感覺, I got used to
 
 
@@ -508,9 +509,9 @@
 00:05:02,302 --> 00:05:03,903
 >simon: JA: 学年。
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    學期
-  +translation en
+  -> lang: en
    school year
 
 
@@ -541,9 +542,9 @@
 00:05:17,350 --> 00:05:23,089
 >simon: 何回も何回も老眼メガネをかけたり取ったりかけたり取ったりかけたり取ったり
  @line
-  +translation zh-Hant（經過和經過,我都把鏡頭）
+  -> lang: zh-Hant（經過和經過,我都把鏡頭）
    老花眼鏡一直戴上拿下、戴上拿下、戴上拿下，來來回回
-  +translation en
+  -> lang: en
    I kept having to put my reading glasses on, then take them off, then put them on again, then take them off again
 　
 
@@ -551,9 +552,9 @@
 00:05:23,356 --> 00:05:35,368
 >simon: 学生をみたいときにとって遠く見える(ため）,だけどパソコンとかノートを見るときにかけないといけない、１００回も...
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    看學生的時候，老花眼鏡戴太遠就看不清楚，但看電腦或筆記本的時候又非戴不可，一天得戴上拿下一百次！
-  +translation en
+  -> lang: en
    everytime I wanted to be able to see far away, to see the students, I had to take them off, but every time I wanted to look at my computer or my notes, I had to put them on. 
 
 
@@ -601,18 +602,18 @@
 00:06:14,107 --> 00:06:16,843
 >simon: すぐ是什麼說?
  @"すぐ"
-  +translation zh-Hant
+  -> lang: zh-Hant
    馬上
-  +translation en
+  -> lang: en
    straight away
   
 
 00:06:17,510 --> 00:06:19,946
 >simon: 我すぐ感覺很麻煩。
  @"すぐ"
-  +translation zh-Hant
+  -> lang: zh-Hant
    馬上
-  +translation en
+  -> lang: en
    straight away
 
 
@@ -632,12 +633,12 @@ SECTION 06:36,000
 00:06:37,196 --> 00:06:52,211
 >simon: 然後,我回答的時候,我跟我老師說,我說了,明天一起,我們一起去...「メガネ屋さん」是怎麼說?
  @"老師"
-  +correction
+  -> correction:
    老婆
  @"メガネ屋さん"
-  +translation zh-Hant
+  -> lang: zh-Hant
    眼鏡行
-  +translation en
+  -> lang: en
    optician
 
 
@@ -667,9 +668,9 @@ SECTION 06:36,000
 00:07:12,198 --> 00:07:17,203
 >simon: 選ばないといけないから奥さんのアドバイスがほしかった
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    選擇不可以選擇,所以我需要老婆的建議
-  +translation en
+  -> lang: en
    I needed to choose a frame so I wanted my wife's advice
 
 
@@ -684,9 +685,9 @@ SECTION 06:36,000
 00:07:27,213 --> 00:07:29,081
 >simon: 建議。アドバイス？
  @"アドバイス"
-  +translation zh-Hant
+  -> lang: zh-Hant
    建議
-  +translation en
+  -> lang: en
    advice
  
 
@@ -726,9 +727,9 @@ SECTION 06:36,000
 00:07:53,206 --> 00:07:54,907
 >simon: 一週間かかった。
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    要一個禮拜
-  +translation en
+  -> lang: en
    it took a week
 
 
@@ -743,9 +744,9 @@ SECTION 06:36,000
 00:08:00,213 --> 00:08:05,651
 >simon: 然後,昨天我...取ってきた。
  @"取ってきた"
-  +translation zh-Hant
+  -> lang: zh-Hant
    拿了
-  +translation en
+  -> lang: en
    I went to get them
 
 
@@ -760,7 +761,7 @@ SECTION 06:36,000
 00:08:11,457 --> 00:08:18,197
 >simon: 然後,拿了之後,我回答,
  @"回答"
-  +correction 
+  -> correction: 
    回家
 
 00:08:18,464 --> 00:08:23,469
@@ -770,9 +771,9 @@ SECTION 06:36,000
 00:08:23,202 --> 00:08:28,207
 >simon: なるべく掛けたほうがいい、慣れる（のは）時間がかかる
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    老花眼鏡盡量戴著比較好，習慣的話需要一點時間
-  +translation en 
+  -> lang: en 
    you should wear them as much as possible, it'll take a while to get used to them. 
 
 
@@ -812,9 +813,9 @@ SECTION 06:36,000
 00:08:58,604 --> 00:09:00,206
 >simon: 何？ fixing。
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    怎麼說？ 修理
-  +translation en
+  -> lang: en
    how can I say? fixing.
 
 
@@ -833,9 +834,9 @@ SECTION 06:36,000
 00:09:09,248 --> 00:09:13,986
 >simon: だけど,我戴了幾時間這後
  @"だけど"
-  +translation zh-Hant
+  -> lang: zh-Hant
    但是
-  +translation en
+  -> lang: en
    but
  @"時間"
   +tag: unnatural
@@ -856,9 +857,9 @@ SECTION 06:36,000
 00:09:18,891 --> 00:09:22,795
 >simon: あの〜何という？晚飯？夕方ぐらい
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    怎麼說，晚晚
-  +translation en
+  -> lang: en
    how can I say "evening"?
 
 
@@ -885,9 +886,9 @@ SECTION 06:36,000
 00:09:34,206 --> 00:09:37,276
 >simon: ちょっと車酔いみたいな感覚
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    有一點車暈的感覺。
-  +translation en
+  -> lang: en
    I felt a bit like I was car-sick
 
 
@@ -945,9 +946,9 @@ SECTION 06:36,000
 00:09:57,330 --> 00:10:01,200
 >simon: 「暈」と「雲」があるからね。
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    有「暈」也有「雲」
-  +translation en
+  -> lang: en
    There's「暈」and「雲」
 
 
@@ -975,9 +976,9 @@ SECTION 06:36,000
 00:10:06,472 --> 00:10:09,208
 >lan: 然後那個,剛剛你說「車酔い」
  @"車酔い"
-  +translation zh-Hant
+  -> lang: zh-Hant
    車有暈
-  +translation en
+  -> lang: en
    carsickness
 
 
@@ -1032,9 +1033,9 @@ SECTION 06:36,000
 00:10:28,194 --> 00:10:30,196
 >simon: かけ過ぎたかもしれない
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    開太多了,可能
-  +translation en
+  -> lang: en
    I probably wore them for too long
 
 
@@ -1077,36 +1078,36 @@ SECTION 06:36,000
 00:10:50,016 --> 00:10:51,183
 >simon: すぐ（很快）,那個。
  @"すぐ"
-  +translation zh-Hant
+  -> lang: zh-Hant
    馬上
-  +translation en
+  -> lang: en
    straight away
 
 
 00:10:51,450 --> 00:10:52,618
 >simon: 啊,できない、できない
  @"できない、できない"
-  +translation zh-Hant
+  -> lang: zh-Hant
    做不到,做不到
-  +translation en
+  -> lang: en
    No way, I can't
 
 
 00:10:52,618 --> 00:10:54,186
 >simon: 気持ち悪くなっている
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    感覺不舒服
-  +translation en
+  -> lang: en
    I feel really bad
 
 
 00:10:54,186 --> 00:10:56,188
 >simon: すぐ外した！
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
     然後,很快就脫掉了
-  +translation en
+  -> lang: en
    I had to take them off straight away
 
 
@@ -1159,9 +1160,9 @@ SECTION 06:36,000
 00:11:29,555 --> 00:11:31,557
 >simon: 今日も
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    所以,今天
-  +translation en
+  -> lang: en
    so today
 
 
@@ -1181,9 +1182,9 @@ SECTION 06:36,000
 00:11:37,229 --> 00:11:37,697
 >simon: ちょっと
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    可能
-  +translation en
+  -> lang: en
    kind of
 
 
@@ -1209,9 +1210,6 @@ SECTION 06:36,000
 
 00:11:46,372 --> 00:11:47,373
 >simon: 時侯。
- @line 
-  +correction
-
 
 
 00:11:48,240 --> 00:11:50,042
@@ -1229,9 +1227,9 @@ SECTION 06:36,000
 00:11:53,012 --> 00:11:54,413
 >simon:「取る」は 怎麼說。
  @"「取る」は"
-  +translation zh-Hant
+  -> lang: zh-Hant
    拿下來
-  +translation en
+  -> lang: en
    take (glasses) off
 
 
@@ -1279,9 +1277,9 @@ SECTION 06:36,000
 00:12:19,872 --> 00:12:29,215
 >simon: 遠近両用なのに、「園」は使っていなかった、全く！  
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    哈哈,全都沒有用圓圓的
-  +translation en（哈哈,全都沒有用圓圓的。）
+  -> lang: en（哈哈,全都沒有用圓圓的。）
    they're near-far lenses but I wasn't using the 'far' part at all!
 
 
@@ -1289,18 +1287,18 @@ SECTION 06:36,000
 00:12:29,215 --> 00:12:31,450
 >lan: 結局何も変わっていないじゃん！
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    所以,並沒有改變
-  +translation en
+  -> lang: en
    so nothing has changed!
 
 
 00:12:31,450 --> 00:12:33,185
 >simon: JA: 今日はね！
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    今天是對
-  +translation en
+  -> lang: en
    for today, yes
 
 
@@ -1340,7 +1338,7 @@ SECTION 06:36,000
 00:12:55,474 --> 00:12:59,111
 >simon: 百均の老眼メガネと一緒だ
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
     百金的老花眼鏡都一樣的
 
 
@@ -1404,36 +1402,36 @@ SECTION 06:36,000
 00:13:54,200 --> 00:13:57,203
 >lan: 何だろう、度数が高い？（欸,度數高嗎?）
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    欸,度數高嗎?
-  +translation en
+  -> lang: en
    my prescription is really strong
 
 
 00:13:57,203 --> 00:13:59,205
 >simon:　あああ、はい、度数が高い
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    啊,對,度數高
-  +translation en
+  -> lang: en
    my prescription is really strong
 
 
 00:13:59,205 --> 00:14:01,207
 >simon: JA:度が高い」かも
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    啊,對,度數高
-  +translation en
+  -> lang: en
    my prescription is really strong
 
 
 00:14:01,207 --> 00:14:03,209
 >lan: 度が高い（度數高）。
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    啊,對,度數高
-  +translation en
+  -> lang: en
    my prescription is really strong
 
 
@@ -1456,27 +1454,27 @@ SECTION 06:36,000
 00:14:19,191 --> 00:14:21,193
 >simon: 五萬?日本元?
  @"日本元"
-  +translation zh-Hant
+  -> lang: zh-Hant
    日本元
-  +translation en
+  -> lang: en
    Japanese yen?
 
 
 00:14:21,193 --> 00:14:23,195
 >lan: 日本円。
  @"日本円"
-  +translation zh-Hant
+  -> lang: zh-Hant
    日本幣
-  +translation en
+  -> lang: en
    Japanese yen
 
 
 00:14:23,195 --> 00:14:27,199
 >simon: 五萬日幣是日本円。
  @"日本円"
-  +translation zh-Hant
+  -> lang: zh-Hant
    日本幣
-  +translation en
+  -> lang: en
    Japanese yen
 
 
@@ -1503,9 +1501,9 @@ SECTION 06:36,000
 00:14:39,211 --> 00:14:49,188
 >lan: 度が高いので、もし安いレンズ使っちゃったらめっちゃ厚くなるんで一番いいもの（にしている）
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
 　 度數高,所以如果用便宜的鏡片的話,就非常厚　　
-  +translation en
+  -> lang: en
 　 my prescription is really strong, so if I didn't get the expensive lenses they'd end up really thick
 
 
@@ -1513,27 +1511,27 @@ SECTION 06:36,000
 00:14:49,321 --> 00:14:51,190
 >simon: JA:双眼鏡みたいになる？(?)。
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    就像雙眼鏡一樣
-  +translation en
+  -> lang: en
    kind of like binoculars?
 
 
 00:14:51,190 --> 00:14:58,197
 >lan: 一番いいものじゃないといけない（我最好的東西,就必須用）。
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    我最好的東西,就必須用
-  +translation en
+  -> lang: en
    so I have to get the really expensive ones
 
 
 00:14:58,197 --> 00:15:00,199
 >lan:　めっちゃ高い（就很貴）。
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    就很貴
-  +translation en
+  -> lang: en
    they're really expensive
 
 
@@ -1556,10 +1554,10 @@ SECTION 06:36,000
 00:15:06,205 --> 00:15:25,724
 >simon:  但是我老婆就說,啊,因為如果你感覺很舒服,你需要買又一個, a spare,スペアが必要。
  @"a spare"
-  +translation zh-Hant
+  -> lang: zh-Hant
     備用
  @"スペアが必要"
-  +translation zh-Hant
+  -> lang: zh-Hant
     需要備用
     
 
@@ -1571,9 +1569,9 @@ SECTION 06:36,000
 00:15:27,192 --> 00:15:32,197
 >simon: spare,あの...壊れたとかなくしたとかお尻で踏んだとか
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    那個,壞掉了,失去了,踩在屁股上
-  +translation en
+  -> lang: en
    in case I break them or lose them or sit on them....
 
 
@@ -1581,9 +1579,9 @@ SECTION 06:36,000
 00:15:32,197 --> 00:15:39,204
 >simon: 一週間かかるから、奥さんは「慣れたらスペアつくらないと」
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    一週間,學校的一週間要花,老婆就說,啊,如果我習慣了,我必須做spare
-  +translation en
+  -> lang: en
    it takes a week to order them, so once you get used to them you should order a spare pair
 
 
@@ -1591,9 +1589,9 @@ SECTION 06:36,000
 00:15:39,204 --> 00:15:44,209
 >simon: えっ？さらにお金がかかる！
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    然後,咦,還要花更多錢?
-  +translation en
+  -> lang: en
    that'll cost even more money...
 
 
@@ -1623,9 +1621,9 @@ SECTION 06:36,000
 00:16:07,866 --> 00:16:14,206
 >simon: 因為,因為我不習慣,慣れていない(不習慣了)
  @"慣れていない"
-  +translation zh-Hant
+  -> lang: zh-Hant
    不習慣了
-  +translation en
+  -> lang: en
    I haven't gotten used to them yet
 
 
@@ -1649,18 +1647,18 @@ SECTION 06:36,000
 00:16:24,216 --> 00:16:30,189
 >simon: 我覺得我... 一生懸命メガネについて考えている
  @"一生懸命メガネについて考えている"
-  +translation zh-Hant
+  -> lang: zh-Hant
    一生的努力在考慮眼鏡
-  +translation en
+  -> lang: en
     I've been thinking a lot about glasses...
 
 
 00:16:30,189 --> 00:16:34,893
 >simon:　他の人のメガネとか見てから考えている
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    在看別人的眼鏡的時候,我在考慮
-  +translation en
+  -> lang: en
    I've been looking at other people's glasses and thinking about them
 
 
@@ -1668,9 +1666,9 @@ SECTION 06:36,000
 00:16:34,727 --> 00:16:42,768
 >simon: 今まで全く何も思っていなかったのに、「なるほど、こんな感覚だ、メガネするのは」と考えている
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    以前完全沒想過，現在卻想：『原來是這種感覺啊，戴眼鏡就是這樣』
-  +translation en
+  -> lang: en
    I've never really thought about glasses before, but now I'm like “oh, so this what it's like to wear glasses"
 
 
@@ -1693,9 +1691,9 @@ SECTION 06:36,000
 00:16:58,183 --> 00:17:02,187
 >simon: 是,新的学び()。
  @"学び"
-  +translation zh-Hant
+  -> lang: zh-Hant
    學習
-  +translation en
+  -> lang: en
    learning
 
 
@@ -1703,9 +1701,9 @@ SECTION 06:36,000
 >simon: 何か学んでいる、今週！
 。
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    我這週好像在學習什麼
-  +translation en
+  -> lang: en
    I'm learning something new this week
 
 
@@ -1728,9 +1726,9 @@ SECTION 06:36,000
 00:17:31,183 --> 00:17:34,586
 >simon: 國際學生的昼休みの集まり
  @"昼休みの集まり"
-  +translation zh-Hant
+  -> lang: zh-Hant
    休閒集
-  +translation en
+  -> lang: en
    get together at lunchtime
 
 
@@ -1749,7 +1747,7 @@ SECTION 06:36,000
 00:17:49,802 --> 00:17:56,442
 >simon: 然後,我戴了,新的語言眼鏡了。
  @"語言"
-  +correction 
+  -> correction: 
    眼鏡
    
 
@@ -1757,18 +1755,18 @@ SECTION 06:36,000
 00:17:56,442 --> 00:17:58,210
 >simon: やっとちゃんと使った()。
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    終於,我用到了
-  +translation en
+  -> lang: en
    I finally used them properly
 
 
 00:17:58,210 --> 00:18:02,481
 >simon: 遠く見て近く見て、遠く見て近く見て、使っていた、今日
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    遠處看,近處看,遠處看,近處看,今天我用到了
-  +translation en
+  -> lang: en
    I finally used them for looking far away, then looking close, then looking far away, then looking close
    
 
@@ -1792,12 +1790,12 @@ SECTION 06:36,000
 00:18:32,211 --> 00:18:36,348
 >simon: 検索したのは'How do glasses work?'😂(我看網上怎麼用的眼鏡)。
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    我看網上怎麼用的眼鏡
-  +translation en
+  -> lang: en
    I googled "how do glasses work?"
  @"How do glasses work?"
-  +translation ja 
+  -> lang: ja 
    メガネの仕組みとは？
     
 
@@ -1820,18 +1818,18 @@ SECTION 06:36,000
 00:19:01,206 --> 00:19:08,213
 >simon: 對了,對我說,你有,你,啊,乱視になっている
  @"乱視になっている"
-  +translation zh-Hant
+  -> lang: zh-Hant
    閃光了
-  +translation en
+  -> lang: en
    you've got astigmatism
 
 
 00:19:08,213 --> 00:19:10,916
 >simon: 乱視、乱れている（視力）(閃光,閃光了)。
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    閃光了
-  +translation en
+  -> lang: en
    your eye is astigmatic
 
 
@@ -1850,32 +1848,32 @@ SECTION 06:36,000
 00:19:16,188 --> 00:19:20,926
 >simon: 我不知道。我說,啊,乱視なんだ（閃光了）。
  @"乱視なんだ"
-  +translation zh-Hant
+  -> lang: zh-Hant
    閃光了 
-  +translation en
+  -> lang: en
    oh, astigmatism
 
 
 00:19:20,926 --> 00:19:25,564
 >simon: 確かに、メガネ掛けてからこの乱視の症状が軽くなっている
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    確實,眼鏡戴了之後,閃光的症狀變軟了
-  +translation en
+  -> lang: en
    my astigmatism symptoms are definitely better with my glasses on
 
 
 00:19:25,564 --> 00:19:30,202
 >simon: だけど我不知道怎麼說乱視用英文。
  @"だけど"
-  +translation zh-Hant
+  -> lang: zh-Hant
    但是
-  +translation en
+  -> lang: en
    but
  @"乱視"
-  +translation zh-Hant
+  -> lang: zh-Hant
    閃光
-  +translation en
+  -> lang: en
    "astigmatism" 
 
 
@@ -1898,36 +1896,36 @@ SECTION 06:36,000
 00:19:50,155 --> 00:19:56,795
 >lan: 目の病院の中の全部の機器、全部使ったことある
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
 　　那個,什麼,眼科醫院裡面的每一臺機器我都用過　
-  +translation en
+  -> lang: en
 　　I've used all the machines in the eye hospital!
 　　
 
 00:20:00,199 --> 00:20:02,201
 >simon: 😂😂😂😂😂楽しい！（！）
  @"楽しい"
-  +translation zh-Hant
+  -> lang: zh-Hant
    好玩
-  +translation en
+  -> lang: en
    fun!
 
 
 00:20:02,201 --> 00:20:04,203
 >lan: JA:楽しくない！😂
  @"楽しくない"
-  +translation zh-Hant
+  -> lang: zh-Hant
    不好玩
-  +translation en
+  -> lang: en
    it's not fun
 
 
 00:20:03,902 --> 00:20:04,903
 >simon: JA:楽しくない！
  @"楽しくない"
-  +translation zh-Hant
+  -> lang: zh-Hant
    不好玩
-  +translation en
+  -> lang: en
    it's not fun
 
 
@@ -1960,9 +1958,9 @@ SECTION 06:36,000
 
 >simon: 閃光治るはずと思ったけど治ってない😢
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    應該會成功的,但是沒有成功
-  +translation en
+  -> lang: en
    I thought my astigmatism would get better after my eye operation, but it didn't😢
 
 
@@ -1986,14 +1984,14 @@ SECTION 06:36,000
 00:20:46,979 --> 00:20:53,318
 >simon:嗯... 不有影響。
  @"不"
-  +correction
+  -> correction:
    沒
 
 
 00:20:53,318 --> 00:21:00,225
 >simon: 眼睛行的人說了,嗯,不有影響。
  @"不"
-  +correction
+  -> correction:
    沒
 
 
@@ -2004,9 +2002,9 @@ SECTION 06:36,000
 00:21:01,393 --> 00:21:03,395
 >simon:　あんまり関係ないって（）。
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    沒什麼關係
-  +translation en
+  -> lang: en
    he said they're not related
 
 
@@ -2017,9 +2015,9 @@ SECTION 06:36,000
 00:21:05,400 --> 00:21:09,400
 >simon: だから手術したのに、手術したら治ると思ったのに😢😢😢
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    所以我手術了,我還以為手術了會治癒
-  +translation en
+  -> lang: en
    that's why I had the operation, I thought it would fix my astigmatism
 
 
@@ -2030,45 +2028,45 @@ SECTION 06:36,000
 00:21:12,304 --> 00:21:15,774
 >lan: JA:新しい目になってない、別に
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    這個人的眼睛還沒有變新的
-  +translation en
+  -> lang: en
    you haven't got a new eye
 
 
 00:21:15,774 --> 00:21:17,509
 >simon: なっていない
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    沒有變
-  +translation en
+  -> lang: en
    no, I haven't
 
 
 00:21:17,509 --> 00:21:21,780
 >simon:　あの変なピンクのところが取れているだけ
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    那個偏偏的黃色的地方只是被拍下來
-  +translation en
+  -> lang: en
    It just removed the pink growth
 
 
 00:21:21,780 --> 00:21:27,019
 >simon: 病院の先生は「手術したほうがいいと思いますよう」と言っていたから
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    醫生說我應該去手術
-  +translation en
+  -> lang: en
    The doctor said I needed to do it
 
 
 00:21:27,019 --> 00:21:34,493
 >simon: やるしかなかったはずだけど乱視治らなかったのは悲しい😢
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    要去做的,要去做的,但沒有治癒，傷心
-  +translation en
+  -> lang: en
    I probably had to do it anyway, but I am sad my astigmatism didn't get fixed
 
 
@@ -2080,9 +2078,9 @@ SECTION 06:36,000
 00:21:36,495 --> 00:21:38,864
 >simon: 悲しい是怎麼說？
  @"悲しい"
-  +translation zh-Hant
+  -> lang: zh-Hant
    傷心
-  +translation en
+  -> lang: en
    sad
  
 
@@ -2095,9 +2093,9 @@ SECTION 06:36,000
 
 >simon: 感覺じゃなくて...慣れる
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    不是「感覺」...習慣?
-  +translation en
+  -> lang: en
    "feel", no that's not right, get used to?
 
 
@@ -2116,9 +2114,9 @@ SECTION 06:36,000
 00:21:59,584 --> 00:22:03,689
 >simon: 老師,老師,教えてください
  @"教えてください"
-  +translation zh-Hant
+  -> lang: zh-Hant
    教我
-  +translation en
+  -> lang: en
    please teach me
 
 
@@ -2225,9 +2223,9 @@ SECTION 06:36,000
 
 >simon: 何と言えばいい、今？「先生、よろしくおねがいします！」
  @line
-  +translation zh-Hant
+  -> lang: zh-Hant
    這時候該怎麼說？在日文裡會說 「Xiānsheng, yōróshìku o-negai shimasu!」
-  +translation en
+  -> lang: en
    in Japanese at this point I would say "yoroshiku onegaishimasu", what can I say in mandarin?
 
 

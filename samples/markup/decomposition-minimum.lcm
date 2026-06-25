@@ -1,0 +1,29 @@
+---
+title: 喫到飽 sample
+defaultLanguageId: zh-Hant
+defaultFormId: surface
+---
+
+# 喫到飽
+
+>: 喫到飽
+
+  @"喫" | "到" | "飽"
+    +tag:
+      - decomposition
+      - morphology
+
+    -> translation lang:en:
+      all-you-can-eat
+
+    @1
+      -> gloss lang:en:
+        eat
+
+    @2
+      -> gloss lang:en:
+        arrive
+
+    @3
+      -> gloss lang:en:
+        full

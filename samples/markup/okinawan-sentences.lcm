@@ -136,12 +136,13 @@ resources:
                   - ooN形
                   - aspect:resultative
                   - tense:past
+                  - 未定
               @"ee"
                 +tag
                   - eeN形
                   - mode:recognition
               @"sa"
-                +tag 
+                +tag:
                   - surprise
 
   

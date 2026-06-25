@@ -1,0 +1,50 @@
+---
+title: 看不懂 nested decomposition sample
+defaultLanguageId: zh-Hant
+defaultFormId: surface
+---
+
+# 看不懂
+
+>: 看不懂
+
+  @"看" | "不懂"
+    +tag:
+      - decomposition
+      - phrase-level
+
+    -> translation lang:en:
+      cannot understand
+
+    @1
+      -> gloss lang:en:
+        look/read
+
+    @2
+      -> gloss lang:en:
+        not understand
+          @"not" | "understand"
+            +tag:
+              - decomposition
+              - gloss-tokenization
+
+            @1
+              +tag:
+                - negation
+
+            @2
+              +tag:
+                - verb
+
+      @"不" | "懂"
+        +tag:
+          - decomposition
+          - nested
+
+        @1
+          -> gloss lang:en:
+            not
+
+        @2
+          -> gloss lang:en:
+            understand
