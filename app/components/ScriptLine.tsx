@@ -401,6 +401,30 @@ function MappingDetailView({ mapping }: { mapping: TextMappingPayload }) {
   );
 }
 
+function AnnotationGroup({
+  title,
+  count,
+  children,
+}: {
+  title: string;
+  count?: number;
+  children: ReactNode;
+}) {
+  return (
+    <section className="rounded border border-gray-200 bg-white p-3 text-gray-950 shadow-sm">
+      <div className="mb-2 flex flex-wrap items-center gap-2 border-b border-gray-100 pb-2">
+        <span className="font-semibold text-gray-950">{title}</span>
+        {count != null && (
+          <span className="rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700">
+            {count}
+          </span>
+        )}
+      </div>
+      <div className="space-y-2">{children}</div>
+    </section>
+  );
+}
+
 function RefDetailView({
   refValue,
   translationLanguageId,
@@ -443,6 +467,41 @@ function RefDetailView({
   return null;
 }
 
+function SelectorRecordView({
+  textLine,
+  annotations,
+}: {
+  textLine: TextLine;
+  annotations: SelectorAnnotation[];
+}) {
+  if (!textLine.selectorRecord) return null;
+
+  const selectorIds = Object.keys(textLine.selectorRecord);
+  if (!selectorIds.length) return null;
+
+  return (
+    <AnnotationGroup title="Selector record" count={selectorIds.length}>
+      {selectorIds.map((selectorId) => {
+        const selector = textLine.selectorRecord?.[selectorId];
+        const annotation = annotations.find((candidate) => candidate.selectorId === selectorId);
+
+        if (!selector) return null;
+
+        return (
+          <div key={selectorId} className="rounded bg-sky-50 px-2 py-1">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="font-semibold text-sky-950">{annotation?.selectedText ?? selectorId}</span>
+              <span className="text-xs text-gray-700">{selectorId}</span>
+              <span className="text-xs text-gray-700">{selector.selectorType}</span>
+              <span className="text-xs text-gray-700">range: {formatRange(selector)}</span>
+            </div>
+          </div>
+        );
+      })}
+    </AnnotationGroup>
+  );
+}
+
 function formatRange(selector: Selector) {
   if (selector.selectorType === "range") {
     return `${selector.range.start}-${selector.range.end}`;
@@ -451,7 +510,7 @@ function formatRange(selector: Selector) {
   return selector.positions.join(", ");
 }
 
-function DeveloperAnnotationView({
+function SelectedTextAnnotationView({
   annotation,
   translationLanguageId,
 }: {
@@ -483,6 +542,114 @@ function DeveloperAnnotationView({
             <RefDetailView
               key={refValue.id}
               refValue={refValue}
+              translationLanguageId={translationLanguageId}
+            />
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function SelectionDeveloperView({
+  selection,
+  textLine,
+  annotations,
+  translationLanguageId,
+}: {
+  selection: Selection;
+  textLine: TextLine;
+  annotations: SelectorAnnotation[];
+  translationLanguageId: string;
+}) {
+  const selectorTexts = selection.selectorIds
+    .map((selectorId) => {
+      const selector = textLine.selectorRecord?.[selectorId];
+      const range = selector ? getSelectorRange(selector, textLine.content.text) : undefined;
+      return {
+        selectorId,
+        text: range ? textLine.content.text.slice(range.start, range.end) : undefined,
+      };
+    });
+  const localRefCount = selection.localSelectedTextRefs?.reduce(
+    (count, bundle) => count + bundle.attachments.length,
+    0
+  ) ?? 0;
+  const selectionAnnotations = annotations.filter(
+    (annotation) =>
+      annotation.selection?.id === selection.id ||
+      (!annotation.selection && selection.selectorIds.includes(annotation.selectorId))
+  );
+
+  return (
+    <div className="rounded border border-violet-200 bg-violet-50/70 p-3 text-gray-950">
+      <div className="mb-2 flex flex-wrap items-center gap-2">
+        <span className="rounded bg-violet-100 px-2 py-0.5 text-xs font-semibold text-violet-950">
+          selection
+        </span>
+        <span className="font-semibold text-gray-950">{selection.label ?? selection.selectionType}</span>
+        <span className="text-xs text-gray-700">{selection.id}</span>
+      </div>
+
+      <div className="mb-2 flex flex-wrap gap-1">
+        {selectorTexts.map(({ selectorId, text }) => (
+          <span key={selectorId} className="rounded bg-white px-2 py-0.5 text-xs text-gray-800">
+            {text ?? selectorId}
+          </span>
+        ))}
+      </div>
+
+      {selection.selectionMappings?.length ? (
+        <div className="mb-2 space-y-2">
+          <div className="text-xs font-semibold uppercase text-gray-700">Whole-selection mappings</div>
+          {selection.selectionMappings
+            .filter((mapping) => shouldShowMapping(mapping, translationLanguageId))
+            .map((mapping) => (
+              <MappingDetailView key={mapping.id} mapping={mapping} />
+            ))}
+        </div>
+      ) : null}
+
+      {selection.selectionRefs?.length ? (
+        <div className="mb-2 space-y-1">
+          <div className="text-xs font-semibold uppercase text-gray-700">Whole-selection refs</div>
+          {selection.selectionRefs.map((refValue) => (
+            <RefDetailView
+              key={refValue.id}
+              refValue={refValue}
+              translationLanguageId={translationLanguageId}
+            />
+          ))}
+        </div>
+      ) : null}
+
+      {localRefCount ? (
+        <div className="space-y-1">
+          <div className="text-xs font-semibold uppercase text-gray-700">Selection-local selected text refs</div>
+          {selection.localSelectedTextRefs?.map((bundle) => (
+            <div key={bundle.id} className="rounded bg-white/80 p-2">
+              <div className="mb-1 text-xs font-semibold text-gray-700">{bundle.source}</div>
+              <div className="space-y-1">
+                {bundle.attachments.map((attachment) => (
+                  <RefDetailView
+                    key={attachment.id}
+                    refValue={attachment.ref}
+                    translationLanguageId={translationLanguageId}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : null}
+
+      {selectionAnnotations.length ? (
+        <div className="mt-2 space-y-2">
+          <div className="text-xs font-semibold uppercase text-gray-700">Selection-local selected text mappings</div>
+          {selectionAnnotations.map((annotation) => (
+            <SelectedTextAnnotationView
+              key={annotation.selectorId}
+              annotation={annotation}
               translationLanguageId={translationLanguageId}
             />
           ))}
@@ -647,6 +814,168 @@ function SelectionSummary({
   );
 }
 
+function DeveloperAnnotationPanel({
+  textLine,
+  annotations,
+  translations,
+  textNodeTags,
+  nodeResources,
+  translationLanguageId,
+  style,
+}: {
+  textLine: TextLine;
+  annotations: SelectorAnnotation[];
+  translations: TextMappingPayload[];
+  textNodeTags: string[];
+  nodeResources: Resource[];
+  translationLanguageId: string;
+  style: ViewerStyle;
+}) {
+  const nonTagLineRefs = textLine.textLineRefs?.filter((ref) => !isTagRef(ref)) ?? [];
+  const nonTranslationLineMappings =
+    textLine.textLineMappings?.filter((mapping) => mapping.mappingType !== "translation") ?? [];
+  const wholeLineMappings = [...translations, ...nonTranslationLineMappings];
+  const selectorRefCount =
+    textLine.selectedTextRefs?.reduce((count, bundle) => count + bundle.attachments.length, 0) ?? 0;
+  const selectedSelectorIds = new Set(textLine.selections?.flatMap((selection) => selection.selectorIds) ?? []);
+  const textLineAnnotations = annotations.filter(
+    (annotation) => !annotation.selection && !selectedSelectorIds.has(annotation.selectorId)
+  );
+  const hasDetails =
+    nonTagLineRefs.length ||
+    wholeLineMappings.length ||
+    textNodeTags.length ||
+    textLine.selectorRecord ||
+    textLineAnnotations.length ||
+    selectorRefCount ||
+    textLine.selections?.length ||
+    nodeResources.length;
+
+  if (!hasDetails) return null;
+
+  return (
+    <details className="mt-3 text-sm">
+      <summary className="cursor-pointer text-gray-800">Annotations</summary>
+      <div className="mt-2 space-y-3">
+        {wholeLineMappings.length || nonTagLineRefs.length || textNodeTags.length ? (
+          <AnnotationGroup
+            title="Whole-line"
+            count={wholeLineMappings.length + nonTagLineRefs.length + textNodeTags.length}
+          >
+            {nonTagLineRefs.length ? (
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 text-xs font-semibold uppercase text-gray-700">
+                  <span>Refs</span>
+                  <span className="rounded bg-gray-100 px-2 py-0.5 text-[0.65rem] font-medium text-gray-700">
+                    {nonTagLineRefs.length}
+                  </span>
+                </div>
+                {nonTagLineRefs.map((refValue) => (
+                  <RefDetailView
+                    key={refValue.id}
+                    refValue={refValue}
+                    translationLanguageId={translationLanguageId}
+                  />
+                ))}
+              </div>
+            ) : null}
+
+            {wholeLineMappings.length ? (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-xs font-semibold uppercase text-gray-700">
+                  <span>Text mappings</span>
+                  <span className="rounded bg-gray-100 px-2 py-0.5 text-[0.65rem] font-medium text-gray-700">
+                    {wholeLineMappings.length}
+                  </span>
+                </div>
+                {wholeLineMappings.map((mapping) => (
+                  <MappingDetailView key={mapping.id} mapping={mapping} />
+                ))}
+              </div>
+            ) : null}
+
+            {textNodeTags.length ? (
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 text-xs font-semibold uppercase text-gray-700">
+                  <span>Tags</span>
+                  <span className="rounded bg-gray-100 px-2 py-0.5 text-[0.65rem] font-medium text-gray-700">
+                    {textNodeTags.length}
+                  </span>
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  {textNodeTags.map((tag) => (
+                    <TagChip key={tag} tag={tag} style={style} />
+                  ))}
+                </div>
+              </div>
+            ) : null}
+          </AnnotationGroup>
+        ) : null}
+
+        <SelectorRecordView textLine={textLine} annotations={annotations} />
+
+        {selectorRefCount ? (
+          <AnnotationGroup title="Selected text refs" count={selectorRefCount}>
+            {textLine.selectedTextRefs?.map((bundle) => (
+              <div key={bundle.id} className="rounded bg-white/80 p-2">
+                <div className="mb-1 text-xs font-semibold text-gray-700">{bundle.source}</div>
+                <div className="space-y-1">
+                  {bundle.attachments.map((attachment) => (
+                    <RefDetailView
+                      key={attachment.id}
+                      refValue={attachment.ref}
+                      translationLanguageId={translationLanguageId}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </AnnotationGroup>
+        ) : null}
+
+        {textLine.selections?.length ? (
+          <AnnotationGroup title="Selections" count={textLine.selections.length}>
+            {textLine.selections.map((selection) => (
+              <SelectionDeveloperView
+                key={selection.id}
+                selection={selection}
+                textLine={textLine}
+                annotations={annotations}
+                translationLanguageId={translationLanguageId}
+              />
+            ))}
+          </AnnotationGroup>
+        ) : null}
+
+        {textLineAnnotations.length ? (
+          <AnnotationGroup title="Selected text mappings" count={textLineAnnotations.length}>
+            {textLineAnnotations.map((annotation) => (
+              <SelectedTextAnnotationView
+                key={annotation.selectorId}
+                annotation={annotation}
+                translationLanguageId={translationLanguageId}
+              />
+            ))}
+          </AnnotationGroup>
+        ) : null}
+
+        {nodeResources.length ? (
+          <AnnotationGroup title="Resolved resources" count={nodeResources.length}>
+            {nodeResources.map((resource) => (
+              <ResourceView
+                key={resource.id}
+                resource={resource}
+                translationLanguageId={translationLanguageId}
+                style={style}
+              />
+            ))}
+          </AnnotationGroup>
+        ) : null}
+      </div>
+    </details>
+  );
+}
+
 export function ScriptLine({
   textNode,
   speakers,
@@ -684,6 +1013,7 @@ export function ScriptLine({
   const annotations = collectSelectorAnnotations(textNode, textNode.content.text);
   const resourceRefs = collectResourceRefs(textNode.textLineRefs);
   const nodeResources = refsToResources(resourceRefs, resources);
+  const isDeveloperMode = annotationMode === "developer";
 
   return (
     <div className={speakerStyle.container}>
@@ -717,31 +1047,36 @@ export function ScriptLine({
             {speaker.name}:{" "}
           </span>
         )}
-        {lineLanguageLabel && (
+        {!isDeveloperMode && lineLanguageLabel && (
           <span className={style.text.languageBadge}>{lineLanguageLabel}</span>
         )}
         <span
-          className={[isLineNonDefaultLanguage ? style.text.languageSwitch : undefined, tagTextStyle.className]
+          className={[
+            !isDeveloperMode && isLineNonDefaultLanguage ? style.text.languageSwitch : undefined,
+            !isDeveloperMode ? tagTextStyle.className : undefined,
+          ]
             .filter(Boolean)
             .join(" ")}
-          style={tagTextStyle.style}
+          style={isDeveloperMode ? undefined : tagTextStyle.style}
         >
-          {renderAnnotatedText({
-            text,
-            annotations,
-            translationLanguageId,
-            style,
-          })}
+          {isDeveloperMode
+            ? textNode.content.text
+            : renderAnnotatedText({
+                text,
+                annotations,
+                translationLanguageId,
+                style,
+              })}
         </span>
       </p>
 
-      {translations.map((translation) => (
+      {!isDeveloperMode && translations.map((translation) => (
         <p key={translation.id} className={style.text.translation}>
           {translation.image.content.text}
         </p>
       ))}
 
-      {textNodeTags.length ? (
+      {!isDeveloperMode && textNodeTags.length ? (
         <div className="mt-2 flex flex-wrap gap-1">
           {textNodeTags.map((tag) => (
             <TagChip key={tag} tag={tag} style={style} />
@@ -749,7 +1084,7 @@ export function ScriptLine({
         </div>
       ) : null}
 
-      {textNode.textLineRefs?.map((refValue) => (
+      {!isDeveloperMode && textNode.textLineRefs?.map((refValue) => (
         refValue.body.type === "tag" ? null : (
           <RefView
             key={refValue.id}
@@ -760,7 +1095,17 @@ export function ScriptLine({
         )
       ))}
 
-      {annotations.length || textNode.selections?.length ? (
+      {isDeveloperMode ? (
+        <DeveloperAnnotationPanel
+          textLine={textNode}
+          annotations={annotations}
+          translations={translations}
+          textNodeTags={textNodeTags}
+          nodeResources={nodeResources}
+          translationLanguageId={translationLanguageId}
+          style={style}
+        />
+      ) : annotations.length || textNode.selections?.length ? (
         <details className="mt-3 text-sm">
           <summary className="cursor-pointer text-gray-800">Annotations</summary>
           <div className="mt-2 space-y-2">
@@ -774,26 +1119,18 @@ export function ScriptLine({
               />
             ))}
             {annotations.map((annotation) => (
-              annotationMode === "developer" ? (
-                <DeveloperAnnotationView
-                  key={annotation.selectorId}
-                  annotation={annotation}
-                  translationLanguageId={translationLanguageId}
-                />
-              ) : (
-                <LearnerAnnotationView
-                  key={annotation.selectorId}
-                  annotation={annotation}
-                  style={style}
-                  translationLanguageId={translationLanguageId}
-                />
-              )
+              <LearnerAnnotationView
+                key={annotation.selectorId}
+                annotation={annotation}
+                style={style}
+                translationLanguageId={translationLanguageId}
+              />
             ))}
           </div>
         </details>
       ) : null}
 
-      {nodeResources.map((resource) => (
+      {!isDeveloperMode && nodeResources.map((resource) => (
         <ResourceView
           key={resource.id}
           resource={resource}

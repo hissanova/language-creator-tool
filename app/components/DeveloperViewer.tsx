@@ -7,6 +7,6 @@ type Props = {
   style?: ViewerStyle;
 };
 
-export function DevelopperViewer(props: Props) {
+export function DeveloperViewer(props: Props) {
   return <ViewerShell {...props} annotationMode="developer" showMetadata />;
 }

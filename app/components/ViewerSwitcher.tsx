@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import type { Document } from "../types/core/document";
 import type { ViewerStyle } from "../types/viewerStyle";
 import { ConversationViewer } from "./ConversationViewer";
-import { DevelopperViewer } from "./DevelopperViewer";
+import { DeveloperViewer } from "./DeveloperViewer";
 import { TextViewer } from "./TextViewer";
 
 type Props = {
@@ -12,7 +12,7 @@ type Props = {
   style?: ViewerStyle;
 };
 
-type ViewerId = "conversation" | "text" | "developper";
+type ViewerId = "conversation" | "text" | "developer";
 
 type ViewerOption = {
   id: ViewerId;
@@ -23,20 +23,20 @@ function getViewerOptions(document: Document): ViewerOption[] {
   if (document.metadata.documentType === "conversation") {
     return [
       { id: "conversation", label: "Conversation viewer" },
-      { id: "developper", label: "Developper viewer" },
+      { id: "developer", label: "Developer viewer" },
     ];
   }
 
   if (document.metadata.documentType === "text") {
     return [
       { id: "text", label: "Text viewer" },
-      { id: "developper", label: "Developper viewer" },
+      { id: "developer", label: "Developer viewer" },
     ];
   }
 
   return [
     { id: "conversation", label: "Conversation viewer" },
-    { id: "developper", label: "Developper viewer" },
+    { id: "developer", label: "Developer viewer" },
   ];
 }
 
@@ -65,8 +65,8 @@ export function ViewerSwitcher({ document, style }: Props) {
         </label>
       </div>
 
-      {selectedViewer.id === "developper" ? (
-        <DevelopperViewer document={document} style={style} />
+      {selectedViewer.id === "developer" ? (
+        <DeveloperViewer document={document} style={style} />
       ) : selectedViewer.id === "text" ? (
         <TextViewer document={document} />
       ) : (
