@@ -1,0 +1,64 @@
+---
+specVersion: "0.5-draft"
+title: "Viewer conversation smoke"
+documentType: "conversation"
+defaultLanguageId: "uchi"
+defaultFormId: "surface"
+
+languages:
+  - id: "uchi"
+    label: "Uchinaaguchi"
+  - id: "ja"
+    label: "Japanese"
+
+forms:
+  - id: "surface"
+    label: "Surface"
+  - id: "gloss"
+    label: "Gloss"
+
+speakers:
+  - id: "chichi"
+    name: "chichi"
+  - id: "saimon"
+    name: "saimon"
+  - id: "masa"
+    name: "masa"
+
+resources:
+  - id: "media-uchi-smoke-audio"
+    type: "media"
+    mediaType: "audio"
+    src: "../conversation-uch-episode/audio/sample-episode-uchi.mp3"
+    label: "Uchinaaguchi sample episode audio"
+---
+
+# はじみあびら
+
+00:00:27,660 --> 00:00:30,096
+>chichi: はじみてぃ しむんどー
+  @line
+    -> lang:ja
+      はじめていいよ
+
+00:00:29,963 --> 00:00:32,298
+>saimon: はじま、はじまびら?
+  @line
+    +tag:
+      - unnatural
+
+00:00:36,736 --> 00:00:38,338
+>masa: へーくしゅん！
+  @line
+    +note:
+      キッチンで録音していて、サイモンの奥さんがたまに割り込む。
+
+00:01:16,676 --> 00:01:18,144
+>saimon: わんねー にーさんどー
+  @line
+    -> lang:ja
+      私は遅いよ
+
+  @"にーさんどー"
+    -> gloss lang:ja
+      遅いよ
