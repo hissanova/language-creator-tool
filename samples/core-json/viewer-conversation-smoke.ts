@@ -20,7 +20,7 @@ import type { Document } from "@/app/types/core/document";
 export const viewerConversationSmoke = {
   metadata: {
     specVersion: "0.5-draft",
-    title: "Viewer conversation smoke",
+    title: "Conversation viewer smoke test",
     documentType: "conversation",
     defaultLanguageId: "uchi",
     defaultFormId: "surface",
