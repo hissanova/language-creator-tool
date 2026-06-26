@@ -1,7 +1,7 @@
 import { ViewerSwitcher } from "@/app/components/ViewerSwitcher";
 
-import { sampleDocument } from "@/app/data/sampleGrammarAnnotations";
+import { sample } from "@/samples/core-json/decomposition-minimum";
 
 export default function SampleAnnotationPage() {
-  return <ViewerSwitcher document={sampleDocument} />;
+  return <ViewerSwitcher document={sample} />;
 }

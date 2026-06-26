@@ -1,4 +1,4 @@
-import type { Document } from "@/app/types/lcm";
+import type { Document } from "@/app/types/core/document";
 
 export const sectionBlocksExample = {
   metadata: {
@@ -32,7 +32,13 @@ export const sectionBlocksExample = {
           note: {
             id: "note-1",
             title: "沖縄語の挨拶に関して",
-            text: "沖縄語の首里・那覇方言では、男性は「はいさい」、女性は「はいたい」という習慣がある。",
+            body: [
+              {
+                languageId: "ja",
+                formId: "surface",
+                text: "沖縄語の首里・那覇方言では、男性は「はいさい」、女性は「はいたい」という習慣がある。",
+              },
+            ]
           },
         },
         {

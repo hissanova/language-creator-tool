@@ -44,7 +44,7 @@ export const viewerConversationSmoke = {
       id: "media-uchi-smoke-audio",
       type: "media",
       mediaType: "audio",
-      src: "../conversation-uch-episode/audio/sample-episode-uchi.mp3",
+      src: "/public/samples/conversation-uch-episode/sample-episode-uchi.mp3",
       label: "Uchinaaguchi sample episode audio",
     },
   ],
