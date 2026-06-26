@@ -1,23 +1,21 @@
+import type { FormedText, TimeSpan } from "../types/core/common";
 import type {
   Document,
   FigureBlock,
-  FormedText,
   NoteBlock,
   Resource,
   Section,
   SectionBlock,
-  SelectorNode,
   TableBlock,
-  TextNode,
-  TextNodeRef,
-  TimeSpan,
-} from "../types/lcm";
+} from "../types/core/document";
+import type { TextLine } from "../types/core/textLine";
+import type { TextLineRef } from "../types/core/references";
 
-type SpeakerRef = TextNodeRef & {
+type SpeakerRef = TextLineRef & {
   body: { type: "speaker"; speakerId: string };
 };
 
-type AlignmentRef = TextNodeRef & {
+type AlignmentRef = TextLineRef & {
   body: { type: "alignment"; interval: TimeSpan };
 };
 
@@ -25,7 +23,7 @@ type Props = {
   document: Document;
 };
 
-export function DocumentViewer({ document }: Props) {
+export function TextViewer({ document }: Props) {
   return (
     <article className="mx-auto max-w-3xl space-y-6 p-6">
       <header className="border-b pb-4">
@@ -77,10 +75,6 @@ function SectionView({ section, resources }: { section: Section; resources: Reso
           <SectionBlockView key={getBlockKey(block)} block={block} resources={resources} />
         ))}
       </div>
-
-      {section.sections?.map((child) => (
-        <SectionView key={child.id} section={child} resources={resources} />
-      ))}
     </section>
   );
 }
@@ -95,27 +89,31 @@ function getBlockKey(block: SectionBlock) {
       return block.figure.id;
     case "table":
       return block.table.id;
+    case "section":
+      return block.section.id;
   }
 }
 
 function SectionBlockView({ block, resources }: { block: SectionBlock; resources: Resource[] }) {
   switch (block.type) {
     case "text":
-      return <TextNodeView textNode={block.text} resources={resources} />;
+      return <TextLineView textLine={block.text} resources={resources} />;
     case "note":
       return <NoteBlockView note={block.note} />;
     case "figure":
       return <FigureBlockView figure={block.figure} resources={resources} />;
     case "table":
       return <TableBlockView table={block.table} />;
+    case "section":
+      return <SectionView section={block.section} resources={resources} />;
   }
 }
 
-function TextNodeView({ textNode, resources }: { textNode: TextNode; resources: Resource[] }) {
-  const speaker = textNode.refs?.find(
+function TextLineView({ textLine, resources }: { textLine: TextLine; resources: Resource[] }) {
+  const speaker = textLine.textLineRefs?.find(
     (ref): ref is SpeakerRef => ref.body.type === "speaker"
   )?.body.speakerId;
-  const alignment = textNode.refs?.find(
+  const alignment = textLine.textLineRefs?.find(
     (ref): ref is AlignmentRef => ref.body.type === "alignment"
   )?.body.interval;
 
@@ -131,49 +129,28 @@ function TextNodeView({ textNode, resources }: { textNode: TextNode; resources: 
             {speaker}
           </span>
         )}
-        <span className="text-lg">{textNode.content.text}</span>
+        <span className="text-lg">{textLine.content.text}</span>
       </div>
 
-      {textNode.transforms?.map((transform) => (
-        <div key={transform.id} className="mt-2 rounded bg-gray-50 p-2 text-sm">
-          <span className="font-semibold">{transform.transformType}: </span>
-          {transform.output.content.text}
+      {textLine.textLineMappings?.map((mapping) => (
+        <div key={mapping.id} className="mt-2 rounded bg-gray-50 p-2 text-sm">
+          <span className="font-semibold">{mapping.mappingType}: </span>
+          {mapping.image.content.text}
         </div>
       ))}
 
-      {textNode.refs?.map((refValue) => (
+      {textLine.textLineRefs?.map((refValue) => (
         <RefView key={refValue.id} body={refValue.body} resources={resources} />
       ))}
 
-      {textNode.selectors?.map((selector) => (
-        <SelectorView key={selector.id} selector={selector} resources={resources} />
-      ))}
-    </div>
-  );
-}
-
-function SelectorView({ selector, resources }: { selector: SelectorNode; resources: Resource[] }) {
-  const ranges = selector.children.flatMap((child) =>
-    child.source?.type === "selector" ? child.source.ranges : []
-  );
-
-  return (
-    <div className="mt-3 border-l-4 border-gray-200 pl-3">
-      <div className="text-sm font-semibold text-gray-700">
-        {selector.label ?? selector.selectorType}
-        {ranges.length ? (
-          <span className="ml-2 font-normal text-gray-500">
-            {ranges.map((range) => `${range.start}-${range.end}`).join(", ")}
-          </span>
-        ) : null}
-      </div>
-
-      {selector.children.map((child) => (
-        <TextNodeView key={child.id} textNode={child} resources={resources} />
-      ))}
-
-      {selector.refs?.map((refValue) => (
-        <RefView key={refValue.id} body={refValue.body} resources={resources} />
+      {textLine.selectedTextMappings?.map((bundle) => (
+        <AnnotationBox key={bundle.id} title={`Selector ${bundle.source}`}>
+          {bundle.mappings.map((mapping) => (
+            <div key={mapping.id}>
+              {mapping.mappingType}: {mapping.image.content.text}
+            </div>
+          ))}
+        </AnnotationBox>
       ))}
     </div>
   );
@@ -183,7 +160,7 @@ function RefView({
   body,
   resources,
 }: {
-  body: NonNullable<TextNode["refs"]>[number]["body"] | NonNullable<SelectorNode["refs"]>[number]["body"];
+  body: TextLineRef["body"];
   resources: Resource[];
 }) {
   switch (body.type) {
@@ -227,9 +204,6 @@ function RefView({
 
     case "speaker":
       return <AnnotationBox title="Speaker">{body.speakerId}</AnnotationBox>;
-
-    case "relation":
-      return <AnnotationBox title="Relation">{body.label ?? body.relationType}</AnnotationBox>;
   }
 }
 
@@ -252,7 +226,9 @@ function NoteBlockView({ note }: { note: NoteBlock }) {
   return (
     <aside className="rounded-lg border bg-gray-50 p-4">
       {note.title && <div className="font-semibold">{note.title}</div>}
-      <p>{note.text}</p>
+      {note.body.map((body, index) => (
+        <p key={`${note.id}-${index}`}>{body.text}</p>
+      ))}
     </aside>
   );
 }
@@ -264,19 +240,15 @@ function FigureBlockView({
   figure: FigureBlock;
   resources: Resource[];
 }) {
-  const resource =
-    figure.resourceRef &&
-    resources.find(
-      (candidate): candidate is Extract<Resource, { type: "image" }> =>
-        candidate.id === figure.resourceRef?.resourceId && candidate.type === "image"
-    );
-  const src = figure.src ?? resource?.src;
-  const alt = figure.alt ?? resource?.alt ?? "";
-  const caption = Object.values(figure.caption ?? resource?.caption ?? {})[0]?.text;
+  const resource = resources.find(
+    (candidate): candidate is Extract<Resource, { type: "image" }> =>
+      candidate.id === figure.resourceRef.resourceId && candidate.type === "image"
+  );
+  const caption = firstCaption(figure.caption ?? resource?.caption);
 
   return (
     <figure className="rounded-lg border bg-gray-50 p-4">
-      {src && <img src={src} alt={alt} className="max-w-full rounded" />}
+      {resource && <img src={resource.src} alt={resource.alt ?? ""} className="max-w-full rounded" />}
       {caption && <figcaption className="mt-2 text-sm text-gray-600">{caption}</figcaption>}
     </figure>
   );
@@ -289,18 +261,18 @@ function TableBlockView({ table }: { table: TableBlock }) {
         <thead>
           <tr>
             {table.columns.map((column) => (
-              <th key={column} className="border-b bg-gray-50 p-2 text-left">
-                {column}
+              <th key={column.id} className="border-b bg-gray-50 p-2 text-left">
+                {column.label}
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {table.rows.map((row, rowIndex) => (
-            <tr key={rowIndex}>
-              {row.map((cell, cellIndex) => (
-                <td key={cellIndex} className="border-t p-2">
-                  {cell.text}
+          {table.rows.map((row) => (
+            <tr key={row.id}>
+              {table.columns.map((column) => (
+                <td key={column.id} className="border-t p-2">
+                  {row.cells[column.id]?.text}
                 </td>
               ))}
             </tr>
@@ -337,6 +309,11 @@ function ResourceView({ resource }: { resource: Resource }) {
         </div>
       ) : null;
   }
+}
+
+function firstCaption(caption: Record<string, FormedText> | FormedText[] | undefined) {
+  if (Array.isArray(caption)) return caption[0]?.text;
+  return Object.values(caption ?? {})[0]?.text;
 }
 
 function formatTimeSpan(time: TimeSpan): string {

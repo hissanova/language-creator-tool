@@ -1,17 +1,18 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import type { Document } from "../types/lcm";
+import type { Document } from "../types/core/document";
 import type { ViewerStyle } from "../types/viewerStyle";
 import { ConversationViewer } from "./ConversationViewer";
 import { DevelopperViewer } from "./DevelopperViewer";
+import { TextViewer } from "./TextViewer";
 
 type Props = {
   document: Document;
   style?: ViewerStyle;
 };
 
-type ViewerId = "conversation" | "developper";
+type ViewerId = "conversation" | "text" | "developper";
 
 type ViewerOption = {
   id: ViewerId;
@@ -26,8 +27,15 @@ function getViewerOptions(document: Document): ViewerOption[] {
     ];
   }
 
+  if (document.metadata.documentType === "text") {
+    return [
+      { id: "text", label: "Text viewer" },
+      { id: "developper", label: "Developper viewer" },
+    ];
+  }
+
   return [
-    { id: "conversation", label: "Contents viewer" },
+    { id: "conversation", label: "Conversation viewer" },
     { id: "developper", label: "Developper viewer" },
   ];
 }
@@ -59,6 +67,8 @@ export function ViewerSwitcher({ document, style }: Props) {
 
       {selectedViewer.id === "developper" ? (
         <DevelopperViewer document={document} style={style} />
+      ) : selectedViewer.id === "text" ? (
+        <TextViewer document={document} />
       ) : (
         <ConversationViewer document={document} style={style} />
       )}

@@ -29,7 +29,7 @@ resources:
   - id: "media-uchi-smoke-audio"
     type: "media"
     mediaType: "audio"
-    src: "/public/media/audio/sample-episode-uchi.mp3"
+    src: "/media/audio/sample-episode-uchi.mp3"
     label: "Uchinaaguchi sample episode audio"
 ---
 

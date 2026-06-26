@@ -44,7 +44,7 @@ export const viewerConversationSmoke = {
       id: "media-uchi-smoke-audio",
       type: "media",
       mediaType: "audio",
-      src: "/public/samples/conversation-uch-episode/sample-episode-uchi.mp3",
+      src: "/media/audio/sample-episode-uchi.mp3",
       label: "Uchinaaguchi sample episode audio",
     },
   ],
@@ -253,7 +253,7 @@ export const viewerConversationSmoke = {
                       content: {
                         text: "遅いよ",
                         languageId: "ja",
-                        formId: "gloss",
+                        formId: "surface",
                       },
                     },
                   },

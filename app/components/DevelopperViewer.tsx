@@ -1,6 +1,6 @@
-import type { Document } from "../types/lcm";
+import type { Document } from "../types/core/document";
 import type { ViewerStyle } from "../types/viewerStyle";
-import { ViewerShell } from "./ContentsViewer";
+import { ViewerShell } from "./ConversationViewer";
 
 type Props = {
   document: Document;
