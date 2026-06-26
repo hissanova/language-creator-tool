@@ -47,7 +47,7 @@ export const nestedDecompositionSample = {
 								selectorIds: ["selector-kan", "selector-budong"],
 								selectionType: "decomposition",
 								label: "看 | 不懂",
-								refs: [
+								selectionRefs: [
 									{
 										id: "ref-selection-kan-budong-tags",
 										body: {
@@ -56,7 +56,7 @@ export const nestedDecompositionSample = {
 										},
 									},
 								],
-								textMappings: [
+								selectionMappings: [
 									{
 										id: "map-selection-kan-budong-translation-en",
 										mappingType: "translation",
@@ -70,7 +70,7 @@ export const nestedDecompositionSample = {
 										},
 									},
 								],
-								textMappingBundles: [
+								localSelectedTextMappings: [
 									{
 										id: "bundle-kan-gloss",
 										source: "selector-kan",
@@ -119,7 +119,7 @@ export const nestedDecompositionSample = {
 															selectorIds: ["selector-not", "selector-understand"],
 															selectionType: "decomposition",
 															label: "not | understand",
-															refs: [
+															selectionRefs: [
 																{
 																	id: "ref-selection-not-understand-tags",
 																	body: {
@@ -128,7 +128,7 @@ export const nestedDecompositionSample = {
 																	},
 																},
 															],
-															refAttachmentBundles: [
+															localSelectedTextRefs: [
 																{
 																	id: "bundle-not-tags",
 																	source: "selector-not",
@@ -192,7 +192,7 @@ export const nestedDecompositionSample = {
 															selectorIds: ["selector-bu", "selector-dong"],
 															selectionType: "decomposition",
 															label: "不 | 懂",
-															refs: [
+															selectionRefs: [
 																{
 																	id: "ref-selection-bu-dong-tags",
 																	body: {
@@ -201,7 +201,7 @@ export const nestedDecompositionSample = {
 																	},
 																},
 															],
-															textMappingBundles: [
+															localSelectedTextMappings: [
 																{
 																	id: "bundle-bu-gloss",
 																	source: "selector-bu",
