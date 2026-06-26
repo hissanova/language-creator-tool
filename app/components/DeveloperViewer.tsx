@@ -1,6 +1,6 @@
 import type { Document } from "../types/core/document";
 import type { ViewerStyle } from "../types/viewerStyle";
-import { ViewerShell } from "./ConversationViewer";
+import { ViewerShell } from "./ViewerShell";
 
 type Props = {
   document: Document;

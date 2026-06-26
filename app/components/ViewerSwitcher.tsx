@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import type { Document } from "../types/core/document";
 import type { ViewerStyle } from "../types/viewerStyle";
 import { ConversationViewer } from "./ConversationViewer";
@@ -19,29 +19,16 @@ type ViewerOption = {
   label: string;
 };
 
-function getViewerOptions(document: Document): ViewerOption[] {
-  if (document.metadata.documentType === "conversation") {
-    return [
-      { id: "conversation", label: "Conversation viewer" },
-      { id: "developer", label: "Developer viewer" },
-    ];
-  }
-
-  if (document.metadata.documentType === "text") {
-    return [
-      { id: "text", label: "Text viewer" },
-      { id: "developer", label: "Developer viewer" },
-    ];
-  }
-
+function getViewerOptions(): ViewerOption[] {
   return [
     { id: "conversation", label: "Conversation viewer" },
+    { id: "text", label: "Text viewer" },
     { id: "developer", label: "Developer viewer" },
   ];
 }
 
 export function ViewerSwitcher({ document, style }: Props) {
-  const viewerOptions = useMemo(() => getViewerOptions(document), [document]);
+  const viewerOptions = getViewerOptions();
   const [viewerId, setViewerId] = useState<ViewerId>(viewerOptions[0].id);
 
   const selectedViewer = viewerOptions.find((option) => option.id === viewerId) ?? viewerOptions[0];
