@@ -22,11 +22,15 @@ export type TextLine = {
   selectorRecord?: SelectorRecord;
   selections?: Selection[];
 
-  textMappingBundles?: TextMappingBundle[];
-  refAttachmentBundles?: RefAttachmentBundle[];
+  // Optional text mappings attached to individual selectors within the TextLine.
+  // Each mapping's source must reference a selector in selectorRecord.
+  selectedTextMappings?: TextMappingBundle[];
+  selectedTextRefs?: RefAttachmentBundle[];
 
-  textMappings?: TextMappingPayload[];
-  refs?: TextLineRef[];
+  // Optional text mappings attached to the TextLine as a whole, rather than to individual selectors.
+  // Use this for text that applies to the entire TextLine.
+  textLineMappings?: TextMappingPayload[];
+  textLineRefs?: TextLineRef[];
 };
 
 // -----------------------------------------------------------------------------
@@ -132,13 +136,13 @@ export type RefAttachmentBundle = {
  * @property {SelectorId[]} selectorIds - Array of selector IDs that comprise this selection.
  * @property {SelectionType} selectionType - The type/category of this selection.
  * @property {string} [label] - Optional human-readable label for this selection.
- * @property {TextMappingBundle[]} [textMappingBundles] - Optional text mappings for individual selectors.
+ * @property {TextMappingBundle[]} [localSelectedTextMappings] - Optional text mappings for individual selectors.
  *   Each mapping's selectorId must reference a selector in selectorIds.
- * @property {RefAttachmentBundle[]} [refAttachmentBundles] - Optional reference attachments for individual selectors.
+ * @property {RefAttachmentBundle[]} [localSelectedTextRefs] - Optional reference attachments for individual selectors.
  *   Each attachment's selectorId must reference a selector in selectorIds.
- * @property {TextMappingPayload[]} [textMappings] - Optional text mappings attached to the selection as a whole,
+ * @property {TextMappingPayload[]} [selectionMappings] - Optional text mappings attached to the selection as a whole,
  *   rather than to individual selectors. Use this for text that applies to the entire selection.
- * @property {SelectionRef[]} [refs] - Optional references attached to the selection as a whole,
+ * @property {SelectionRef[]} [selectionRefs] - Optional references attached to the selection as a whole,
  *   rather than to individual selectors.
  * @property {Provenance} [provenance] - Optional provenance information tracking the origin and history of this selection.
  */
@@ -152,12 +156,12 @@ export type Selection = {
 
   label?: string;
 
-  textMappingBundles?: TextMappingBundle[];
+  localSelectedTextMappings?: TextMappingBundle[];
 
-  refAttachmentBundles?: RefAttachmentBundle[];
+  localSelectedTextRefs?: RefAttachmentBundle[];
 
-  textMappings?: TextMappingPayload[];
-  refs?: SelectionRef[];
+  selectionMappings?: TextMappingPayload[];
+  selectionRefs?: SelectionRef[];
 
   provenance?: Provenance;
 };
@@ -182,21 +186,21 @@ export type SelectionType =
 // -----------------------------------------------------------------------------
 // Validation rules
 
-// TextLine.textMappingBundles[].source
+// TextLine.localSelectedTextMappings[].source
 //   must exist in TextLine.selectorRecord
 
-// TextLine.refAttachmentBundles[].source
+// TextLine.localSelectedTextRefs[].source
 //   must exist in TextLine.selectorRecord
 
-// Selection.textMappingBundles[].source
+// Selection.selectionMappings[].source
 //   must be included in Selection.selectorIds
 
-// Selection.refAttachmentBundles[].source
+// Selection.localSelectedTextRefs[].source
 //   must be included in Selection.selectorIds
 
-// Selection.textMappings
+// Selection.selectionMappings
 //   are mappings from the Selection as a whole
 
-// Selection.refs
+// Selection.selectionRefs
 //   are refs attached to the Selection as a whole
 
