@@ -27,7 +27,6 @@ import {
   refText,
   refsToResources,
   selectionTags,
-  shouldShowMapping,
   type LineRef,
   type SelectorAnnotation,
 } from "./script-line/coreQueries";
@@ -46,6 +45,10 @@ type Props = {
   canPlay?: boolean;
   onPlay?: (interval: TimeSpan) => void;
 };
+
+function isNoteRef(refValue: LineRef) {
+  return refValue.body.type === "note";
+}
 
 function tagDisplayStyle(tag: string, style: ViewerStyle) {
   return style.tags?.[tag];
@@ -191,9 +194,8 @@ function LearnerAnnotationView({
   translationLanguageId: string;
 }) {
   const tags = annotationTags(annotation);
-  const mappings = annotation.mappings.filter((mapping) => shouldShowMapping(mapping, translationLanguageId));
-  const selectionMappings = annotation.selection?.selectionMappings
-    ?.filter((mapping) => shouldShowMapping(mapping, translationLanguageId)) ?? [];
+  const mappings = annotation.mappings;
+  const selectionMappings = annotation.selection?.selectionMappings ?? [];
 
   if (!tags.length && !mappings.length && !selectionMappings.length && !annotation.refs.length) return null;
 
@@ -283,12 +285,10 @@ function SelectionSummary({
   selection,
   textLine,
   style,
-  translationLanguageId,
 }: {
   selection: Selection;
   textLine: TextLine;
   style: ViewerStyle;
-  translationLanguageId: string;
 }) {
   const selectorTexts = selection.selectorIds
     .map((selectorId) => {
@@ -298,7 +298,7 @@ function SelectionSummary({
     })
     .filter(Boolean);
   const tags = selectionTags(selection);
-  const mappings = selection.selectionMappings?.filter((mapping) => shouldShowMapping(mapping, translationLanguageId)) ?? [];
+  const mappings = selection.selectionMappings ?? [];
 
   if (!selectorTexts.length && !tags.length && !mappings.length) return null;
 
@@ -362,6 +362,7 @@ export function ScriptLine({
   const resourceRefs = collectResourceRefs(textNode.textLineRefs);
   const nodeResources = refsToResources(resourceRefs, resources);
   const isDeveloperMode = annotationMode === "developer";
+  const noteRefs = textNode.textLineRefs?.filter(isNoteRef) ?? [];
 
   return (
     <div className={speakerStyle.container}>
@@ -424,16 +425,8 @@ export function ScriptLine({
         </p>
       ))}
 
-      {!isDeveloperMode && textNodeTags.length ? (
-        <div className="mt-2 flex flex-wrap gap-1">
-          {textNodeTags.map((tag) => (
-            <TagChip key={tag} tag={tag} style={style} />
-          ))}
-        </div>
-      ) : null}
-
       {!isDeveloperMode && textNode.textLineRefs?.map((refValue) => (
-        refValue.body.type === "tag" ? null : (
+        refValue.body.type === "tag" || refValue.body.type === "note" ? null : (
           <RefView
             key={refValue.id}
             refValue={refValue}
@@ -447,23 +440,36 @@ export function ScriptLine({
         <DeveloperAnnotationPanel
           textLine={textNode}
           annotations={annotations}
-          translations={translations}
           textNodeTags={textNodeTags}
           nodeResources={nodeResources}
           translationLanguageId={translationLanguageId}
           style={style}
         />
-      ) : annotations.length || textNode.selections?.length ? (
+      ) : annotations.length || textNode.selections?.length || noteRefs.length || textNodeTags.length ? (
         <details className="mt-3 text-sm">
           <summary className="cursor-pointer text-gray-800">Annotations</summary>
           <div className="mt-2 space-y-2">
+            {textNodeTags.length ? (
+              <div className="flex flex-wrap gap-1">
+                {textNodeTags.map((tag) => (
+                  <TagChip key={tag} tag={tag} style={style} />
+                ))}
+              </div>
+            ) : null}
+            {noteRefs.map((refValue) => (
+              <RefView
+                key={refValue.id}
+                refValue={refValue}
+                translationLanguageId={translationLanguageId}
+                style={style}
+              />
+            ))}
             {textNode.selections?.map((selection) => (
               <SelectionSummary
                 key={selection.id}
                 selection={selection}
                 textLine={textNode}
                 style={style}
-                translationLanguageId={translationLanguageId}
               />
             ))}
             {annotations.map((annotation) => (

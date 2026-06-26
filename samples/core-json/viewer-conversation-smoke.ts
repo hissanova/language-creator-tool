@@ -30,7 +30,6 @@ export const viewerConversationSmoke = {
     ],
     forms: [
       { id: "surface", label: "Surface" },
-      { id: "gloss", label: "Gloss" },
     ],
     speakers: [
       { id: "chichi", name: "chichi" },

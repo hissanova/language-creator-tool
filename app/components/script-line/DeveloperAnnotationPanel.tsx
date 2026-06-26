@@ -8,7 +8,6 @@ import {
   isTagRef,
   mappingText,
   refText,
-  shouldShowMapping,
   type LineRef,
   type SelectorAnnotation,
 } from "./coreQueries";
@@ -16,7 +15,6 @@ import {
 type Props = {
   textLine: TextLine;
   annotations: SelectorAnnotation[];
-  translations: TextMappingPayload[];
   textNodeTags: string[];
   nodeResources: Resource[];
   translationLanguageId: string;
@@ -266,11 +264,9 @@ function SelectionDeveloperView({
       {selection.selectionMappings?.length ? (
         <div className="mb-2 space-y-2">
           <div className="text-xs font-semibold uppercase text-gray-700">Whole-selection mappings</div>
-          {selection.selectionMappings
-            .filter((mapping) => shouldShowMapping(mapping, translationLanguageId))
-            .map((mapping) => (
-              <MappingDetailView key={mapping.id} mapping={mapping} />
-            ))}
+          {selection.selectionMappings.map((mapping) => (
+            <MappingDetailView key={mapping.id} mapping={mapping} />
+          ))}
         </div>
       ) : null}
 
@@ -325,18 +321,13 @@ function SelectionDeveloperView({
 
 function ResourceView({
   resource,
-  translationLanguageId,
   style,
 }: {
   resource: Resource;
-  translationLanguageId: string;
   style: ViewerStyle;
 }) {
   if (resource.type === "image") {
-    const caption =
-      translationLanguageId === "none"
-        ? undefined
-        : resource.caption?.[translationLanguageId]?.text;
+    const caption = Object.values(resource.caption ?? {})[0]?.text;
 
     return (
       <figure className={style.resource.figure}>
@@ -368,16 +359,13 @@ function ResourceView({
 export function DeveloperAnnotationPanel({
   textLine,
   annotations,
-  translations,
   textNodeTags,
   nodeResources,
   translationLanguageId,
   style,
 }: Props) {
   const nonTagLineRefs = textLine.textLineRefs?.filter((ref) => !isTagRef(ref)) ?? [];
-  const nonTranslationLineMappings =
-    textLine.textLineMappings?.filter((mapping) => mapping.mappingType !== "translation") ?? [];
-  const wholeLineMappings = [...translations, ...nonTranslationLineMappings];
+  const wholeLineMappings = textLine.textLineMappings ?? [];
   const selectorRefCount =
     textLine.selectedTextRefs?.reduce((count, bundle) => count + bundle.attachments.length, 0) ?? 0;
   const selectedSelectorIds = new Set(textLine.selections?.flatMap((selection) => selection.selectorIds) ?? []);
@@ -508,7 +496,6 @@ export function DeveloperAnnotationPanel({
               <ResourceView
                 key={resource.id}
                 resource={resource}
-                translationLanguageId={translationLanguageId}
                 style={style}
               />
             ))}

@@ -14,8 +14,6 @@ languages:
 forms:
   - id: "surface"
     label: "Surface"
-  - id: "gloss"
-    label: "Gloss"
 
 speakers:
   - id: "chichi"

@@ -202,6 +202,7 @@ export function ViewerShell({
 
   const media = document.resources?.find((resource) => resource.type === "media");
   const mediaSrc = media ? normalizeMediaSrc(media.src) : undefined;
+  const isDeveloperMode = annotationMode === "developer";
 
   const playSpan = (span: TimeSpan) => {
     if (!mediaRef.current) return;
@@ -333,37 +334,39 @@ export function ViewerShell({
         </div>
       )}
 
-      <div className={style.layout.controls}>
-        <label className="flex items-center gap-2">
-          <span className="text-sm font-medium">Form</span>
-          <select
-            className="rounded border bg-white px-2 py-1 text-gray-950"
-            value={formId}
-            onChange={(event) => setFormId(event.target.value)}
-          >
-            {formOptions.map((form) => (
-              <option key={form.id} value={form.id} className="bg-white text-gray-950">
-                {form.label ?? form.id}
-              </option>
-            ))}
-          </select>
-        </label>
+      {!isDeveloperMode && (
+        <div className={style.layout.controls}>
+          <label className="flex items-center gap-2">
+            <span className="text-sm font-medium">Form</span>
+            <select
+              className="rounded border bg-white px-2 py-1 text-gray-950"
+              value={formId}
+              onChange={(event) => setFormId(event.target.value)}
+            >
+              {formOptions.map((form) => (
+                <option key={form.id} value={form.id} className="bg-white text-gray-950">
+                  {form.label ?? form.id}
+                </option>
+              ))}
+            </select>
+          </label>
 
-        <label className="flex items-center gap-2">
-          <span className="text-sm font-medium">Translation / Meaning</span>
-          <select
-            className="rounded border bg-white px-2 py-1 text-gray-950"
-            value={translationLanguageId}
-            onChange={(event) => setTranslationLanguageId(event.target.value)}
-          >
-            {translationLanguageOptions.map((language) => (
-              <option key={language.id} value={language.id} className="bg-white text-gray-950">
-                {language.label ?? language.id}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
+          <label className="flex items-center gap-2">
+            <span className="text-sm font-medium">Translation</span>
+            <select
+              className="rounded border bg-white px-2 py-1 text-gray-950"
+              value={translationLanguageId}
+              onChange={(event) => setTranslationLanguageId(event.target.value)}
+            >
+              {translationLanguageOptions.map((language) => (
+                <option key={language.id} value={language.id} className="bg-white text-gray-950">
+                  {language.label ?? language.id}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+      )}
 
       <div className="space-y-8">
         {document.sections.map((section) => renderSection(section))}

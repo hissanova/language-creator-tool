@@ -138,6 +138,8 @@ export function getDisplayMapping(textLine: TextLine, formId: string): TextMappi
 }
 
 export function getTranslations(textLine: TextLine, languageId: string) {
+  if (!languageId || languageId === "none") return [];
+
   return textLine.textLineMappings?.filter(
     (mapping) => mapping.mappingType === "translation" && shouldShowMapping(mapping, languageId)
   ) ?? [];
