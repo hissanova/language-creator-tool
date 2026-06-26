@@ -13,7 +13,6 @@ export const nestedDecompositionSample = {
 		],
 		forms: [
 			{ id: "surface", label: "Surface" },
-			{ id: "gloss", label: "Gloss" },
 		],
 	},
 	sections: [
@@ -83,7 +82,7 @@ export const nestedDecompositionSample = {
 													content: {
 														text: "look/read",
 														languageId: "en",
-														formId: "gloss",
+														formId: "surface",
 													},
 												},
 											},
@@ -101,7 +100,7 @@ export const nestedDecompositionSample = {
 													content: {
 														text: "not understand",
 														languageId: "en",
-														formId: "gloss",
+														formId: "surface",
 													},
 													selectorRecord: {
 														"selector-not": {
@@ -214,7 +213,7 @@ export const nestedDecompositionSample = {
 																				content: {
 																					text: "not",
 																					languageId: "en",
-																					formId: "gloss",
+																					formId: "surface",
 																				},
 																			},
 																		},
@@ -232,7 +231,7 @@ export const nestedDecompositionSample = {
 																				content: {
 																					text: "understand",
 																					languageId: "en",
-																					formId: "gloss",
+																					formId: "surface",
 																				},
 																			},
 																		},

@@ -12,9 +12,7 @@ export const sample = {
 						{ id: "en", label: "English" }
 				],
 				forms: [
-						{ id: "surface", label: "Surface" },
-						{ id: "gloss", label: "Gloss" }
-				]
+						{ id: "surface", label: "Surface" },				]
 		},
 		sections: [
 				{
@@ -63,7 +61,7 @@ export const sample = {
 																										content: {
 																												text: "eat",
 																												languageId: "en",
-																												formId: "gloss"
+																												formId: "surface"
 																										}
 																								}
 																						}
@@ -81,7 +79,7 @@ export const sample = {
 																										content: {
 																												text: "arrive",
 																												languageId: "en",
-																												formId: "gloss"
+																												formId: "surface"
 																										}
 																								}
 																						}
@@ -99,7 +97,7 @@ export const sample = {
 																										content: {
 																												text: "full",
 																												languageId: "en",
-																												formId: "gloss"
+																												formId: "surface"
 																										}
 																								}
 																						}

@@ -187,11 +187,11 @@ export function ViewerShell({
 }: ViewerShellProps) {
   const mediaRef = useRef<HTMLMediaElement | null>(null);
 
-  const formOptions = withNone(document.metadata.forms);
+  const formOptions = document.metadata.forms ?? [];
   const translationLanguageOptions = withNone(document.metadata.languages);
 
   const [formId, setFormId] = useState<string>(
-    document.metadata.defaultFormId ?? "none"
+    document.metadata.defaultFormId ?? formOptions[0]?.id ?? "none"
   );
 
   const [translationLanguageId, setTranslationLanguageId] = useState<string>(
@@ -336,20 +336,29 @@ export function ViewerShell({
 
       {!isDeveloperMode && (
         <div className={style.layout.controls}>
-          <label className="flex items-center gap-2">
-            <span className="text-sm font-medium">Form</span>
-            <select
-              className="rounded border bg-white px-2 py-1 text-gray-950"
-              value={formId}
-              onChange={(event) => setFormId(event.target.value)}
-            >
-              {formOptions.map((form) => (
-                <option key={form.id} value={form.id} className="bg-white text-gray-950">
-                  {form.label ?? form.id}
-                </option>
-              ))}
-            </select>
-          </label>
+          {formOptions.length === 1 ? (
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-medium">Form</span>
+              <span className="rounded border bg-gray-100 px-2 py-1 text-gray-950">
+                {formOptions[0].label ?? formOptions[0].id}
+              </span>
+            </div>
+          ) : formOptions.length > 1 ? (
+            <label className="flex items-center gap-2">
+              <span className="text-sm font-medium">Form</span>
+              <select
+                className="rounded border bg-white px-2 py-1 text-gray-950"
+                value={formId}
+                onChange={(event) => setFormId(event.target.value)}
+              >
+                {formOptions.map((form) => (
+                  <option key={form.id} value={form.id} className="bg-white text-gray-950">
+                    {form.label ?? form.id}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ) : null}
 
           <label className="flex items-center gap-2">
             <span className="text-sm font-medium">Translation</span>
