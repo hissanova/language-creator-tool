@@ -231,7 +231,7 @@ export const viewerConversationSmoke = {
               },
             ],
             selectorRecord: {
-              "selector-uchi-smoke-004-niisandoo": {
+              "selector-uchi-smoke-004-niisan": {
                 selectorType: "range",
                 range: {
                   start: 5,
@@ -241,14 +241,14 @@ export const viewerConversationSmoke = {
             },
             selectedTextMappings: [
               {
-                id: "bundle-uchi-smoke-004-niisandoo-gloss",
-                source: "selector-uchi-smoke-004-niisandoo",
+                id: "bundle-uchi-smoke-004-niisan-gloss",
+                source: "selector-uchi-smoke-004-niisan",
                 mappings: [
                   {
-                    id: "map-uchi-smoke-004-niisandoo-gloss-ja",
+                    id: "map-uchi-smoke-004-niisan-gloss-ja",
                     mappingType: "gloss",
                     image: {
-                      id: "line-uchi-smoke-004-niisandoo-gloss-ja",
+                      id: "line-uchi-smoke-004-niisan-gloss-ja",
                       content: {
                         text: "遅い",
                         languageId: "ja",

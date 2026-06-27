@@ -142,25 +142,35 @@ function resourceEntries(textLine: TextLine, resources: Resource[] | undefined):
     }) ?? [];
 }
 
-function hasSourceContent(block: AnnotationPanelSourceBlockConfig, context: BlockContext) {
+function sourceContentCount(block: AnnotationPanelSourceBlockConfig, context: BlockContext) {
   const { textLine, resources, translationLanguageId } = context;
 
   switch (block.source) {
     case "textLine.refs":
-      return filteredRefs(textLine, block.filter).length > 0;
+      return filteredRefs(textLine, block.filter).length;
     case "textLine.textMappings":
-      return filteredMappings(textLine, block.filter, translationLanguageId).length > 0;
+      return filteredMappings(textLine, block.filter, translationLanguageId).length;
     case "textLine.selectorRecord":
-      return Object.keys(textLine.selectorRecord ?? {}).length > 0;
+      return Object.keys(textLine.selectorRecord ?? {}).length;
     case "textLine.selectedTextRefs":
-      return filteredSelectedTextRefs(textLine, block.filter).length > 0;
+      return filteredSelectedTextRefs(textLine, block.filter).reduce(
+        (count, bundle) => count + bundle.attachments.length,
+        0
+      );
     case "textLine.selectedTextMappings":
-      return filteredSelectedTextMappings(textLine, block.filter, translationLanguageId).length > 0;
+      return filteredSelectedTextMappings(textLine, block.filter, translationLanguageId).reduce(
+        (count, bundle) => count + bundle.mappings.length,
+        0
+      );
     case "textLine.selections":
-      return filteredSelections(textLine, block.filter).length > 0;
+      return filteredSelections(textLine, block.filter).length;
     case "textLine.resources":
-      return resourceEntries(textLine, resources).length > 0;
+      return resourceEntries(textLine, resources).length;
   }
+}
+
+function hasSourceContent(block: AnnotationPanelSourceBlockConfig, context: BlockContext) {
+  return sourceContentCount(block, context) > 0;
 }
 
 function shouldRenderSource(
@@ -265,6 +275,8 @@ function SelectorRecordValue({
   const showCoreKindLabels = options.showCoreKindLabels ?? true;
   const showIds = options.showIds ?? true;
   const showRanges = options.showRanges ?? true;
+  const showSelectorType =
+    options.selectorRecord?.showSelectorType ?? options.showSemanticTypeLabels ?? true;
 
   return (
     <div className="space-y-1">
@@ -289,6 +301,9 @@ function SelectorRecordValue({
               )}
               {selectedText && <span className="font-semibold text-sky-950">{selectedText}</span>}
               {showIds && <span className="text-xs text-gray-700">{selectorId}</span>}
+              {showSelectorType && (
+                <span className="text-xs text-gray-700">{selector.selectorType}</span>
+              )}
               {showRanges && (
                 <span className="text-xs text-gray-700">range: {formatRange(selector)}</span>
               )}
@@ -430,15 +445,21 @@ function AnnotationPanelSourceBlock({
   baseOptions?: AnnotationPanelDisplayOptions;
 }) {
   const options = mergeOptions(baseOptions, block.options);
-  const hasContent = hasSourceContent(block, context);
+  const count = sourceContentCount(block, context);
+  const hasContent = count > 0;
 
   if (!hasContent && !showsEmptyState(options)) return null;
 
   return (
     <section className="rounded border border-gray-200 bg-white p-3 text-sm shadow-sm">
       {block.title && (
-        <div className="mb-2 border-b border-gray-100 pb-2 font-semibold text-gray-950">
-          {block.title}
+        <div className="mb-2 flex items-center gap-2 border-b border-gray-100 pb-2 font-semibold text-gray-950">
+          <span>{block.title}</span>
+          {(options.showCounts ?? false) && (
+            <span className="rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700">
+              {count}
+            </span>
+          )}
         </div>
       )}
       <div className="space-y-2">
@@ -463,13 +484,22 @@ function AnnotationPanelGroupBlock({
   const visibleChildren = block.children.filter((child) =>
     shouldRenderSource(child, context, options)
   );
+  const count = visibleChildren.reduce(
+    (total, child) => total + sourceContentCount(child, context),
+    0
+  );
 
   if (!visibleChildren.length && !showsEmptyState(options)) return null;
 
   return (
     <section className="rounded border border-gray-200 bg-white p-3 text-sm shadow-sm">
-      <div className="mb-2 border-b border-gray-100 pb-2 font-semibold text-gray-950">
-        {block.title}
+      <div className="mb-2 flex items-center gap-2 border-b border-gray-100 pb-2 font-semibold text-gray-950">
+        <span>{block.title}</span>
+        {(options.showCounts ?? false) && (
+          <span className="rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700">
+            {count}
+          </span>
+        )}
       </div>
       <div className="space-y-2">
         {visibleChildren.length ? (
