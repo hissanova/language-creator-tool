@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "check:samples": "tsc -p tsconfig.samples.json"
+    "check:samples": "tsc -p tsconfig.samples.json",
+    "compile:lcm": "node scripts/lcm/compile-fixtures.mjs",
+    "check:lcm": "node scripts/lcm/check-lcm-compiler.mjs"
   },
   "dependencies": {
     "next": "16.2.6",

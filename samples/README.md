@@ -2,6 +2,8 @@
 
 Samples are used to keep markup, Core JSON, Display Style, Display JSON, and the viewer implementation aligned.
 
+The registered `.lcm` samples can be compiled into generated Core JSON TypeScript fixtures. See [Compiling LCM to Core JSON Fixtures](../docs/workflow/lcm-compiler.md). Generated files under `samples/core-json/generated/` should not be edited by hand.
+
 ## Structure
 
 ```text

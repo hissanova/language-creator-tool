@@ -1,5 +1,10 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+## Project Documentation
+
+- [Language Creator Tool workflow](docs/workflow.md)
+- [Compiling LCM to Core JSON fixtures](docs/workflow/lcm-compiler.md)
+
 ## Getting Started
 
 First, run the development server:

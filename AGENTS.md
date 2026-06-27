@@ -127,3 +127,20 @@ Do not add a Viewer JSON or Display JSON layer for the current universal/debug v
 
 Do not write canonical samples as plain JSON.
 Use `.sample.ts` files with `satisfies` and import the corresponding type from `app/types`.
+
+## Generated Core JSON fixtures
+
+Generated Core JSON fixture files should use explicit `: Document` annotations rather than `satisfies Document`.
+
+Use:
+
+```ts
+export const sampleGenerated: Document = { ... };
+```
+Do not use:
+
+```ts
+export const sampleGenerated = { ... } satisfies Document;
+```
+
+This avoids overly narrow nested object inference for generated selectorRecord and selections.
