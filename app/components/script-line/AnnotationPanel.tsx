@@ -315,6 +315,52 @@ function SelectorRecordValue({
   );
 }
 
+function selectedTextForSource(
+  textLine: TextLine,
+  source: string,
+  annotations: SelectorAnnotation[],
+) {
+  const annotation = annotations.find((candidate) => candidate.selectorId === source);
+  if (annotation?.selectedText) return annotation.selectedText;
+
+  const selector = textLine.selectorRecord?.[source];
+  if (!selector) return undefined;
+
+  const range = getSelectorRange(selector, textLine.content.text);
+  if (!range) return undefined;
+
+  return textLine.content.text.slice(range.start, range.end);
+}
+
+function SelectedTextBundleHeader({
+  textLine,
+  source,
+  annotations,
+  options,
+}: {
+  textLine: TextLine;
+  source: string;
+  annotations: SelectorAnnotation[];
+  options: AnnotationPanelDisplayOptions;
+}) {
+  const selectedText = selectedTextForSource(textLine, source, annotations);
+  const showIds = options.showIds ?? true;
+  const showRanges = options.showRanges ?? true;
+  const selector = textLine.selectorRecord?.[source];
+
+  if (!selectedText && !showIds && !(showRanges && selector)) return null;
+
+  return (
+    <div className="mb-1 flex flex-wrap items-center gap-2 text-xs text-gray-700">
+      {selectedText && (
+        <span className="font-semibold text-gray-950">{selectedText}</span>
+      )}
+      {showIds && <span>{source}</span>}
+      {showRanges && selector && <span>range: {formatRange(selector)}</span>}
+    </div>
+  );
+}
+
 function ResourceValue({
   entry,
   options,
@@ -382,9 +428,12 @@ function SourceContent({
     case "textLine.selectedTextRefs":
       return filteredSelectedTextRefs(textLine, block.filter).map((bundle) => (
         <div key={bundle.id} className="rounded bg-gray-50 p-2">
-          {(options.showIds ?? true) && (
-            <div className="mb-1 text-xs font-semibold text-gray-700">{bundle.source}</div>
-          )}
+          <SelectedTextBundleHeader
+            textLine={textLine}
+            source={bundle.source}
+            annotations={annotations}
+            options={options}
+          />
           <div className="space-y-1">
             {bundle.attachments.map((attachment) => (
               <RefValue
@@ -401,9 +450,12 @@ function SourceContent({
       return filteredSelectedTextMappings(textLine, block.filter, translationLanguageId).map(
         (bundle) => (
           <div key={bundle.id} className="rounded bg-gray-50 p-2">
-            {(options.showIds ?? true) && (
-              <div className="mb-1 text-xs font-semibold text-gray-700">{bundle.source}</div>
-            )}
+            <SelectedTextBundleHeader
+              textLine={textLine}
+              source={bundle.source}
+              annotations={annotations}
+              options={options}
+            />
             <div className="space-y-2">
               {bundle.mappings.map((mapping) => (
                 <MappingValue key={mapping.id} mapping={mapping} options={options} />

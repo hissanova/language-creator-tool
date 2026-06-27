@@ -28,8 +28,9 @@ import {
   type LineRef,
   type SelectorAnnotation,
 } from "./script-line/coreQueries";
+import { AnnotationPanel } from "./script-line/AnnotationPanel";
 import { DeveloperAnnotationPanel } from "./script-line/DeveloperAnnotationPanel";
-import { SelectionDetailView } from "./script-line/SelectionDetailView";
+import { learnerAnnotationPanelConfig } from "./script-line/annotationPanelPresets";
 
 type Props = {
   textNode: TextLine;
@@ -44,10 +45,6 @@ type Props = {
   canPlay?: boolean;
   onPlay?: (interval: TimeSpan) => void;
 };
-
-function isNoteRef(refValue: LineRef) {
-  return refValue.body.type === "note";
-}
 
 function tagDisplayStyle(tag: string, style: ViewerStyle) {
   return style.tags?.[tag];
@@ -318,7 +315,29 @@ export function ScriptLine({
   const resourceRefs = collectResourceRefs(textNode.textLineRefs);
   const nodeResources = refsToResources(resourceRefs, resources);
   const isDeveloperMode = annotationMode === "developer";
-  const noteRefs = textNode.textLineRefs?.filter(isNoteRef) ?? [];
+  const hasLearnerLineRefs = textNode.textLineRefs?.some(
+    (refValue) =>
+      refValue.body.type === "tag" ||
+      refValue.body.type === "note" ||
+      refValue.body.type === "dictionary"
+  );
+  const hasLearnerSelections = textNode.selections?.some(
+    (selection) =>
+      selection.selectionType === "decomposition" || selection.selectionType === "parallel"
+  );
+  const hasLearnerSelectedTextMappings = textNode.selectedTextMappings?.some((bundle) =>
+    bundle.mappings.some(
+      (mapping) => mapping.mappingType === "gloss" || mapping.mappingType === "translation"
+    )
+  );
+  const hasLearnerSelectedTextRefs = textNode.selectedTextRefs?.some((bundle) =>
+    bundle.attachments.some(
+      (attachment) =>
+        attachment.ref.body.type === "tag" ||
+        attachment.ref.body.type === "note" ||
+        attachment.ref.body.type === "dictionary"
+    )
+  );
 
   return (
     <div className={speakerStyle.container}>
@@ -401,35 +420,25 @@ export function ScriptLine({
           translationLanguageId={translationLanguageId}
           style={style}
         />
-      ) : annotations.length || textNode.selections?.length || noteRefs.length || textNodeTags.length ? (
-        <details className="mt-3 text-sm">
-          <summary className="cursor-pointer text-gray-800">Annotations</summary>
-          <div className="mt-2 space-y-2">
-            {textNodeTags.length ? (
-              <div className="flex flex-wrap gap-1">
-                {textNodeTags.map((tag) => (
-                  <TagChip key={tag} tag={tag} style={style} />
-                ))}
-              </div>
-            ) : null}
-            {noteRefs.map((refValue) => (
-              <RefView
-                key={refValue.id}
-                refValue={refValue}
-                translationLanguageId={translationLanguageId}
-                style={style}
-              />
-            ))}
-            {textNode.selections?.map((selection) => (
-              <SelectionDetailView
-                key={selection.id}
-                variant="learner"
-                selection={selection}
-                textLine={textNode}
-                annotations={annotations}
-                translationLanguageId={translationLanguageId}
-              />
-            ))}
+      ) : hasLearnerLineRefs ||
+        hasLearnerSelectedTextMappings ||
+        hasLearnerSelectedTextRefs ||
+        hasLearnerSelections ? (
+        <details
+          className="mt-3 text-sm"
+          open={learnerAnnotationPanelConfig.defaultOpen}
+        >
+          <summary className="cursor-pointer text-gray-800">
+            {learnerAnnotationPanelConfig.summaryLabel}
+          </summary>
+          <div className="mt-2">
+            <AnnotationPanel
+              textLine={textNode}
+              resources={resources}
+              annotations={annotations}
+              translationLanguageId={translationLanguageId}
+              config={learnerAnnotationPanelConfig}
+            />
           </div>
         </details>
       ) : null}
