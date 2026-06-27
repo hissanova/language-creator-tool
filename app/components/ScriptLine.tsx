@@ -6,7 +6,6 @@ import type {
 } from "../types/core/document";
 import type { TimeSpan } from "../types/core/common";
 import type {
-  Selection,
   TextLine,
 } from "../types/core/textLine";
 import type { TagTextDisplayStyle, ViewerStyle } from "../types/viewerStyle";
@@ -26,11 +25,11 @@ import {
   mappingText,
   refText,
   refsToResources,
-  selectionTags,
   type LineRef,
   type SelectorAnnotation,
 } from "./script-line/coreQueries";
 import { DeveloperAnnotationPanel } from "./script-line/DeveloperAnnotationPanel";
+import { SelectionDetailView } from "./script-line/SelectionDetailView";
 
 type Props = {
   textNode: TextLine;
@@ -281,49 +280,6 @@ function ResourceView({
   return null;
 }
 
-function SelectionSummary({
-  selection,
-  textLine,
-  style,
-}: {
-  selection: Selection;
-  textLine: TextLine;
-  style: ViewerStyle;
-}) {
-  const selectorTexts = selection.selectorIds
-    .map((selectorId) => {
-      const selector = textLine.selectorRecord?.[selectorId];
-      const range = selector ? getSelectorRange(selector, textLine.content.text) : undefined;
-      return range ? textLine.content.text.slice(range.start, range.end) : undefined;
-    })
-    .filter(Boolean);
-  const tags = selectionTags(selection);
-  const mappings = selection.selectionMappings ?? [];
-
-  if (!selectorTexts.length && !tags.length && !mappings.length) return null;
-
-  return (
-    <div className="rounded border border-gray-200 bg-white p-3 text-sm text-gray-950 shadow-sm">
-      <div className="mb-2 font-semibold text-gray-950">
-        {selection.label ?? selection.selectionType}: {selectorTexts.join(" / ")}
-      </div>
-      {tags.length ? (
-        <div className="mb-2 flex flex-wrap gap-1">
-          {tags.map((tag) => (
-            <TagChip key={tag} tag={tag} style={style} />
-          ))}
-        </div>
-      ) : null}
-      {mappings.map((mapping) => (
-        <div key={mapping.id} className="grid gap-1 rounded bg-gray-50 px-2 py-1 sm:grid-cols-[minmax(4rem,auto)_1fr]">
-          <span className="text-xs font-semibold uppercase text-gray-700">{mapping.mappingType}</span>
-          <span>{mappingText(mapping)}</span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 export function ScriptLine({
   textNode,
   speakers,
@@ -465,18 +421,12 @@ export function ScriptLine({
               />
             ))}
             {textNode.selections?.map((selection) => (
-              <SelectionSummary
+              <SelectionDetailView
                 key={selection.id}
+                variant="learner"
                 selection={selection}
                 textLine={textNode}
-                style={style}
-              />
-            ))}
-            {annotations.map((annotation) => (
-              <LearnerAnnotationView
-                key={annotation.selectorId}
-                annotation={annotation}
-                style={style}
+                annotations={annotations}
                 translationLanguageId={translationLanguageId}
               />
             ))}
