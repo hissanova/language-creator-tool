@@ -9,6 +9,7 @@
     "lint": "eslint",
     "check:samples": "tsc -p tsconfig.samples.json",
     "compile:lcm": "node scripts/lcm/compile-fixtures.mjs",
+    "compile:lcm:file": "node scripts/lcm/compile-file.mjs",
     "check:lcm": "node scripts/lcm/check-lcm-compiler.mjs"
   },
   "dependencies": {

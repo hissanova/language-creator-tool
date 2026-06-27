@@ -1,7 +1,38 @@
-﻿00:00:00,000
+---
+specVersion: "0.5-draft"
+title: "Chinese conversation smoke"
+documentType: "conversation"
+defaultLanguageId: "zh-Hant"
+defaultFormId: "surface"
+
+languages:
+  - id: "zh-Hant"
+    label: "Traditional Chinese"
+  - id: "ja"
+    label: "Japanese"
+  - id: "en"
+    label: "English"
+
+forms:
+  - id: "surface"
+    label: "Surface"
+
+speakers:
+  - id: "simon"
+    name: "Simon"
+  - id: "lan"
+    name: "Lan"
+
+resources:
+  - id: "media-audio-hyq_2026-04-16_xindeyanjing"
+    type: "media"
+    mediaType: "audio"
+    src: "/media/audio/hyq_2026-04-16_xindeyanjing.mp3"
+    label: "Chinese sample episode audio"
+---
+
 # INTRO 新的眼睛
 
-00:01:09,502
 # 新的眼睛
 
 00:01:13,807 --> 00:01:14,808
@@ -29,8 +60,9 @@
 
 00:01:23,249 --> 00:01:24,717
 >simon: 聽我?
-	@"聽我"
-		+tag: unnatural
+  @"聽我"
+    +tag:
+      - unnatural
 
 
 00:01:25,752 --> 00:01:27,654
@@ -39,8 +71,9 @@
 
 00:01:27,687 --> 00:01:29,789
 >simon: 聽我?你看得到嗎?
-	@"聽我"
-		+tag: unnatural
+  @"聽我"
+    +tag:
+      - unnatural
 
 
 00:01:30,356 --> 00:01:31,524
@@ -57,12 +90,11 @@
 
 00:01:36,329 --> 00:01:37,764
 >simon: 日本人の皆さん！
-	@"日本人の皆さん"
-		-> lang: ja
-			-> lang: zh-Hant
-				大家日本人
-			-> lang: en
-				Japanese people!
+  @"日本人の皆さん"
+    -> lang:zh-Hant
+      大家日本人
+    -> lang:en
+      Japanese people!
 
 
 00:01:41,868 --> 00:01:42,469
@@ -71,16 +103,16 @@
 
 00:01:38,098 --> 00:01:41,501
 >simon: 「質問の聞く」のは「問」。
-	@"「質問の聞く」のは"
-		-> lang: zh-Hant
-			聽一個問題是
+  @"「質問の聞く」のは"
+    -> lang:zh-Hant
+      聽一個問題是
 
 
 00:01:43,169 --> 00:01:45,905
 >simon: 「音楽を聞く」のは「聽」。
-	@"「音楽を聞く」のは"
-		-> lang: zh-Hant
-			聽音樂是
+  @"「音楽を聞く」のは"
+    -> lang:zh-Hant
+      聽音樂是
 
 
 00:01:46,439 --> 00:01:48,007
@@ -142,27 +174,27 @@
 
 00:02:31,284 --> 00:02:32,619
 >simon: メガネは眼鏡。
-	@"メガネは"
-		-> lang: zh-Hant
-			眼睛
-		-> lang: en
-			glasses are
+  @"メガネは"
+    -> lang:zh-Hant
+      眼睛
+    -> lang:en
+      glasses are
 
 
 00:02:33,553 --> 00:02:35,054
 >lan: メガネは眼鏡。
-	@"メガネは"
-		-> lang: zh-Hant
-			眼睛
-		-> lang: en
-			glasses are
+  @"メガネは"
+    -> lang:zh-Hant
+      眼睛
+    -> lang:en
+      glasses are
 
 
 00:02:35,388 --> 00:02:37,390
 >simon: 眼鏡。目は？
-	@"目は"
-		-> lang: zh-Hant
-			眼睛是？
+  @"目は"
+    -> lang:zh-Hant
+      眼睛是？
 
 
 00:02:38,024 --> 00:02:38,992
@@ -175,11 +207,11 @@
 
 00:02:42,000 --> 00:02:44,000
 >simon: はいはいはい...
-	@"はいはいはい"
-		-> lang: zh-Hant
-			對對對
-		-> lang: en
-			yes yes yes
+  @"はいはいはい"
+    -> lang:zh-Hant
+      對對對
+    -> lang:en
+      yes yes yes
 
 
 00:02:44,330 --> 00:02:45,765
@@ -244,11 +276,11 @@
 
 00:03:16,095 --> 00:03:17,664
 >simon: 下週(先週)。
-	@"先週"
-		-> lang: zh-Hant
-			下週
-		-> lang: en
-			last week
+  @"先週"
+    -> lang:zh-Hant
+      下週
+    -> lang:en
+      last week
 
 
 00:03:17,096 --> 00:03:19,098
@@ -257,11 +289,11 @@
 
 00:03:22,669 --> 00:03:24,904
 >simon: 我...「春休み」怎麼說?
-	@"春休み"
-		-> lang: zh-Hant
-			春假
-		-> lang: en
-			spring vacation
+  @"春休み"
+    -> lang:zh-Hant
+      春假
+    -> lang:en
+      spring vacation
 
 
 00:03:25,371 --> 00:03:26,072
@@ -282,20 +314,20 @@
 
 00:03:32,912 --> 00:03:33,880
 >simon: 老人
-	@"老人"
-		-> lang: zh-Hant
-			老人
-		-> lang: en
-			elderly people
+  @"老人"
+    -> lang:zh-Hant
+      老人
+    -> lang:en
+      elderly people
 
 
 00:03:34,047 --> 00:03:36,015
 >simon:　老人メガネ,じゃなくて...
-	@"老人メガネ,じゃなくて"
-		-> lang: zh-Hant
-			老人眼鏡...不是！
-		-> lang: en
-			old people glasses...that's not right...
+  @"老人メガネ,じゃなくて"
+    -> lang:zh-Hant
+      老人眼鏡...不是！
+    -> lang:en
+      old people glasses...that's not right...
 
 
 00:03:37,183 --> 00:03:39,185
@@ -313,29 +345,29 @@
 
 00:03:42,922 --> 00:03:44,791
 >simon: ちょっと待って
-	@"ちょっと待って"
-		-> lang: zh-Hant
-			等一下
-		-> lang: en
-			just a minute 
+  @"ちょっと待って"
+    -> lang:zh-Hant
+      等一下
+    -> lang:en
+      just a minute 
 
 
 00:03:45,325 --> 00:03:46,259
 >simon:　「何というの」は
-	@"「何というの」は"
-		-> lang: zh-Hant
-			「怎嗎說」是
-		-> lang: en
-			"How do you say" is
+  @"「何というの」は"
+    -> lang:zh-Hant
+      「怎嗎說」是
+    -> lang:en
+      "How do you say" is
 
 
 00:03:46,893 --> 00:03:49,195
 >simon: 什麼說じゃないよね、怎麼說だよね?当たっているよね？
-	@line
-		-> lang: zh-Hant
-			不是「什麼說」，是「什麼說」對不對？
-		-> lang: en
-			it's not "什麼說" it's "怎麼說", correct?
+  @line
+    -> lang:zh-Hant
+      不是「什麼說」，是「什麼說」對不對？
+    -> lang:en
+      it's not "什麼說" it's "怎麼說", correct?
 
 
 00:03:49,929 --> 00:03:50,663
@@ -344,11 +376,11 @@
 
 00:03:50,797 --> 00:03:54,100
 >simon: 怎麼說。「老眼メガネ」是怎麼說?
-	@"老眼メガネ"
-		-> lang: zh-Hant
-			老花眼鏡
-		-> lang: en
-			reading glasses
+  @"老眼メガネ"
+    -> lang:zh-Hant
+      老花眼鏡
+    -> lang:en
+      reading glasses
 
 
 00:03:54,701 --> 00:03:56,703
@@ -369,11 +401,11 @@
 
 00:04:02,041 --> 00:04:03,643
 >lan: 「老眼」就是老花。
-	@"老眼"
-		-> lang: zh-Hant
-								老花
-		-> lang: en
-			age-related presbyopia
+  @"老眼"
+    -> lang:zh-Hant
+                老花
+    -> lang:en
+      age-related presbyopia
 
 
 00:04:04,010 --> 00:04:06,012
@@ -434,11 +466,11 @@
 
 00:04:32,272 --> 00:04:33,373
 >simon: 老眼メガネ？
-	@"老眼メガネ"
-		-> lang: zh-Hant
-			老花眼鏡
-		-> lang: en
-			reading glasses
+  @"老眼メガネ"
+    -> lang:zh-Hant
+      老花眼鏡
+    -> lang:en
+      reading glasses
 
 
 00:04:33,973 --> 00:04:35,275
@@ -463,11 +495,11 @@
 
 00:04:44,584 --> 00:04:47,020
 >simon: 感覺,あ、感覺じゃない。慣れた
-	@line
-		-> lang: zh-Hant
-			感覺，啊，不是感覺，習慣了
-		-> lang: en
-			感覺, ah wait, not 感覺, I got used to
+  @line
+    -> lang:zh-Hant
+      感覺，啊，不是感覺，習慣了
+    -> lang:en
+      感覺, ah wait, not 感覺, I got used to
 
 
 00:04:47,186 --> 00:04:48,521
@@ -508,11 +540,11 @@
 
 00:05:02,302 --> 00:05:03,903
 >simon: JA: 学年。
-	@line
-		-> lang: zh-Hant
-			學期
-		-> lang: en
-			school year
+  @line
+    -> lang:zh-Hant
+      學期
+    -> lang:en
+      school year
 
 
 00:05:05,471 --> 00:05:06,172
@@ -541,21 +573,21 @@
 
 00:05:17,350 --> 00:05:23,089
 >simon: 何回も何回も老眼メガネをかけたり取ったりかけたり取ったりかけたり取ったり
-	@line
-		-> lang: zh-Hant（經過和經過,我都把鏡頭）
-			老花眼鏡一直戴上拿下、戴上拿下、戴上拿下，來來回回
-		-> lang: en
-			I kept having to put my reading glasses on, then take them off, then put them on again, then take them off again
+  @line
+    -> lang:zh-Hant（經過和經過,我都把鏡頭）
+      老花眼鏡一直戴上拿下、戴上拿下、戴上拿下，來來回回
+    -> lang:en
+      I kept having to put my reading glasses on, then take them off, then put them on again, then take them off again
 　
 
 
 00:05:23,356 --> 00:05:35,368
 >simon: 学生をみたいときにとって遠く見える(ため）,だけどパソコンとかノートを見るときにかけないといけない、１００回も...
-	@line
-		-> lang: zh-Hant
-			看學生的時候，老花眼鏡戴太遠就看不清楚，但看電腦或筆記本的時候又非戴不可，一天得戴上拿下一百次！
-		-> lang: en
-			everytime I wanted to be able to see far away, to see the students, I had to take them off, but every time I wanted to look at my computer or my notes, I had to put them on. 
+  @line
+    -> lang:zh-Hant
+      看學生的時候，老花眼鏡戴太遠就看不清楚，但看電腦或筆記本的時候又非戴不可，一天得戴上拿下一百次！
+    -> lang:en
+      everytime I wanted to be able to see far away, to see the students, I had to take them off, but every time I wanted to look at my computer or my notes, I had to put them on. 
 
 
 
@@ -601,24 +633,24 @@
 
 00:06:14,107 --> 00:06:16,843
 >simon: すぐ是什麼說?
-	@"すぐ"
-		-> lang: zh-Hant
-			馬上
-		-> lang: en
-			straight away
-		
+  @"すぐ"
+    -> lang:zh-Hant
+      馬上
+    -> lang:en
+      straight away
+    
 
 00:06:17,510 --> 00:06:19,946
 >simon: 我すぐ感覺很麻煩。
-	@"すぐ"
-		-> lang: zh-Hant
-			馬上
-		-> lang: en
-			straight away
+  @"すぐ"
+    -> lang:zh-Hant
+      馬上
+    -> lang:en
+      straight away
 
 
 00:06:20,380 --> 00:06:24,317
 >lan: 哦,你就很快就覺得很麻煩。
 
-06:26,000 -->  06:36,000
+00:06:26,000 -->  00:06:36,000
 >sound:  🎵🎵🎵MUSIC🎵🎵🎵

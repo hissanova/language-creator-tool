@@ -21,6 +21,7 @@ Run these commands from the repository root:
 
 ```bash
 npm run compile:lcm
+npm run compile:lcm:file -- --input <path> --output <path> --exportName <name>
 npm run check:lcm
 npm run check:samples
 npm run lint
@@ -28,6 +29,7 @@ npm run build
 ```
 
 - `npm run compile:lcm` reads the registered LCM fixtures and rewrites their generated Core JSON TypeScript files.
+- `npm run compile:lcm:file -- --input <path> --output <path> --exportName <name>` compiles one LCM file to a TypeScript `Document` module with the requested named export.
 - `npm run check:lcm` compiles the fixtures in memory and checks their required semantics, deterministic output, and use of valid text forms.
 - `npm run check:samples` type-checks the TypeScript sample fixtures against the current Core JSON types.
 - `npm run lint` runs ESLint across the repository.
@@ -159,4 +161,3 @@ Next.js serves files under `public/` from the site root. Use a source such as `/
 ### Generated output differs from the hand-written fixture
 
 Exact IDs and object formatting are not required to match. Run `npm run check:lcm` and `npm run check:samples`; semantic checks and Core JSON type compatibility are the important guarantees.
-

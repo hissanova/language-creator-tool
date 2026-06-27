@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { compileLcmFile } from "./compile-lcm.mjs";
+import { compileLcmToDocument } from "./compile-lcm.mjs";
 import { lcmFixtures } from "./fixtures.mjs";
 
 function textLines(document) {
@@ -139,8 +139,8 @@ const checks = {
 };
 
 for (const fixture of lcmFixtures) {
-  const document = await compileLcmFile(fixture.sourcePath);
-  assert.deepEqual(await compileLcmFile(fixture.sourcePath), document);
+  const document = await compileLcmToDocument(fixture.sourcePath);
+  assert.deepEqual(await compileLcmToDocument(fixture.sourcePath), document);
   assert.ok(!JSON.stringify(document).includes('"formId":"gloss"'));
   checks[fixture.name](document);
   console.log(`Checked ${fixture.name}`);
