@@ -235,7 +235,7 @@ export const viewerConversationSmoke = {
                 selectorType: "range",
                 range: {
                   start: 5,
-                  end: 11,
+                  end: 9,
                 },
               },
             },
@@ -250,7 +250,7 @@ export const viewerConversationSmoke = {
                     image: {
                       id: "line-uchi-smoke-004-niisandoo-gloss-ja",
                       content: {
-                        text: "遅いよ",
+                        text: "遅い",
                         languageId: "ja",
                         formId: "surface",
                       },
