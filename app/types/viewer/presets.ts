@@ -4,8 +4,13 @@ export const developerAnnotationPanelConfig = {
   id: "developer-annotation-panel",
   mode: "developer",
   placement: "line.developerPanel",
-  summaryLabel: "Annotations",
-  defaultOpen: false,
+  dropdown: {
+    enabled: true,
+    showTitle: true,
+    title: "Annotations",
+    defaultOpen: false,
+    triggerPlacement: "belowLeft",
+  },
   empty: "hide",
   defaultOptions: {
     density: "full",
@@ -114,8 +119,13 @@ export const learnerAnnotationPanelConfig = {
   id: "learner-annotation-panel",
   mode: "learner",
   placement: "line.below.collapsible",
-  summaryLabel: "Annotations",
-  defaultOpen: false,
+  dropdown: {
+    enabled: true,
+    showTitle: false,
+    title: "Annotations",
+    defaultOpen: false,
+    triggerPlacement: "bottomRight",
+  },
   empty: "hide",
   defaultOptions: {
     density: "compact",

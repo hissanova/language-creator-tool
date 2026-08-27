@@ -4,8 +4,13 @@ export const developerAnnotationPanelConfig = {
   id: "developer-annotation-panel",
   mode: "developer",
   placement: "line.developerPanel",
-  summaryLabel: "Annotations",
-  defaultOpen: false,
+  dropdown: {
+    enabled: true,
+    showTitle: true,
+    title: "Annotations",
+    defaultOpen: false,
+    triggerPlacement: "belowLeft",
+  },
   empty: "hide",
   defaultOptions: {
     showCoreKindLabels: true,
@@ -82,12 +87,24 @@ export const learnerAnnotationPanelConfig = {
   id: "learner-annotation-panel",
   mode: "learner",
   placement: "line.below.collapsible",
-  summaryLabel: "Annotations",
-  defaultOpen: false,
+  dropdown: {
+    enabled: true,
+    showTitle: false,
+    title: "Annotations",
+    defaultOpen: false,
+    triggerPlacement: "bottomRight",
+  },
   empty: "hide",
   defaultOptions: {
     showCoreKindLabels: false,
     showSemanticTypeLabels: true,
+    semanticTypeLabelOverrides: {
+      gloss: "Meaning",
+      translation: "Translation",
+      note: "Note",
+      dictionary: "Dictionary",
+      tag: false,
+    },
     showIds: false,
     showRanges: false,
     showCounts: false,
@@ -107,12 +124,12 @@ export const learnerAnnotationPanelConfig = {
     {
       kind: "group",
       id: "learner-line-annotations",
-      title: "Line annotations",
+      showTitle: false,
       children: [
         {
           kind: "source",
           id: "learner-line-refs",
-          title: "Refs",
+          showTitle: false,
           source: "textLine.refs",
           filter: {
             refTypes: ["tag", "note", "dictionary"],
@@ -123,12 +140,12 @@ export const learnerAnnotationPanelConfig = {
     {
       kind: "group",
       id: "learner-selected-text-annotations",
-      title: "Selected text annotations",
+      title: "Words",
       children: [
         {
           kind: "source",
           id: "learner-selected-text-mappings",
-          title: "Selected text mappings",
+          showTitle: false,
           source: "textLine.selectedTextMappings",
           filter: {
             mappingTypes: ["gloss", "translation"],
@@ -143,7 +160,7 @@ export const learnerAnnotationPanelConfig = {
         {
           kind: "source",
           id: "learner-selected-text-refs",
-          title: "Selected text refs",
+          showTitle: false,
           source: "textLine.selectedTextRefs",
           filter: {
             refTypes: ["tag", "note", "dictionary"],
@@ -160,7 +177,7 @@ export const learnerAnnotationPanelConfig = {
     {
       kind: "source",
       id: "learner-selections",
-      title: "Selections",
+      title: "Breakdown",
       source: "textLine.selections",
       filter: {
         selectionTypes: ["decomposition", "parallel"],

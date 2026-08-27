@@ -119,6 +119,7 @@ export type AnnotationPanelSourceBlockConfig = {
   kind: "source";
   id: string;
   title?: string;
+  showTitle?: boolean;
   source: AnnotationPanelBlockSource;
   filter?: AnnotationPanelFilter;
   options?: AnnotationPanelDisplayOptions;
@@ -127,7 +128,8 @@ export type AnnotationPanelSourceBlockConfig = {
 export type AnnotationPanelGroupBlockConfig = {
   kind: "group";
   id: string;
-  title: string;
+  title?: string;
+  showTitle?: boolean;
   children: AnnotationPanelSourceBlockConfig[];
   options?: AnnotationPanelDisplayOptions;
 };
@@ -136,16 +138,20 @@ export type AnnotationPanelBlockConfig =
   | AnnotationPanelSourceBlockConfig
   | AnnotationPanelGroupBlockConfig;
 
+export type AnnotationPanelDropdownConfig = {
+  enabled: boolean;
+  showTitle?: boolean;
+  title?: string;
+  defaultOpen?: boolean;
+  triggerPlacement?: "belowLeft" | "bottomRight";
+};
+
 export type AnnotationPanelConfig = {
   id: string;
   mode: ViewerMode;
   placement: AnnotationPanelPlacement;
 
-  /** Label used by the dropdown/details summary. Example: "Annotations". */
-  summaryLabel?: string;
-
-  /** Controls initial <details> state when rendered as line.below.collapsible. */
-  defaultOpen?: boolean;
+  dropdown: AnnotationPanelDropdownConfig;
 
   /** Fallback used by child blocks unless they override it. */
   defaultOptions?: AnnotationPanelDisplayOptions;
