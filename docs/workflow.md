@@ -2,6 +2,8 @@
 
 This document defines the recommended workflow for changing the Language Creator Tool data model, markup, samples, and viewer behavior.
 
+For the current fixture-driven compiler commands and supported LCM subset, see [Compiling LCM to Core JSON Fixtures](workflow/lcm-compiler.md).
+
 ## Pipeline
 
 ```text

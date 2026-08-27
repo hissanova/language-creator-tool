@@ -1,8 +1,42 @@
+---
+specVersion: "0.5-draft"
+title: "Chinese conversation sample"
+documentType: "conversation"
+defaultLanguageId: "zh-Hant"
+defaultFormId: "surface"
+
+languages:
+  - id: "zh-Hant"
+    label: "Traditional Chinese"
+  - id: "ja"
+    label: "Japanese"
+  - id: "en"
+    label: "English"
+
+forms:
+  - id: "surface"
+    label: "Surface"
+
+speakers:
+  - id: "simon"
+    name: "Simon"
+  - id: "lan"
+    name: "Lan"
+
+resources:
+  - id: "sample-episode-zh"
+    type: "media"
+    mediaType: "audio"
+    src: "/media/audio/sample-episode-zh.mp3"
+    label: "Chinese sample episode audio"
+---
+
+
+
+# 你看得到嗎?
+
 00:00:00,000 --> 00:00:13,546
 >: music
-
-00:00:13,546 --> 00:00:14,047
-## 你看得到嗎?
 
 00:00:14,047 --> 00:00:15,048
 >simon: 哈羅
@@ -24,21 +58,24 @@
 
 00:00:23,490 --> 00:00:24,958
 >simon: 聽我? 
-	@"聽我" 
-		+tag unnatural
+  @"聽我" 
+    +tag:
+      - unnatural
 
 00:00:25,992 --> 00:00:27,894
 >lan: 聽你說是不是?
 
 00:00:27,927 --> 00:00:30,030
 >simon: 聽我?你看得到嗎? 
-	@"聽我" 
-		+tag unnatural
+  @"聽我" 
+    +tag:
+      - unnatural
 
 00:00:30,597 --> 00:00:31,765
 >lan: 問你。
-	@"問"
-		+tag bold
+  @"問"
+    +tag: 
+      - bold
 
 00:00:32,032 --> 00:00:33,566
 >simon: 問你。啊！！
@@ -48,34 +85,33 @@
 
 00:00:36,569 --> 00:00:38,004
 >simon: 日本人の皆さん！ 
-	@line 
-		-> lang:zh 
-			大家日本人 
-		-> lang:en 
-			Japanese people!
+  @line 
+    -> lang:zh-Hant 
+      大家日本人 
+    -> lang:en 
+      Japanese people!
 
 00:00:38,338 --> 00:00:41,741
->: 「質問の聞く」のは「問」。 
-	@"質問の「聞く」のは" 
-		-> lang:zh 
-			聽一個問題是
+>simon: 「質問の聞く」のは「問」。 
+  @"「質問の聞く」のは" 
+    -> lang:zh-Hant 
+      聽一個問題是
 
 00:00:42,108 --> 00:00:42,709
-> :「問」
-	@"問"
-		+tag italic
+>simon:「問」
+  @"問"
+    +tag: 
+      - italic
 
 00:00:43,410 --> 00:00:46,146
->:[音楽を聞く」のは「聽」。 
-	@"「音楽を聞く」のは" 
-		-> lang:zh 
-			聽音樂是
-	    -> lang:en
-        	listen to music is
-		+note
-			in Japanese both "ask" and "listen" use the same word, pronounced "kiku"
-		+resource url:
-			href: https://www.guidetojapanese.org/blog/2006/05/08/distinguishing-between-same-kanji/
+>simon:「音楽を聞く」のは「聽」。 
+  @"「音楽を聞く」のは" 
+    -> lang:zh-Hant 
+      聽音樂是
+      -> lang:en
+          listen to music is
+    +note:
+      in Japanese both "ask" and "listen" use the same word, pronounced "kiku"
 
 00:00:46,679 --> 00:00:48,248
 >lan: 沒錯。
@@ -101,19 +137,16 @@
 00:01:05,799 --> 00:01:06,399
 >lan: 戴
 
-00:01:06,433 --> 00:01:06,499
 # 新的眼鏡
 
 00:01:06,699 --> 00:01:13,440
 >simon: 我戴這個新的眼...睛?
-	@line
-		+resource image:
-			src: images/newglasses.png
 
 00:01:14,107 --> 00:01:15,208
 >lan: 眼睛
-	@line
-		+tag underline
+  @line
+    +tag:
+      - underline
 
 00:01:15,375 --> 00:01:16,409
 >simon: 眼睛。
@@ -129,27 +162,27 @@
 
 00:01:31,524 --> 00:01:32,859
 >simon: メガネは眼鏡。 
-	@"メガネは“ 
-		-> lang:zh 
-			眼睛 
-		-> lang:en 
-			glasses are
+  @"メガネは"
+    -> lang:zh-Hant 
+      眼睛 
+    -> lang:en 
+      glasses are
 
 00:01:33,793 --> 00:01:35,295
 >lan: メガネは眼鏡。 
-	@"メガネは“ 
-		-> lang:zh 
-			眼睛 
-		-> lang:en 
-			glasses are
+  @"メガネは" 
+    -> lang:zh-Hant 
+      眼睛 
+    -> lang:en 
+      glasses are
 
 00:01:35,628 --> 00:01:37,630
 >simon: 眼鏡。目は？ 
-	@"目は" 
-		-> lang:zh 
-			眼睛是？
-		-> lang:en 
-				eyes are....?
+  @"目は" 
+    -> lang:zh-Hant 
+      眼睛是？
+    -> lang:en 
+        eyes are....?
 
 00:01:38,264 --> 00:01:39,232
 >lan: 眼鏡。
@@ -189,20 +222,19 @@
 
 00:02:07,026 --> 00:02:09,028
 >lan: 眼睛變差了
-	@line
-		@"眼睛"|"變"|"差"|"了"
-      @1
-        -> lang:en
-          eyes
-      @2
-        -> lang:en
-          become
-      @3
-        -> lang:en
-          different, bad
-      @4
-        +dictionary
-          marker of completion
+  @"眼睛" | "變" | "差" | "了"
+    @1
+      -> lang:en
+        eyes
+    @2
+      -> lang:en
+        become
+    @3
+      -> lang:en
+        different, bad
+    @4
+      +note:
+        marker of completion
 
 00:02:08,995 --> 00:02:09,729
 >simon: 啊!
@@ -218,11 +250,11 @@
 
 00:02:16,336 --> 00:02:18,138
 >simon: 下週(先週)。 
-	@"先週" 
-		-> lang:zh 
-			下週 
-		-> lang:en 
-				last week
+  @"先週" 
+    -> lang:zh-Hant 
+      下週 
+    -> lang:en 
+        last week
 
 00:02:18,138 --> 00:02:19,339
 >simon: 下週
@@ -235,20 +267,17 @@
 
 00:02:22,742 --> 00:02:25,145
 >simon: 我...「春休み」怎麼說? 
-	@"春休み" 
-		-> lang:zh 
-			春假 
-		-> lang:en 
-			spring vacation
+  @"春休み" 
+    -> lang:zh-Hant 
+      春假 
+    -> lang:en 
+      spring vacation
 
 00:02:25,612 --> 00:02:26,312
 >lan: 春假。
 
 00:02:26,446 --> 00:02:27,380
 >sound: typing
-	@line
-		+sound:
-				keyboard typing
 
 00:02:27,580 --> 00:02:29,582
 >simon: 春假。
@@ -261,19 +290,19 @@
 
 00:02:34,087 --> 00:02:35,221
 >simon: 老人 
-	@"老人" [00:03:34,070 --> 00:03:34,280]
-		-> lang:zh 
-			老人 
-		-> lang:en 
-			elderly people
+  @"老人" [00:03:34,070 --> 00:03:34,280]
+    -> lang:zh-Hant 
+      老人 
+    -> lang:en 
+      elderly people
 
 00:02:35,221 --> 00:02:37,190
 >simon: 老人メガネ,じゃなくて... 
-	@"老人メガネ,じゃなくて" 
-		-> lang:zh 
-			老人眼鏡...不是！ 
-		-> lang:en 
-			old people glasses...that's not right...
+  @"老人メガネ,じゃなくて" 
+    -> lang:zh-Hant 
+      老人眼鏡...不是！ 
+    -> lang:en 
+      old people glasses...that's not right...
 
 00:02:38,358 --> 00:02:40,360
 >simon: 老人メガネ,じゃなくて...😂
@@ -286,38 +315,38 @@
 
 00:02:44,097 --> 00:02:45,965
 >simon: ちょっと待って 
-	@"ちょっと待って" 
-		-> lang:zh 
-			等一下 
-		-> lang:en 
-			just a minute
+  @"ちょっと待って" 
+    -> lang:zh-Hant 
+      等一下 
+    -> lang:en 
+      just a minute
 
 00:02:46,499 --> 00:02:47,433
 >simon: 「何というの」は 
-	@"「何というの」は" 
-		-> lang:zh 
-			「怎嗎說」是 
-		-> lang:en 
-			"How do you say" is
+  @"「何というの」は" 
+    -> lang:zh-Hant 
+      「怎嗎說」是 
+    -> lang:en 
+      "How do you say" is
 
 00:02:48,067 --> 00:02:50,370
 >simon: 什麼說じゃないよね、怎麼說だよね?当たっているよね？ 
-	@line 
-		-> lang:zh 
-			不是「什麼說」，是「什麼說」對不對？ 
-		-> lang:en 
-			it's not “什麼說” it's "怎麼說", correct?
+  @line 
+    -> lang:zh-Hant 
+      不是「什麼說」，是「什麼說」對不對？ 
+    -> lang:en 
+      it's not "什麼說" it's "怎麼說", correct?
 
 00:02:51,104 --> 00:02:51,838
 >lan: 怎麼說?
 
 00:02:51,971 --> 00:02:55,275
 >simon: 怎麼說。「老眼メガネ」是怎麼說? 
-	@"老眼メガネ" 
-		-> lang:zh 
-			老花眼鏡 
-		-> lang:en 
-			reading glasses
+  @"老眼メガネ" 
+    -> lang:zh-Hant 
+      老花眼鏡 
+    -> lang:en 
+      reading glasses
 
 00:02:55,875 --> 00:02:57,877
 >lan: 老花眼鏡。
@@ -333,23 +362,19 @@
 
 00:03:03,216 --> 00:03:04,817
 >lan: 「老眼」就是老花。 
-	@"老眼" 
-		-> lang:zh 
-			老花 
-		-> lang:en 
-			age-related presbyopia
+  @"老眼" 
+    -> lang:zh-Hant 
+      老花 
+    -> lang:en 
+      age-related presbyopia
 
 00:03:05,185 --> 00:03:07,187
 >simon: 啊!
 
 00:03:07,654 --> 00:03:09,656
->simon: 花是「花]の花？
-	@"花"[2]
-		-> lang:en
-				flower
+>simon: 花是「花」の花？
 
-00:03:09,722 --> 00:03:09,822
-## 花花的
+# 花花的
 
 00:03:10,056 --> 00:03:10,590
 >lan: 對。
@@ -392,11 +417,11 @@
 
 00:03:33,446 --> 00:03:34,547
 >simon: 老眼メガネ？ 
-	@"老眼メガネ" 
-		-> lang:zh 
-			老花眼鏡 
-		-> lang:en 
-			reading glasses
+  @"老眼メガネ" 
+    -> lang:zh-Hant 
+      老花眼鏡 
+    -> lang:en 
+      reading glasses
 
 00:03:35,148 --> 00:03:36,449
 >lan: 老花眼鏡。
@@ -415,11 +440,11 @@
 
 00:03:45,758 --> 00:03:48,194
 >simon: 感覺,あ、感覺じゃない。慣れた 
-	@line 
-		-> lang:zh 
-			感覺，啊，不是感覺，習慣了 
-		-> lang:en 
-			感覺, ah wait, not 感覺, I got used to
+  @line 
+    -> lang:zh-Hant 
+      感覺，啊，不是感覺，習慣了 
+    -> lang:en 
+      感覺, ah wait, not 感覺, I got used to
 
 00:03:48,361 --> 00:03:49,696
 >lan: 你習慣了。
@@ -450,14 +475,13 @@
 
 00:04:03,476 --> 00:04:05,078
 >simon: JA: 学年。 
-	@line 
-		-> lang:zh 
-			學期 
-		-> lang:en 
-			school year
+  @line 
+    -> lang:zh-Hant 
+      學期 
+    -> lang:en 
+      school year
 
-00:04:05,578 --> 00:04:06,012
-## 學期
+# 學期
 
 00:04:06,646 --> 00:04:07,347
 >lan: 學期。
@@ -479,19 +503,19 @@
 
 00:04:18,524 --> 00:04:24,264
 >simon: 何回も何回も老眼メガネをかけたり取ったりかけたり取ったりかけたり取ったり 
-	@line 
-		-> lang:zh（經過和經過,我都把鏡頭） 
-			花眼鏡一直戴上拿下、戴上拿下、戴上拿下，來來回回 
-		-> lang:en 
-			I kept having to put my reading glasses on, then take them off, then put them on again, then take them off again
+  @line 
+    -> lang:zh-Hant（經過和經過,我都把鏡頭） 
+      花眼鏡一直戴上拿下、戴上拿下、戴上拿下，來來回回 
+    -> lang:en 
+      I kept having to put my reading glasses on, then take them off, then put them on again, then take them off again
 
 00:04:24,530 --> 00:04:36,542
 >simon: 学生をみたいときにとって遠く見える(ため）,だけどパソコンとかノートを見るときにかけないといけない、１００回も... 
-	@line 
-		-> lang:zh 
-			看學生的時候，老花眼鏡戴太遠就看不清楚，但看電腦或筆記本的時候又非戴不可，一天得戴上拿下一百次！ 
-		-> lang:en 
-			everytime I wanted to be able to see far away, to see the students, I had to take them off, but every time I wanted to look at my computer or my notes, I had to put them on.
+  @line 
+    -> lang:zh-Hant 
+      看學生的時候，老花眼鏡戴太遠就看不清楚，但看電腦或筆記本的時候又非戴不可，一天得戴上拿下一百次！ 
+    -> lang:en 
+      everytime I wanted to be able to see far away, to see the students, I had to take them off, but every time I wanted to look at my computer or my notes, I had to put them on.
 
 00:04:36,843 --> 00:04:37,944
 >simon: 怎麼說？
@@ -525,19 +549,19 @@
 
 00:05:15,281 --> 00:05:18,017
 >simon: すぐ是什麼說? 
-	@"すぐ" 
-		-> lang:zh 
-			馬上 
-		-> lang:en 
-			straight away
+  @"すぐ" 
+    -> lang:zh-Hant 
+      馬上 
+    -> lang:en 
+      straight away
 
 00:05:18,685 --> 00:05:21,120
 >simon: 我すぐ感覺很麻煩。 
-	@"すぐ" 
-		-> lang:zh 
-			馬上 
-		-> lang:en 
-			straight away
+  @"すぐ" 
+    -> lang:zh-Hant 
+      馬上 
+    -> lang:en 
+      straight away
 
 00:05:21,554 --> 00:05:25,491
 >lan: 哦,你就很快就覺得很麻煩。
