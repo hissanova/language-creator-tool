@@ -626,6 +626,13 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
+                "id": "sample-episode-zh-reduced-ref-speaker-014",
+                "body": {
+                  "type": "speaker",
+                  "speakerId": "simon"
+                }
+              },
+              {
                 "id": "sample-episode-zh-reduced-ref-alignment-015",
                 "body": {
                   "type": "alignment",
@@ -681,10 +688,10 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-014",
+                "id": "sample-episode-zh-reduced-ref-speaker-015",
                 "body": {
                   "type": "speaker",
-                  "speakerId": " "
+                  "speakerId": "simon"
                 }
               },
               {
@@ -742,6 +749,13 @@ export const conversationSampleChinese2: Document = {
               "formId": "surface"
             },
             "textLineRefs": [
+              {
+                "id": "sample-episode-zh-reduced-ref-speaker-016",
+                "body": {
+                  "type": "speaker",
+                  "speakerId": "simon"
+                }
+              },
               {
                 "id": "sample-episode-zh-reduced-ref-alignment-017",
                 "body": {
@@ -817,7 +831,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-015",
+                "id": "sample-episode-zh-reduced-ref-speaker-017",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -850,7 +864,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-016",
+                "id": "sample-episode-zh-reduced-ref-speaker-018",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -883,7 +897,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-017",
+                "id": "sample-episode-zh-reduced-ref-speaker-019",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -916,7 +930,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-018",
+                "id": "sample-episode-zh-reduced-ref-speaker-020",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -949,7 +963,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-019",
+                "id": "sample-episode-zh-reduced-ref-speaker-021",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -982,7 +996,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-020",
+                "id": "sample-episode-zh-reduced-ref-speaker-022",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -1015,7 +1029,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-021",
+                "id": "sample-episode-zh-reduced-ref-speaker-023",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -1048,7 +1062,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-022",
+                "id": "sample-episode-zh-reduced-ref-speaker-024",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -1088,7 +1102,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-023",
+                "id": "sample-episode-zh-reduced-ref-speaker-025",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -1121,7 +1135,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-024",
+                "id": "sample-episode-zh-reduced-ref-speaker-026",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -1163,7 +1177,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-025",
+                "id": "sample-episode-zh-reduced-ref-speaker-027",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -1196,7 +1210,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-026",
+                "id": "sample-episode-zh-reduced-ref-speaker-028",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -1229,7 +1243,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-027",
+                "id": "sample-episode-zh-reduced-ref-speaker-029",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -1262,7 +1276,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-028",
+                "id": "sample-episode-zh-reduced-ref-speaker-030",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -1295,7 +1309,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-029",
+                "id": "sample-episode-zh-reduced-ref-speaker-031",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -1369,7 +1383,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-030",
+                "id": "sample-episode-zh-reduced-ref-speaker-032",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -1443,7 +1457,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-031",
+                "id": "sample-episode-zh-reduced-ref-speaker-033",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -1517,7 +1531,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-032",
+                "id": "sample-episode-zh-reduced-ref-speaker-034",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -1550,7 +1564,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-033",
+                "id": "sample-episode-zh-reduced-ref-speaker-035",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -1583,7 +1597,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-034",
+                "id": "sample-episode-zh-reduced-ref-speaker-036",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -1616,7 +1630,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-035",
+                "id": "sample-episode-zh-reduced-ref-speaker-037",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -1649,7 +1663,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-036",
+                "id": "sample-episode-zh-reduced-ref-speaker-038",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -1682,7 +1696,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-037",
+                "id": "sample-episode-zh-reduced-ref-speaker-039",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -1715,7 +1729,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-038",
+                "id": "sample-episode-zh-reduced-ref-speaker-040",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -1748,7 +1762,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-039",
+                "id": "sample-episode-zh-reduced-ref-speaker-041",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -1781,7 +1795,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-040",
+                "id": "sample-episode-zh-reduced-ref-speaker-042",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -1814,7 +1828,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-041",
+                "id": "sample-episode-zh-reduced-ref-speaker-043",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -1847,7 +1861,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-042",
+                "id": "sample-episode-zh-reduced-ref-speaker-044",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -1880,7 +1894,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-043",
+                "id": "sample-episode-zh-reduced-ref-speaker-045",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -1913,7 +1927,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-044",
+                "id": "sample-episode-zh-reduced-ref-speaker-046",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -2064,7 +2078,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-045",
+                "id": "sample-episode-zh-reduced-ref-speaker-047",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -2097,7 +2111,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-046",
+                "id": "sample-episode-zh-reduced-ref-speaker-048",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -2130,7 +2144,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-047",
+                "id": "sample-episode-zh-reduced-ref-speaker-049",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -2163,7 +2177,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-048",
+                "id": "sample-episode-zh-reduced-ref-speaker-050",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -2196,7 +2210,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-049",
+                "id": "sample-episode-zh-reduced-ref-speaker-051",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -2270,7 +2284,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-050",
+                "id": "sample-episode-zh-reduced-ref-speaker-052",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -2303,7 +2317,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-051",
+                "id": "sample-episode-zh-reduced-ref-speaker-053",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -2336,7 +2350,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-052",
+                "id": "sample-episode-zh-reduced-ref-speaker-054",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -2369,7 +2383,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-053",
+                "id": "sample-episode-zh-reduced-ref-speaker-055",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -2443,7 +2457,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-054",
+                "id": "sample-episode-zh-reduced-ref-speaker-056",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -2476,7 +2490,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-055",
+                "id": "sample-episode-zh-reduced-ref-speaker-057",
                 "body": {
                   "type": "speaker",
                   "speakerId": "sound"
@@ -2509,7 +2523,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-056",
+                "id": "sample-episode-zh-reduced-ref-speaker-058",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -2542,7 +2556,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-057",
+                "id": "sample-episode-zh-reduced-ref-speaker-059",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -2575,7 +2589,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-058",
+                "id": "sample-episode-zh-reduced-ref-speaker-060",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -2608,7 +2622,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-059",
+                "id": "sample-episode-zh-reduced-ref-speaker-061",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -2682,7 +2696,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-060",
+                "id": "sample-episode-zh-reduced-ref-speaker-062",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -2756,7 +2770,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-061",
+                "id": "sample-episode-zh-reduced-ref-speaker-063",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -2789,7 +2803,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-062",
+                "id": "sample-episode-zh-reduced-ref-speaker-064",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -2822,7 +2836,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-063",
+                "id": "sample-episode-zh-reduced-ref-speaker-065",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -2855,7 +2869,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-064",
+                "id": "sample-episode-zh-reduced-ref-speaker-066",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -2929,7 +2943,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-065",
+                "id": "sample-episode-zh-reduced-ref-speaker-067",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -3003,7 +3017,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-066",
+                "id": "sample-episode-zh-reduced-ref-speaker-068",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -3062,7 +3076,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-067",
+                "id": "sample-episode-zh-reduced-ref-speaker-069",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -3095,7 +3109,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-068",
+                "id": "sample-episode-zh-reduced-ref-speaker-070",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -3169,7 +3183,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-069",
+                "id": "sample-episode-zh-reduced-ref-speaker-071",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -3202,7 +3216,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-070",
+                "id": "sample-episode-zh-reduced-ref-speaker-072",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -3235,7 +3249,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-071",
+                "id": "sample-episode-zh-reduced-ref-speaker-073",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -3268,7 +3282,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-072",
+                "id": "sample-episode-zh-reduced-ref-speaker-074",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -3301,7 +3315,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-073",
+                "id": "sample-episode-zh-reduced-ref-speaker-075",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -3375,7 +3389,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-074",
+                "id": "sample-episode-zh-reduced-ref-speaker-076",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -3408,7 +3422,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-075",
+                "id": "sample-episode-zh-reduced-ref-speaker-077",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -3448,7 +3462,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-076",
+                "id": "sample-episode-zh-reduced-ref-speaker-078",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -3481,7 +3495,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-077",
+                "id": "sample-episode-zh-reduced-ref-speaker-079",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -3514,7 +3528,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-078",
+                "id": "sample-episode-zh-reduced-ref-speaker-080",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -3547,7 +3561,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-079",
+                "id": "sample-episode-zh-reduced-ref-speaker-081",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -3580,7 +3594,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-080",
+                "id": "sample-episode-zh-reduced-ref-speaker-082",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -3613,7 +3627,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-081",
+                "id": "sample-episode-zh-reduced-ref-speaker-083",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -3646,7 +3660,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-082",
+                "id": "sample-episode-zh-reduced-ref-speaker-084",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -3679,7 +3693,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-083",
+                "id": "sample-episode-zh-reduced-ref-speaker-085",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -3712,7 +3726,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-084",
+                "id": "sample-episode-zh-reduced-ref-speaker-086",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -3745,7 +3759,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-085",
+                "id": "sample-episode-zh-reduced-ref-speaker-087",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -3778,7 +3792,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-086",
+                "id": "sample-episode-zh-reduced-ref-speaker-088",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -3811,7 +3825,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-087",
+                "id": "sample-episode-zh-reduced-ref-speaker-089",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -3844,7 +3858,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-088",
+                "id": "sample-episode-zh-reduced-ref-speaker-090",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -3877,7 +3891,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-089",
+                "id": "sample-episode-zh-reduced-ref-speaker-091",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -3951,7 +3965,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-090",
+                "id": "sample-episode-zh-reduced-ref-speaker-092",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -3984,7 +3998,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-091",
+                "id": "sample-episode-zh-reduced-ref-speaker-093",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -4017,7 +4031,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-092",
+                "id": "sample-episode-zh-reduced-ref-speaker-094",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -4050,7 +4064,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-093",
+                "id": "sample-episode-zh-reduced-ref-speaker-095",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -4083,7 +4097,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-094",
+                "id": "sample-episode-zh-reduced-ref-speaker-096",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -4116,7 +4130,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-095",
+                "id": "sample-episode-zh-reduced-ref-speaker-097",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -4175,7 +4189,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-096",
+                "id": "sample-episode-zh-reduced-ref-speaker-098",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -4208,7 +4222,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-097",
+                "id": "sample-episode-zh-reduced-ref-speaker-099",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -4241,7 +4255,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-098",
+                "id": "sample-episode-zh-reduced-ref-speaker-100",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -4274,7 +4288,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-099",
+                "id": "sample-episode-zh-reduced-ref-speaker-101",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -4307,7 +4321,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-100",
+                "id": "sample-episode-zh-reduced-ref-speaker-102",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -4340,7 +4354,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-101",
+                "id": "sample-episode-zh-reduced-ref-speaker-103",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -4373,7 +4387,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-102",
+                "id": "sample-episode-zh-reduced-ref-speaker-104",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -4406,7 +4420,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-103",
+                "id": "sample-episode-zh-reduced-ref-speaker-105",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -4439,7 +4453,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-104",
+                "id": "sample-episode-zh-reduced-ref-speaker-106",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -4472,7 +4486,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-105",
+                "id": "sample-episode-zh-reduced-ref-speaker-107",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -4538,7 +4552,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-106",
+                "id": "sample-episode-zh-reduced-ref-speaker-108",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -4571,7 +4585,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-107",
+                "id": "sample-episode-zh-reduced-ref-speaker-109",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -4604,7 +4618,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-108",
+                "id": "sample-episode-zh-reduced-ref-speaker-110",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -4637,7 +4651,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-109",
+                "id": "sample-episode-zh-reduced-ref-speaker-111",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -4670,7 +4684,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-110",
+                "id": "sample-episode-zh-reduced-ref-speaker-112",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -4703,7 +4717,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-111",
+                "id": "sample-episode-zh-reduced-ref-speaker-113",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -4736,7 +4750,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-112",
+                "id": "sample-episode-zh-reduced-ref-speaker-114",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -4795,7 +4809,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-113",
+                "id": "sample-episode-zh-reduced-ref-speaker-115",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -4854,7 +4868,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-114",
+                "id": "sample-episode-zh-reduced-ref-speaker-116",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -4887,7 +4901,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-115",
+                "id": "sample-episode-zh-reduced-ref-speaker-117",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -4920,7 +4934,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-116",
+                "id": "sample-episode-zh-reduced-ref-speaker-118",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -4953,7 +4967,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-117",
+                "id": "sample-episode-zh-reduced-ref-speaker-119",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -4986,7 +5000,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-118",
+                "id": "sample-episode-zh-reduced-ref-speaker-120",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -5019,7 +5033,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-119",
+                "id": "sample-episode-zh-reduced-ref-speaker-121",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -5052,7 +5066,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-120",
+                "id": "sample-episode-zh-reduced-ref-speaker-122",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -5085,7 +5099,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-121",
+                "id": "sample-episode-zh-reduced-ref-speaker-123",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -5118,7 +5132,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-122",
+                "id": "sample-episode-zh-reduced-ref-speaker-124",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -5151,7 +5165,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-123",
+                "id": "sample-episode-zh-reduced-ref-speaker-125",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -5184,7 +5198,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-124",
+                "id": "sample-episode-zh-reduced-ref-speaker-126",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -5258,7 +5272,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-125",
+                "id": "sample-episode-zh-reduced-ref-speaker-127",
                 "body": {
                   "type": "speaker",
                   "speakerId": "simon"
@@ -5332,7 +5346,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-126",
+                "id": "sample-episode-zh-reduced-ref-speaker-128",
                 "body": {
                   "type": "speaker",
                   "speakerId": "lan"
@@ -5365,7 +5379,7 @@ export const conversationSampleChinese2: Document = {
             },
             "textLineRefs": [
               {
-                "id": "sample-episode-zh-reduced-ref-speaker-127",
+                "id": "sample-episode-zh-reduced-ref-speaker-129",
                 "body": {
                   "type": "speaker",
                   "speakerId": "sound"

@@ -22,7 +22,6 @@ import {
   getTranslations,
   isNonDefaultLanguage,
   lineTags,
-  mappingText,
   refText,
   refsToResources,
   type LineRef,
@@ -50,21 +49,6 @@ function tagDisplayStyle(tag: string, style: ViewerStyle) {
   return style.tags?.[tag];
 }
 
-function tagLabel(tag: string, style: ViewerStyle) {
-  return tagDisplayStyle(tag, style)?.label ?? tag;
-}
-
-function tagInlineStyle(tag: string, style: ViewerStyle): CSSProperties | undefined {
-  const configuredStyle = tagDisplayStyle(tag, style)?.style;
-  if (!configuredStyle) return undefined;
-
-  return {
-    color: configuredStyle.color,
-    backgroundColor: configuredStyle.backgroundColor,
-    borderColor: configuredStyle.borderColor,
-  };
-}
-
 function mergeTagTextDisplayStyles(tags: string[], style: ViewerStyle) {
   const configuredStyles = tags
     .map((tag) => tagDisplayStyle(tag, style))
@@ -85,22 +69,6 @@ function mergeTagTextDisplayStyles(tags: string[], style: ViewerStyle) {
     className: className || undefined,
     style: Object.keys(inlineStyle).length ? inlineStyle : undefined,
   };
-}
-
-function TagChip({ tag, style }: { tag: string; style: ViewerStyle }) {
-  const configuredStyle = tagDisplayStyle(tag, style);
-  const className =
-    configuredStyle?.className ??
-    "border-gray-300 bg-gray-100 text-gray-900";
-
-  return (
-    <span
-      className={`inline-flex items-center rounded border px-2 py-0.5 text-xs font-medium ${className}`}
-      style={tagInlineStyle(tag, style)}
-    >
-      {tagLabel(tag, style)}
-    </span>
-  );
 }
 
 function languageLabel(languageId: string, languages: Language[] | undefined) {
@@ -176,61 +144,6 @@ function RefView({
     <div className={style.text.annotationBox}>
       <div className={style.text.annotationTitle}>{refValue.body.type}</div>
       <div>{text}</div>
-    </div>
-  );
-}
-
-function LearnerAnnotationView({
-  annotation,
-  style,
-  translationLanguageId,
-}: {
-  annotation: SelectorAnnotation;
-  style: ViewerStyle;
-  translationLanguageId: string;
-}) {
-  const tags = annotationTags(annotation);
-  const mappings = annotation.mappings;
-  const selectionMappings = annotation.selection?.selectionMappings ?? [];
-
-  if (!tags.length && !mappings.length && !selectionMappings.length && !annotation.refs.length) return null;
-
-  return (
-    <div className="rounded border border-gray-200 bg-white p-3 text-gray-950 shadow-sm">
-      <div className="mb-2 font-semibold text-gray-950">{annotation.selectedText}</div>
-
-      {tags.length ? (
-        <div className="mb-2 flex flex-wrap gap-1">
-          {tags.map((tag) => (
-            <TagChip key={tag} tag={tag} style={style} />
-          ))}
-        </div>
-      ) : null}
-
-      {[...mappings, ...selectionMappings].length ? (
-        <div className="space-y-1">
-          {[...mappings, ...selectionMappings].map((mapping) => (
-            <div
-              key={mapping.id}
-              className="grid gap-1 rounded bg-gray-50 px-2 py-1 sm:grid-cols-[minmax(4rem,auto)_1fr]"
-            >
-              <span className="text-xs font-semibold uppercase text-gray-700">
-                {mapping.mappingType}
-              </span>
-              <span>{mappingText(mapping)}</span>
-            </div>
-          ))}
-        </div>
-      ) : null}
-
-      {annotation.refs.map((refValue) => (
-        <RefView
-          key={refValue.id}
-          refValue={refValue}
-          translationLanguageId={translationLanguageId}
-          style={style}
-        />
-      ))}
     </div>
   );
 }
