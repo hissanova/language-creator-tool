@@ -33,10 +33,14 @@ export function DeveloperAnnotationPanel(props: Props) {
 
   if (!hasDetails) return null;
 
+  const dropdown = developerAnnotationPanelConfig.dropdown;
+  if (!dropdown.enabled) return null;
+  const title = dropdown.title ?? "Annotations";
+
   return (
-    <details className="mt-3 text-sm" open={developerAnnotationPanelConfig.defaultOpen}>
-      <summary className="cursor-pointer text-gray-800">
-        {developerAnnotationPanelConfig.summaryLabel}
+    <details className="mt-3 text-sm" open={dropdown.defaultOpen}>
+      <summary className="cursor-pointer text-gray-800" aria-label={title}>
+        {(dropdown.showTitle ?? true) && title}
       </summary>
       <div className="mt-2">
         <AnnotationPanel

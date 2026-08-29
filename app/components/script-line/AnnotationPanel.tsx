@@ -17,6 +17,7 @@ import {
   type SelectorAnnotation,
 } from "./coreQueries";
 import { SelectionDetailView } from "./SelectionDetailView";
+import { semanticTypeLabel } from "./semanticTypeLabel";
 
 type AnnotationPanelProps = {
   textLine: TextLine;
@@ -204,7 +205,7 @@ function RefValue({
   options: AnnotationPanelDisplayOptions;
 }) {
   const showCoreKindLabels = options.showCoreKindLabels ?? true;
-  const showSemanticTypeLabels = options.showSemanticTypeLabels ?? true;
+  const typeLabel = semanticTypeLabel(refValue.body.type, options);
   const showIds = options.showIds ?? true;
   const text =
     refText(refValue, translationLanguageId) ??
@@ -224,8 +225,8 @@ function RefValue({
             ref
           </span>
         )}
-        {showSemanticTypeLabels && (
-          <span className="font-semibold text-gray-900">{refValue.body.type}</span>
+        {typeLabel && (
+          <span className="font-semibold text-gray-900">{typeLabel}</span>
         )}
         {showIds && <span className="text-xs text-gray-700">{refValue.id}</span>}
         {text && <span>{text}</span>}
@@ -242,7 +243,7 @@ function MappingValue({
   options: AnnotationPanelDisplayOptions;
 }) {
   const showCoreKindLabels = options.showCoreKindLabels ?? true;
-  const showSemanticTypeLabels = options.showSemanticTypeLabels ?? true;
+  const typeLabel = semanticTypeLabel(mapping.mappingType, options);
   const showIds = options.showIds ?? true;
 
   return (
@@ -253,8 +254,8 @@ function MappingValue({
             mapping
           </span>
         )}
-        {showSemanticTypeLabels && (
-          <span className="font-semibold text-gray-900">{mapping.mappingType}</span>
+        {typeLabel && (
+          <span className="font-semibold text-gray-900">{typeLabel}</span>
         )}
         {showIds && <span className="text-xs text-gray-700">{mapping.id}</span>}
         <span>{mappingText(mapping)}</span>
@@ -275,8 +276,7 @@ function SelectorRecordValue({
   const showCoreKindLabels = options.showCoreKindLabels ?? true;
   const showIds = options.showIds ?? true;
   const showRanges = options.showRanges ?? true;
-  const showSelectorType =
-    options.selectorRecord?.showSelectorType ?? options.showSemanticTypeLabels ?? true;
+  const showSelectorType = options.selectorRecord?.showSelectorType ?? true;
 
   return (
     <div className="space-y-1">
@@ -301,8 +301,10 @@ function SelectorRecordValue({
               )}
               {selectedText && <span className="font-semibold text-sky-950">{selectedText}</span>}
               {showIds && <span className="text-xs text-gray-700">{selectorId}</span>}
-              {showSelectorType && (
-                <span className="text-xs text-gray-700">{selector.selectorType}</span>
+              {showSelectorType && semanticTypeLabel(selector.selectorType, options) && (
+                <span className="text-xs text-gray-700">
+                  {semanticTypeLabel(selector.selectorType, options)}
+                </span>
               )}
               {showRanges && (
                 <span className="text-xs text-gray-700">range: {formatRange(selector)}</span>
@@ -369,7 +371,9 @@ function ResourceValue({
   options: AnnotationPanelDisplayOptions;
 }) {
   const showCoreKindLabels = options.showCoreKindLabels ?? true;
-  const showSemanticTypeLabels = options.showSemanticTypeLabels ?? true;
+  const typeLabel = entry.resource
+    ? semanticTypeLabel(entry.resource.type, options)
+    : undefined;
   const showIds = options.showIds ?? true;
   const label = entry.resource
     ? entry.resource.type === "external"
@@ -387,8 +391,8 @@ function ResourceValue({
             resource
           </span>
         )}
-        {showSemanticTypeLabels && entry.resource && (
-          <span className="font-semibold text-gray-900">{entry.resource.type}</span>
+        {typeLabel && (
+          <span className="font-semibold text-gray-900">{typeLabel}</span>
         )}
         {showIds && <span className="text-xs text-gray-700">{entry.refId}</span>}
         <span>{entry.resourceId}</span>
@@ -502,6 +506,16 @@ function AnnotationPanelSourceBlock({
 
   if (!hasContent && !showsEmptyState(options)) return null;
 
+  const content = hasContent ? (
+    <SourceContent block={block} options={options} context={context} />
+  ) : (
+    <div className="text-sm text-gray-500">No annotations.</div>
+  );
+
+  if (block.showTitle === false) {
+    return <div className="space-y-2 text-sm">{content}</div>;
+  }
+
   return (
     <section className="rounded border border-gray-200 bg-white p-3 text-sm shadow-sm">
       {block.title && (
@@ -515,11 +529,7 @@ function AnnotationPanelSourceBlock({
         </div>
       )}
       <div className="space-y-2">
-        {hasContent ? (
-          <SourceContent block={block} options={options} context={context} />
-        ) : (
-          <div className="text-sm text-gray-500">No annotations.</div>
-        )}
+        {content}
       </div>
     </section>
   );
@@ -543,10 +553,27 @@ function AnnotationPanelGroupBlock({
 
   if (!visibleChildren.length && !showsEmptyState(options)) return null;
 
+  const content = visibleChildren.length ? (
+    visibleChildren.map((child) => (
+      <AnnotationPanelSourceBlock
+        key={child.id}
+        block={child}
+        context={context}
+        baseOptions={options}
+      />
+    ))
+  ) : (
+    <div className="text-sm text-gray-500">No annotations.</div>
+  );
+
+  if (block.showTitle === false) {
+    return <div className="space-y-2 text-sm">{content}</div>;
+  }
+
   return (
     <section className="rounded border border-gray-200 bg-white p-3 text-sm shadow-sm">
       <div className="mb-2 flex items-center gap-2 border-b border-gray-100 pb-2 font-semibold text-gray-950">
-        <span>{block.title}</span>
+        {block.title && <span>{block.title}</span>}
         {(options.showCounts ?? false) && (
           <span className="rounded bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-700">
             {count}
@@ -554,18 +581,7 @@ function AnnotationPanelGroupBlock({
         )}
       </div>
       <div className="space-y-2">
-        {visibleChildren.length ? (
-          visibleChildren.map((child) => (
-            <AnnotationPanelSourceBlock
-              key={child.id}
-              block={child}
-              context={context}
-              baseOptions={options}
-            />
-          ))
-        ) : (
-          <div className="text-sm text-gray-500">No annotations.</div>
-        )}
+        {content}
       </div>
     </section>
   );

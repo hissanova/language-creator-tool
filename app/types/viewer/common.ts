@@ -23,6 +23,9 @@ export type LabelVisibilityOptions = {
    */
   showSemanticTypeLabels?: boolean;
 
+  /** Replace or hide individual semantic labels without changing Core JSON values. */
+  semanticTypeLabelOverrides?: Record<string, string | false>;
+
   /** Show internal Core JSON ids such as map-..., ref-..., selector-... */
   showIds?: boolean;
 

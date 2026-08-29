@@ -8,6 +8,7 @@ import {
   type LineRef,
   type SelectorAnnotation,
 } from "./coreQueries";
+import { semanticTypeLabel } from "./semanticTypeLabel";
 
 type SelectionDetailViewProps = {
   variant?: "developer" | "learner";
@@ -27,7 +28,7 @@ export function MappingDetailView({
   options?: AnnotationPanelDisplayOptions;
 }) {
   const showCoreKindLabels = options?.showCoreKindLabels ?? true;
-  const showSemanticTypeLabels = options?.showSemanticTypeLabels ?? true;
+  const typeLabel = semanticTypeLabel(mapping.mappingType, options);
   const showIds = options?.showIds ?? true;
 
   return (
@@ -38,8 +39,8 @@ export function MappingDetailView({
             mapping
           </span>
         )}
-        {showSemanticTypeLabels && (
-          <span className="font-semibold text-gray-900">{mapping.mappingType}</span>
+        {typeLabel && (
+          <span className="font-semibold text-gray-900">{typeLabel}</span>
         )}
         {showIds && <span className="text-xs text-gray-700">{mapping.id}</span>}
       </div>
@@ -58,13 +59,13 @@ export function RefDetailView({
   options?: AnnotationPanelDisplayOptions;
 }) {
   const text = refText(refValue, translationLanguageId);
-  const showSemanticTypeLabels = options?.showSemanticTypeLabels ?? true;
+  const typeLabel = semanticTypeLabel(refValue.body.type, options);
 
   if (text) {
     return (
       <div className="rounded border border-gray-200 bg-white px-2 py-1 text-gray-950">
-        {showSemanticTypeLabels && (
-          <span className="font-semibold text-gray-900">{refValue.body.type}: </span>
+        {typeLabel && (
+          <span className="font-semibold text-gray-900">{typeLabel}: </span>
         )}
         <span>{text}</span>
       </div>
@@ -74,8 +75,8 @@ export function RefDetailView({
   if (refValue.body.type === "alignment") {
     return (
       <div className="rounded border border-gray-200 bg-white px-2 py-1 text-gray-950">
-        {showSemanticTypeLabels && (
-          <span className="font-semibold text-gray-900">alignment: </span>
+        {typeLabel && (
+          <span className="font-semibold text-gray-900">{typeLabel}: </span>
         )}
         <span>
           {refValue.body.interval.start}
@@ -88,8 +89,8 @@ export function RefDetailView({
   if (refValue.body.type === "speaker") {
     return (
       <div className="rounded border border-gray-200 bg-white px-2 py-1 text-gray-950">
-        {showSemanticTypeLabels && (
-          <span className="font-semibold text-gray-900">speaker: </span>
+        {typeLabel && (
+          <span className="font-semibold text-gray-900">{typeLabel}: </span>
         )}
         <span>{refValue.body.speakerId}</span>
       </div>
@@ -163,7 +164,7 @@ export function SelectionDetailView({
   void variant;
 
   const showCoreKindLabels = options?.showCoreKindLabels ?? true;
-  const showSemanticTypeLabels = options?.showSemanticTypeLabels ?? true;
+  const selectionTypeLabel = semanticTypeLabel(selection.selectionType, options);
   const showIds = options?.showIds ?? true;
   const maxDepth = options?.selection?.maxDepth ?? options?.maxDepth ?? 99;
   const canRenderNestedSelections = depth < maxDepth;
@@ -196,8 +197,8 @@ export function SelectionDetailView({
             selection
           </span>
         )}
-        {(selection.label || showSemanticTypeLabels) && (
-          <span className="font-semibold text-gray-950">{selection.label ?? selection.selectionType}</span>
+        {(selection.label || selectionTypeLabel) && (
+          <span className="font-semibold text-gray-950">{selection.label ?? selectionTypeLabel}</span>
         )}
         {showIds && <span className="text-xs text-gray-700">{selection.id}</span>}
       </div>

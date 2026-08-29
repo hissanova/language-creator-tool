@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from "react";
+import { useId, useState, type CSSProperties, type ReactNode } from "react";
 import type {
   Language,
   Resource,
@@ -251,10 +251,22 @@ export function ScriptLine({
         attachment.ref.body.type === "dictionary"
     )
   );
+  const hasLearnerAnnotations = Boolean(
+    hasLearnerLineRefs ||
+      hasLearnerSelectedTextMappings ||
+      hasLearnerSelectedTextRefs ||
+      hasLearnerSelections
+  );
+  const learnerDropdown = learnerAnnotationPanelConfig.dropdown;
+  const [isLearnerPanelOpen, setIsLearnerPanelOpen] = useState<boolean>(
+    learnerDropdown.defaultOpen ?? false
+  );
+  const learnerPanelId = useId();
+  const learnerDropdownTitle = learnerDropdown.title ?? "Annotations";
 
   return (
     <div className={speakerStyle.container}>
-      <p className={style.text.line}>
+      {isDeveloperMode ? <p className={style.text.line}>
         {canPlay && alignment && (
           <button
             onClick={() => onPlay?.(alignment)}
@@ -305,13 +317,75 @@ export function ScriptLine({
                 style,
               })}
         </span>
-      </p>
-
-      {!isDeveloperMode && translations.map((translation) => (
-        <p key={translation.id} className={style.text.translation}>
-          {translation.image.content.text}
-        </p>
-      ))}
+      </p> : (
+        <div className={`${style.text.line} grid grid-cols-[auto_auto_minmax(0,1fr)_auto] items-start gap-x-2`}>
+          {canPlay && alignment && (
+            <button
+              onClick={() => onPlay?.(alignment)}
+              className={`${style.layout.playButton} col-start-1 self-start align-middle`}
+              aria-label="Play line"
+              title="Play line"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                width="16"
+                height="16"
+                fill="currentColor"
+                aria-hidden
+              >
+                <path d="M8 5v14l11-7z" />
+              </svg>
+            </button>
+          )}
+          {speaker && (
+            <span
+              className={["col-start-2", speakerStyle.name, speakerDisplayStyle?.className]
+                .filter(Boolean)
+                .join(" ")}
+              style={speakerNameStyle}
+            >
+              {speaker.name}:
+            </span>
+          )}
+          <div className="col-start-3 min-w-0">
+            <div>
+              {lineLanguageLabel && (
+                <span className={style.text.languageBadge}>{lineLanguageLabel}</span>
+              )}
+              <span
+                className={[
+                  isLineNonDefaultLanguage ? style.text.languageSwitch : undefined,
+                  tagTextStyle.className,
+                ].filter(Boolean).join(" ")}
+                style={tagTextStyle.style}
+              >
+                {renderAnnotatedText({ text, annotations, translationLanguageId, style })}
+              </span>
+            </div>
+            {translations.map((translation) => (
+              <p key={translation.id} className={style.text.translation}>
+                {translation.image.content.text}
+              </p>
+            ))}
+          </div>
+          {hasLearnerAnnotations && learnerDropdown.enabled && (
+            <button
+              type="button"
+              className="col-start-4 self-end rounded p-1 text-gray-700 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2"
+              aria-label={learnerDropdownTitle}
+              aria-expanded={isLearnerPanelOpen}
+              aria-controls={learnerPanelId}
+              onClick={() => setIsLearnerPanelOpen((open) => !open)}
+            >
+              {(learnerDropdown.showTitle ?? true) && (
+                <span className="mr-1">{learnerDropdownTitle}</span>
+              )}
+              <span aria-hidden>{isLearnerPanelOpen ? "▴" : "▾"}</span>
+            </button>
+          )}
+        </div>
+      )}
 
       {!isDeveloperMode && textNode.textLineRefs?.map((refValue) => (
         refValue.body.type === "tag" || refValue.body.type === "note" ? null : (
@@ -333,18 +407,8 @@ export function ScriptLine({
           translationLanguageId={translationLanguageId}
           style={style}
         />
-      ) : hasLearnerLineRefs ||
-        hasLearnerSelectedTextMappings ||
-        hasLearnerSelectedTextRefs ||
-        hasLearnerSelections ? (
-        <details
-          className="mt-3 text-sm"
-          open={learnerAnnotationPanelConfig.defaultOpen}
-        >
-          <summary className="cursor-pointer text-gray-800">
-            {learnerAnnotationPanelConfig.summaryLabel}
-          </summary>
-          <div className="mt-2">
+      ) : hasLearnerAnnotations && learnerDropdown.enabled && isLearnerPanelOpen ? (
+          <div id={learnerPanelId} className="mt-2 text-sm">
             <AnnotationPanel
               textLine={textNode}
               resources={resources}
@@ -353,7 +417,6 @@ export function ScriptLine({
               config={learnerAnnotationPanelConfig}
             />
           </div>
-        </details>
       ) : null}
 
       {!isDeveloperMode && nodeResources.map((resource) => (
