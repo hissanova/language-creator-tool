@@ -23,6 +23,23 @@ Open [http://localhost:3000](http://localhost:3000) with your browser to see the
 
 You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
+## Visual regression tests
+
+Install Chromium once, then run the visual tests:
+
+```bash
+npx playwright install chromium
+npm run test:visual
+```
+
+After confirming that a Viewer change is intentional, update the baseline screenshots with:
+
+```bash
+npm run test:visual:update
+```
+
+If CI reports a visual difference, download the `playwright-visual-regression` artifact to inspect the expected, actual, and diff images. The current coverage is deliberately limited to four representative Viewer cases using Chromium at a desktop viewport with the light theme. It does not cover the Text Viewer.
+
 This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
 ## Learn More
