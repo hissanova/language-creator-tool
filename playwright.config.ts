@@ -10,6 +10,11 @@ export default defineConfig({
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
   reporter: process.env.CI ? [["list"], ["html", { open: "never" }]] : "list",
+  expect: {
+    // Linux distributions rasterize the same fallback CJK glyphs slightly
+    // differently. This is just above the measured CI variance (1.38%).
+    toHaveScreenshot: { maxDiffPixelRatio: 0.015 },
+  },
   use: {
     baseURL,
     colorScheme: "light",
