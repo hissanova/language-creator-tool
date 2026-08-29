@@ -2,6 +2,9 @@
   "name": "language-creator-tool",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20.9.0"
+  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -10,7 +13,8 @@
     "check:samples": "tsc -p tsconfig.samples.json",
     "compile:lcm": "node scripts/lcm/compile-fixtures.mjs",
     "compile:lcm:file": "node scripts/lcm/compile-file.mjs",
-    "check:lcm": "node scripts/lcm/check-lcm-compiler.mjs"
+    "check:lcm": "node scripts/lcm/check-lcm-compiler.mjs",
+    "check": "npm run lint && npm run check:lcm && npm run check:samples && npm run build"
   },
   "dependencies": {
     "next": "16.2.6",
