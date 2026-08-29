@@ -1,6 +1,7 @@
 import type { Document } from "../types/core/document";
 import type { ViewerStyle } from "../types/viewerStyle";
 import { ViewerShell } from "./ViewerShell";
+import { DeveloperScriptLine } from "./script-line/DeveloperScriptLine";
 
 type Props = {
   document: Document;
@@ -8,5 +9,11 @@ type Props = {
 };
 
 export function DeveloperViewer(props: Props) {
-  return <ViewerShell {...props} annotationMode="developer" showMetadata />;
+  return (
+    <ViewerShell
+      {...props}
+      LineComponent={DeveloperScriptLine}
+      showMetadata
+    />
+  );
 }

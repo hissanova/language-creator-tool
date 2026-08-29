@@ -1,20 +1,20 @@
+import { ScriptLine } from "../ScriptLine";
+import { buildScriptLineModel } from "./buildScriptLineModel";
+import type { ScriptLineCompositionProps } from "./types";
 import type { Resource } from "../../types/core/document";
 import type { TextLine } from "../../types/core/textLine";
-import type { ViewerStyle } from "../../types/viewerStyle";
 import type { SelectorAnnotation } from "./coreQueries";
 import { AnnotationPanel } from "./AnnotationPanel";
-import { developerAnnotationPanelConfig } from "./annotationPanelPresets";
+import { developerAnnotationPanelConfig } from "../../config/annotationPanelPresets";
 
 type Props = {
   textLine: TextLine;
   annotations: SelectorAnnotation[];
-  textNodeTags: string[];
   nodeResources: Resource[];
   translationLanguageId: string;
-  style: ViewerStyle;
 };
 
-export function DeveloperAnnotationPanel(props: Props) {
+function DeveloperAnnotationPanel(props: Props) {
   const {
     textLine,
     annotations,
@@ -52,5 +52,31 @@ export function DeveloperAnnotationPanel(props: Props) {
         />
       </div>
     </details>
+  );
+}
+
+export function DeveloperScriptLine(props: ScriptLineCompositionProps) {
+  const { translationLanguageId, style, canPlay, onPlay } = props;
+  const model = buildScriptLineModel(props);
+
+  return (
+    <ScriptLine
+      speaker={model.speaker}
+      speakerId={model.speakerId}
+      alignment={model.alignment}
+      canPlay={canPlay}
+      onPlay={onPlay}
+      style={style}
+      layoutVariant="inline"
+      textContent={model.originalText}
+      belowContent={
+        <DeveloperAnnotationPanel
+          textLine={model.textNode}
+          annotations={model.annotations}
+          nodeResources={model.nodeResources}
+          translationLanguageId={translationLanguageId}
+        />
+      }
+    />
   );
 }
