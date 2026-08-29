@@ -11,7 +11,7 @@ import type {
 } from "../types/core/document";
 import type { FormedText, TimeSpan } from "../types/core/common";
 import type { ViewerStyle } from "../types/viewerStyle";
-import { ScriptLine } from "./ScriptLine";
+import type { ScriptLineComponent } from "./script-line/types";
 import { viewerStyle as defaultStyle } from "../styles/viewerStyle";
 
 type Props = {
@@ -20,8 +20,9 @@ type Props = {
 };
 
 type ViewerShellProps = Props & {
-  annotationMode: "learner" | "developer";
+  LineComponent: ScriptLineComponent;
   showMetadata?: boolean;
+  showViewerControls?: boolean;
 };
 
 type SelectOption = {
@@ -182,8 +183,9 @@ function MetadataDetails({ document }: { document: Document }) {
 export function ViewerShell({
   document,
   style = defaultStyle,
-  annotationMode,
+  LineComponent,
   showMetadata = false,
+  showViewerControls = false,
 }: ViewerShellProps) {
   const mediaRef = useRef<HTMLMediaElement | null>(null);
 
@@ -202,7 +204,6 @@ export function ViewerShell({
 
   const media = document.resources?.find((resource) => resource.type === "media");
   const mediaSrc = media ? normalizeMediaSrc(media.src) : undefined;
-  const isDeveloperMode = annotationMode === "developer";
 
   const playSpan = (span: TimeSpan) => {
     if (!mediaRef.current) return;
@@ -241,7 +242,7 @@ export function ViewerShell({
     switch (block.type) {
       case "text":
         return (
-          <ScriptLine
+          <LineComponent
             key={block.text.id}
             textNode={block.text}
             speakers={speakers}
@@ -251,7 +252,6 @@ export function ViewerShell({
             formId={formId}
             translationLanguageId={translationLanguageId}
             style={style}
-            annotationMode={annotationMode}
             canPlay={Boolean(media)}
             onPlay={playSpan}
           />
@@ -334,7 +334,7 @@ export function ViewerShell({
         </div>
       )}
 
-      {!isDeveloperMode && (
+      {showViewerControls && (
         <div className={style.layout.controls}>
           {formOptions.length === 1 ? (
             <div className="flex items-center gap-2">

@@ -1,4 +1,4 @@
-import type { AnnotationPanelConfig } from "./annotationPanel";
+import type { AnnotationPanelConfig } from "../types/viewer/annotationPanel";
 
 export const developerAnnotationPanelConfig = {
   id: "developer-annotation-panel",
@@ -13,7 +13,6 @@ export const developerAnnotationPanelConfig = {
   },
   empty: "hide",
   defaultOptions: {
-    density: "full",
     showCoreKindLabels: true,
     showSemanticTypeLabels: true,
     showIds: true,
@@ -21,38 +20,7 @@ export const developerAnnotationPanelConfig = {
     showCounts: true,
     empty: "hide",
     maxDepth: 99,
-    mapping: {
-      showCoreKindLabels: true,
-      showSemanticTypeLabels: true,
-      showIds: true,
-      showMappingType: true,
-      showMappingId: true,
-      showMappingImageLanguage: true,
-      showMappingImageForm: true,
-      showNestedImageTextLine: true,
-    },
-    ref: {
-      showCoreKindLabels: true,
-      showSemanticTypeLabels: true,
-      showIds: true,
-      showRefType: true,
-      showRefId: true,
-    },
-    selectorRecord: {
-      showCoreKindLabels: true,
-      showSemanticTypeLabels: true,
-      showIds: true,
-      showRanges: true,
-      showSelectorType: true,
-      showSelectorId: true,
-      showSelectedText: true,
-    },
     selection: {
-      showCoreKindLabels: true,
-      showSemanticTypeLabels: true,
-      showIds: true,
-      showRanges: true,
-      showCounts: true,
       showSelectorChips: true,
       showWholeSelectionMappings: true,
       showWholeSelectionRefs: true,
@@ -90,15 +58,15 @@ export const developerAnnotationPanelConfig = {
     },
     {
       kind: "source",
-      id: "selected-text-mappings",
-      title: "Selected text mappings",
-      source: "textLine.selectedTextMappings",
-    },
-    {
-      kind: "source",
       id: "selected-text-refs",
       title: "Selected text refs",
       source: "textLine.selectedTextRefs",
+    },
+    {
+      kind: "source",
+      id: "selected-text-mappings",
+      title: "Selected text mappings",
+      source: "textLine.selectedTextMappings",
     },
     {
       kind: "source",
@@ -108,8 +76,8 @@ export const developerAnnotationPanelConfig = {
     },
     {
       kind: "source",
-      id: "resolved-resources",
-      title: "Resolved resources",
+      id: "resources",
+      title: "Resources",
       source: "textLine.resources",
     },
   ],
@@ -128,46 +96,21 @@ export const learnerAnnotationPanelConfig = {
   },
   empty: "hide",
   defaultOptions: {
-    density: "compact",
     showCoreKindLabels: false,
     showSemanticTypeLabels: true,
+    semanticTypeLabelOverrides: {
+      gloss: "Meaning",
+      translation: "Translation",
+      note: "Note",
+      dictionary: "Dictionary",
+      tag: false,
+    },
     showIds: false,
     showRanges: false,
     showCounts: false,
     empty: "hide",
     maxDepth: 3,
-    mapping: {
-      showCoreKindLabels: false,
-      showSemanticTypeLabels: true,
-      showIds: false,
-      showMappingType: true,
-      showMappingId: false,
-      showMappingImageLanguage: false,
-      showMappingImageForm: false,
-      showNestedImageTextLine: true,
-    },
-    ref: {
-      showCoreKindLabels: false,
-      showSemanticTypeLabels: true,
-      showIds: false,
-      showRefType: true,
-      showRefId: false,
-    },
-    selectorRecord: {
-      showCoreKindLabels: false,
-      showSemanticTypeLabels: false,
-      showIds: false,
-      showRanges: false,
-      showSelectorType: false,
-      showSelectorId: false,
-      showSelectedText: true,
-    },
     selection: {
-      showCoreKindLabels: false,
-      showSemanticTypeLabels: true,
-      showIds: false,
-      showRanges: false,
-      showCounts: false,
       showSelectorChips: true,
       showWholeSelectionMappings: true,
       showWholeSelectionRefs: true,
@@ -180,26 +123,53 @@ export const learnerAnnotationPanelConfig = {
   blocks: [
     {
       kind: "group",
-      id: "line-annotations",
-      title: "Line annotations",
+      id: "learner-line-annotations",
+      showTitle: false,
       children: [
         {
           kind: "source",
           id: "learner-line-refs",
-          title: "Refs",
+          showTitle: false,
           source: "textLine.refs",
           filter: {
             refTypes: ["tag", "note", "dictionary"],
           },
         },
+      ],
+    },
+    {
+      kind: "group",
+      id: "learner-selected-text-annotations",
+      title: "Words",
+      children: [
         {
           kind: "source",
-          id: "learner-line-mappings",
-          title: "Translations",
-          source: "textLine.textMappings",
+          id: "learner-selected-text-mappings",
+          showTitle: false,
+          source: "textLine.selectedTextMappings",
           filter: {
-            mappingTypes: ["translation"],
-            languages: "currentTranslation",
+            mappingTypes: ["gloss", "translation"],
+          },
+          options: {
+            showCoreKindLabels: false,
+            showSemanticTypeLabels: true,
+            showIds: false,
+            showRanges: false,
+          },
+        },
+        {
+          kind: "source",
+          id: "learner-selected-text-refs",
+          showTitle: false,
+          source: "textLine.selectedTextRefs",
+          filter: {
+            refTypes: ["tag", "note", "dictionary"],
+          },
+          options: {
+            showCoreKindLabels: false,
+            showSemanticTypeLabels: true,
+            showIds: false,
+            showRanges: false,
           },
         },
       ],
@@ -207,29 +177,25 @@ export const learnerAnnotationPanelConfig = {
     {
       kind: "source",
       id: "learner-selections",
-      title: "Selections",
+      title: "Breakdown",
       source: "textLine.selections",
       filter: {
-        selectionTypes: ["decomposition", "parallel", "translationUnit"],
+        selectionTypes: ["decomposition", "parallel"],
       },
-    },
-    {
-      kind: "source",
-      id: "learner-selected-text-mappings",
-      title: "Selected text mappings",
-      source: "textLine.selectedTextMappings",
-      filter: {
-        mappingTypes: ["gloss", "translation", "learnerHint", "form", "romanization", "transliteration"],
-        languages: "any",
-      },
-    },
-    {
-      kind: "source",
-      id: "learner-selected-text-refs",
-      title: "Selected text refs",
-      source: "textLine.selectedTextRefs",
-      filter: {
-        refTypes: ["note", "dictionary", "tag"],
+      options: {
+        showCoreKindLabels: false,
+        showSemanticTypeLabels: true,
+        showIds: false,
+        showRanges: false,
+        selection: {
+          showSelectorChips: true,
+          showWholeSelectionMappings: true,
+          showWholeSelectionRefs: true,
+          showLocalSelectedTextMappings: true,
+          showLocalSelectedTextRefs: true,
+          showNestedMappingImages: true,
+          maxDepth: 3,
+        },
       },
     },
   ],

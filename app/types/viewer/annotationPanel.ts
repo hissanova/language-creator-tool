@@ -171,13 +171,6 @@ export type AnnotationPanelContextState = {
   formId: FormId | "none";
 };
 
-export type SelectionDetailVariant = "developer" | "learner";
-
-export type SelectionDetailConfig = {
-  variant: SelectionDetailVariant;
-  selection: SelectionDisplayOptions;
-};
-
 export type SelectionBlockCandidate = {
   selection: Selection;
   options: SelectionDisplayOptions;

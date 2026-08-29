@@ -11,7 +11,6 @@ import {
 import { semanticTypeLabel } from "./semanticTypeLabel";
 
 type SelectionDetailViewProps = {
-  variant?: "developer" | "learner";
   selection: Selection;
   textLine: TextLine;
   annotations: SelectorAnnotation[];
@@ -153,7 +152,6 @@ export function SelectedTextAnnotationView({
 }
 
 export function SelectionDetailView({
-  variant,
   selection,
   textLine,
   annotations,
@@ -161,8 +159,6 @@ export function SelectionDetailView({
   options,
   depth = 0,
 }: SelectionDetailViewProps) {
-  void variant;
-
   const showCoreKindLabels = options?.showCoreKindLabels ?? true;
   const selectionTypeLabel = semanticTypeLabel(selection.selectionType, options);
   const showIds = options?.showIds ?? true;

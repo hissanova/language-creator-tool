@@ -30,7 +30,6 @@ type AnnotationPanelProps = {
 type BlockContext = Omit<AnnotationPanelProps, "config"> & {
   annotations: SelectorAnnotation[];
   defaultOptions?: AnnotationPanelDisplayOptions;
-  mode: AnnotationPanelConfig["mode"];
 };
 
 type ResourceEntry = {
@@ -411,7 +410,7 @@ function SourceContent({
   options: AnnotationPanelDisplayOptions;
   context: BlockContext;
 }) {
-  const { textLine, resources, annotations, translationLanguageId, mode } = context;
+  const { textLine, resources, annotations, translationLanguageId } = context;
 
   switch (block.source) {
     case "textLine.refs":
@@ -472,7 +471,6 @@ function SourceContent({
       return filteredSelections(textLine, block.filter).map((selection) => (
         <SelectionDetailView
           key={selection.id}
-          variant={mode}
           selection={selection}
           textLine={textLine}
           annotations={annotations}
@@ -620,7 +618,6 @@ export function AnnotationPanel({
     annotations,
     translationLanguageId,
     defaultOptions: config.defaultOptions,
-    mode: config.mode,
   };
   const visibleBlocks = config.blocks.filter((block) => shouldRenderBlock(block, context));
 
