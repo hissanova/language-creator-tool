@@ -14,7 +14,8 @@
     "compile:lcm": "node scripts/lcm/compile-fixtures.mjs",
     "compile:lcm:file": "node scripts/lcm/compile-file.mjs",
     "check:lcm": "node scripts/lcm/check-lcm-compiler.mjs",
-    "check": "npm run lint && npm run check:lcm && npm run check:samples && npm run build"
+    "check:open-content": "node scripts/open-content/check-open-content.mjs",
+    "check": "npm run lint && npm run check:lcm && npm run check:open-content && npm run check:samples && npm run build"
   },
   "dependencies": {
     "next": "16.2.6",
