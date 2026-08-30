@@ -34,6 +34,13 @@ export default function Home() {
       >
         Open sample annotations
       </Link>
+      <br />
+      <Link
+        href="/open-content"
+        className="text-blue-600 underline"
+      >
+        Open external content
+      </Link>
       <h1 className="mt-6 mb-4 text-2xl font-bold">
         Generated sample JSON files
       </h1>
