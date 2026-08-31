@@ -2,12 +2,12 @@ import type { Selection, TextLine, TextMappingPayload } from "../../types/core/t
 import type { AnnotationPanelDisplayOptions } from "../../types/viewer";
 import {
   formatRange,
-  getSelectorRange,
   mappingText,
   refText,
   type LineRef,
   type SelectorAnnotation,
 } from "./coreQueries";
+import { getSelectorRange } from "./resolveAnnotatedTextSegments";
 import { semanticTypeLabel } from "./semanticTypeLabel";
 
 type SelectionDetailViewProps = {

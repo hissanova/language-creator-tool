@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noEmit": false,
+    "outDir": "/tmp/lct-annotated-text-tests",
+    "rootDir": "."
+  },
+  "include": [
+    "app/components/AnnotatedText.test.tsx",
+    "app/components/script-line/resolveAnnotatedTextSegments.test.ts"
+  ]
+}

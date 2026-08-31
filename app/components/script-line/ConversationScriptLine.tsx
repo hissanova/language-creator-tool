@@ -1,21 +1,21 @@
 "use client";
 
-import { useId, useState, type CSSProperties, type ReactNode } from "react";
+import { useId, useState, type CSSProperties } from "react";
 import type { Resource } from "../../types/core/document";
 import type { TagTextDisplayStyle, ViewerStyle } from "../../types/viewerStyle";
 import { learnerAnnotationPanelConfig } from "../../config/annotationPanelPresets";
-import { HoverWord } from "../HoverWord";
+import { AnnotatedText } from "../AnnotatedText";
 import { ScriptLine } from "../ScriptLine";
 import { AnnotationPanel } from "./AnnotationPanel";
 import { buildScriptLineModel } from "./buildScriptLineModel";
 import {
   annotationTags,
   annotationTitle,
-  getSelectorRange,
   refText,
   type LineRef,
   type SelectorAnnotation,
 } from "./coreQueries";
+import { resolveAnnotatedTextSegments } from "./resolveAnnotatedTextSegments";
 import type { ScriptLineCompositionProps } from "./types";
 
 function mergeTagTextDisplayStyles(tags: string[], style: ViewerStyle) {
@@ -40,64 +40,26 @@ function mergeTagTextDisplayStyles(tags: string[], style: ViewerStyle) {
   };
 }
 
-function renderAnnotatedText({
-  text,
-  annotations,
+function annotationPresentation({
+  annotation,
   translationLanguageId,
   style,
 }: {
-  text: string;
-  annotations: SelectorAnnotation[];
+  annotation: SelectorAnnotation;
   translationLanguageId: string;
   style: ViewerStyle;
 }) {
-  const selected = annotations
-    .map((annotation) => ({
-      annotation,
-      range: getSelectorRange(annotation.selector, text),
-    }))
-    .filter(
-      (item): item is {
-        annotation: SelectorAnnotation;
-        range: { start: number; end: number };
-      } => Boolean(item.range)
-    )
-    .sort((a, b) => a.range.start - b.range.start || b.range.end - a.range.end);
+  const title = annotationTitle(annotation, translationLanguageId);
+  const tagTextStyle = mergeTagTextDisplayStyles(annotationTags(annotation), style);
+  const annotationClassName = title
+    ? style.text.annotated
+    : style.text.annotationWithoutPopup;
 
-  const nodes: ReactNode[] = [];
-  let cursor = 0;
-
-  for (const { annotation, range } of selected) {
-    if (range.start < cursor) continue;
-
-    if (cursor < range.start) {
-      nodes.push(<span key={`plain-${cursor}`}>{text.slice(cursor, range.start)}</span>);
-    }
-
-    const title = annotationTitle(annotation, translationLanguageId);
-    const tagTextStyle = mergeTagTextDisplayStyles(annotationTags(annotation), style);
-    const annotationClassName = title
-      ? style.text.annotated
-      : style.text.annotationWithoutPopup;
-
-    nodes.push(
-      <HoverWord
-        key={`${annotation.selectorId}-${range.start}-${range.end}`}
-        text={text.slice(range.start, range.end)}
-        title={title}
-        className={[annotationClassName, tagTextStyle.className].filter(Boolean).join(" ")}
-        style={tagTextStyle.style}
-      />
-    );
-
-    cursor = range.end;
-  }
-
-  if (cursor < text.length) {
-    nodes.push(<span key={`plain-${cursor}`}>{text.slice(cursor)}</span>);
-  }
-
-  return nodes;
+  return {
+    title,
+    className: [annotationClassName, tagTextStyle.className].filter(Boolean).join(" "),
+    style: tagTextStyle.style,
+  };
 }
 
 function RefView({
@@ -242,6 +204,10 @@ function ConversationAnnotationDisclosure({
 export function ConversationScriptLine(props: ScriptLineCompositionProps) {
   const { textNode, resources = [], translationLanguageId, style, canPlay, onPlay } = props;
   const model = buildScriptLineModel(props);
+  const annotatedTextSegments = resolveAnnotatedTextSegments(
+    model.displayTextValue,
+    model.annotations,
+  );
   const tagTextStyle = mergeTagTextDisplayStyles(model.textNodeTags, style);
   const hasAnnotations = hasConversationAnnotations(textNode);
   const dropdown = learnerAnnotationPanelConfig.dropdown;
@@ -298,12 +264,14 @@ export function ConversationScriptLine(props: ScriptLineCompositionProps) {
       style={style}
       layoutVariant="grid"
       languageLabel={model.lineLanguageLabel}
-      textContent={renderAnnotatedText({
-        text: model.displayTextValue,
-        annotations: model.annotations,
-        translationLanguageId,
-        style,
-      })}
+      textContent={
+        <AnnotatedText
+          segments={annotatedTextSegments}
+          getAnnotationPresentation={(annotation) =>
+            annotationPresentation({ annotation, translationLanguageId, style })
+          }
+        />
+      }
       textClassName={[
         model.isLineNonDefaultLanguage ? style.text.languageSwitch : undefined,
         tagTextStyle.className,
