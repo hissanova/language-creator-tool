@@ -11,11 +11,11 @@ import type {
 } from "../../types/viewer";
 import {
   formatRange,
-  getSelectorRange,
   mappingText,
   refText,
   type SelectorAnnotation,
 } from "./coreQueries";
+import { getSelectorRange } from "./resolveAnnotatedTextSegments";
 import { SelectionDetailView } from "./SelectionDetailView";
 import { semanticTypeLabel } from "./semanticTypeLabel";
 

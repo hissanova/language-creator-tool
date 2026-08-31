@@ -14,6 +14,7 @@ import type {
   SelectionRef,
   TextLineRef,
 } from "../../types/core/references";
+import { getSelectorRange } from "./resolveAnnotatedTextSegments";
 
 export type LineRef = TextLineRef | SelectionRef;
 export type SpeakerRef = TextLineRef & { body: { type: "speaker"; speakerId: string } };
@@ -143,17 +144,6 @@ export function getTranslations(textLine: TextLine, languageId: string) {
   return textLine.textLineMappings?.filter(
     (mapping) => mapping.mappingType === "translation" && shouldShowMapping(mapping, languageId)
   ) ?? [];
-}
-
-export function getSelectorRange(selector: Selector, text: string) {
-  if (selector.selectorType !== "range") return undefined;
-
-  const { range } = selector;
-  if (range.start < 0 || range.end <= range.start || range.end > text.length) {
-    return undefined;
-  }
-
-  return range;
 }
 
 export function formatRange(selector: Selector) {
