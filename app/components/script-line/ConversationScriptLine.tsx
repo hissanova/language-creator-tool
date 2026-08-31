@@ -192,53 +192,89 @@ function hasConversationAnnotations(textNode: ScriptLineCompositionProps["textNo
   );
 }
 
+function ConversationAnnotationDisclosure({
+  textNode,
+  resources,
+  annotations,
+  translationLanguageId,
+}: {
+  textNode: ScriptLineCompositionProps["textNode"];
+  resources: Resource[];
+  annotations: SelectorAnnotation[];
+  translationLanguageId: string;
+}) {
+  const dropdown = learnerAnnotationPanelConfig.dropdown;
+  const [isPanelOpen, setIsPanelOpen] = useState<boolean>(
+    dropdown.defaultOpen ?? false
+  );
+  const panelId = useId();
+  const dropdownTitle = dropdown.title ?? "Annotations";
+
+  return (
+    <div className="min-w-0">
+      <button
+        type="button"
+        className="absolute right-1 top-0 z-10 -translate-y-full rounded p-1 text-gray-700 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2"
+        aria-label={dropdownTitle}
+        aria-expanded={isPanelOpen}
+        aria-controls={panelId}
+        onClick={() => setIsPanelOpen((open) => !open)}
+      >
+        {(dropdown.showTitle ?? true) && <span className="mr-1">{dropdownTitle}</span>}
+        <span aria-hidden>{isPanelOpen ? "▴" : "▾"}</span>
+      </button>
+
+      {isPanelOpen ? (
+        <div id={panelId} className="pt-2 text-sm">
+          <AnnotationPanel
+            textLine={textNode}
+            resources={resources}
+            annotations={annotations}
+            translationLanguageId={translationLanguageId}
+            config={learnerAnnotationPanelConfig}
+          />
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 export function ConversationScriptLine(props: ScriptLineCompositionProps) {
   const { textNode, resources = [], translationLanguageId, style, canPlay, onPlay } = props;
   const model = buildScriptLineModel(props);
   const tagTextStyle = mergeTagTextDisplayStyles(model.textNodeTags, style);
   const hasAnnotations = hasConversationAnnotations(textNode);
   const dropdown = learnerAnnotationPanelConfig.dropdown;
-  const [isPanelOpen, setIsPanelOpen] = useState<boolean>(dropdown.defaultOpen ?? false);
-  const panelId = useId();
-  const dropdownTitle = dropdown.title ?? "Annotations";
+  const standaloneRefs = textNode.textLineRefs?.filter(
+    (refValue) =>
+      refValue.body.type !== "tag" &&
+      refValue.body.type !== "note" &&
+      Boolean(refText(refValue, translationLanguageId))
+  );
+  const hasBottomSlot = Boolean(
+    standaloneRefs?.length ||
+      (hasAnnotations && dropdown.enabled) ||
+      model.nodeResources.length
+  );
 
-  const trailingControl = hasAnnotations && dropdown.enabled ? (
-    <button
-      type="button"
-      className="col-start-4 self-end rounded p-1 text-gray-700 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2"
-      aria-label={dropdownTitle}
-      aria-expanded={isPanelOpen}
-      aria-controls={panelId}
-      onClick={() => setIsPanelOpen((open) => !open)}
-    >
-      {(dropdown.showTitle ?? true) && <span className="mr-1">{dropdownTitle}</span>}
-      <span aria-hidden>{isPanelOpen ? "▴" : "▾"}</span>
-    </button>
-  ) : null;
-
-  const belowContent = (
+  const bottomSlot = hasBottomSlot ? (
     <>
-      {textNode.textLineRefs?.map((refValue) =>
-        refValue.body.type === "tag" || refValue.body.type === "note" ? null : (
-          <RefView
-            key={refValue.id}
-            refValue={refValue}
-            translationLanguageId={translationLanguageId}
-            style={style}
-          />
-        )
-      )}
+      {standaloneRefs?.map((refValue) => (
+        <RefView
+          key={refValue.id}
+          refValue={refValue}
+          translationLanguageId={translationLanguageId}
+          style={style}
+        />
+      ))}
 
-      {hasAnnotations && dropdown.enabled && isPanelOpen ? (
-        <div id={panelId} className="mt-2 text-sm">
-          <AnnotationPanel
-            textLine={textNode}
-            resources={resources}
-            annotations={model.annotations}
-            translationLanguageId={translationLanguageId}
-            config={learnerAnnotationPanelConfig}
-          />
-        </div>
+      {hasAnnotations && dropdown.enabled ? (
+        <ConversationAnnotationDisclosure
+          textNode={textNode}
+          resources={resources}
+          annotations={model.annotations}
+          translationLanguageId={translationLanguageId}
+        />
       ) : null}
 
       {model.nodeResources.map((resource) => (
@@ -250,7 +286,7 @@ export function ConversationScriptLine(props: ScriptLineCompositionProps) {
         />
       ))}
     </>
-  );
+  ) : undefined;
 
   return (
     <ScriptLine
@@ -280,8 +316,8 @@ export function ConversationScriptLine(props: ScriptLineCompositionProps) {
           {translation.image.content.text}
         </p>
       ))}
-      trailingControl={trailingControl}
-      belowContent={belowContent}
+      rowClassName={hasAnnotations && dropdown.enabled ? "pr-7" : undefined}
+      bottomSlot={bottomSlot}
     />
   );
 }

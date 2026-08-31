@@ -2,6 +2,8 @@ import type { CSSProperties, ReactNode } from "react";
 import type { TimeSpan } from "../types/core/common";
 import type { Speaker } from "../types/core/document";
 import type { ViewerStyle } from "../types/viewerStyle";
+import { ScriptLineFrame } from "./script-line/ScriptLineFrame";
+import { ScriptLineRow } from "./script-line/ScriptLineRow";
 
 type Props = {
   speaker?: Speaker;
@@ -16,8 +18,9 @@ type Props = {
   textStyle?: CSSProperties;
   languageLabel?: string;
   translations?: ReactNode;
-  trailingControl?: ReactNode;
-  belowContent?: ReactNode;
+  rowClassName?: string;
+  topSlot?: ReactNode;
+  bottomSlot?: ReactNode;
 };
 
 export function ScriptLine({
@@ -33,8 +36,9 @@ export function ScriptLine({
   textStyle,
   languageLabel,
   translations,
-  trailingControl,
-  belowContent,
+  rowClassName,
+  topSlot,
+  bottomSlot,
 }: Props) {
   const speakerStyle = style.speaker.default;
   const speakerDisplayStyle = speakerId ? style.speakers?.[speakerId] : undefined;
@@ -51,7 +55,7 @@ export function ScriptLine({
       onClick={() => onPlay?.(alignment)}
       className={[
         style.layout.playButton,
-        isGridLayout ? "col-start-1 self-start align-middle" : "mr-2 align-middle",
+        isGridLayout ? "align-middle" : "mr-2 align-middle",
       ].join(" ")}
       aria-label="Play line"
       title="Play line"
@@ -72,7 +76,6 @@ export function ScriptLine({
   const speakerContent = speaker ? (
     <span
       className={[
-        isGridLayout ? "col-start-2" : undefined,
         speakerStyle.name,
         speakerDisplayStyle?.className,
       ]
@@ -95,34 +98,28 @@ export function ScriptLine({
     </>
   );
 
-  const lineContent = (
+  const text = isGridLayout ? (
     <>
-      {playControl}
-      {speakerContent}
-      {isGridLayout ? (
-        <div className="col-start-3 min-w-0">
-          <div>{primaryText}</div>
-          {translations}
-        </div>
-      ) : (
-        primaryText
-      )}
-      {trailingControl}
+      <div>{primaryText}</div>
+      {translations}
     </>
+  ) : (
+    primaryText
   );
 
   return (
-    <div className={speakerStyle.container}>
-      {isGridLayout ? (
-        <div
-          className={`${style.text.line} grid grid-cols-[auto_auto_minmax(0,1fr)_auto] items-start gap-x-2`}
-        >
-          {lineContent}
-        </div>
-      ) : (
-        <p className={style.text.line}>{lineContent}</p>
-      )}
-      {belowContent}
-    </div>
+    <ScriptLineFrame
+      className={speakerStyle.container}
+      topSlot={topSlot}
+      bottomSlot={bottomSlot}
+    >
+      <ScriptLineRow
+        playControl={playControl}
+        speaker={speakerContent}
+        text={text}
+        layoutVariant={layoutVariant}
+        className={[style.text.line, rowClassName].filter(Boolean).join(" ")}
+      />
+    </ScriptLineFrame>
   );
 }
