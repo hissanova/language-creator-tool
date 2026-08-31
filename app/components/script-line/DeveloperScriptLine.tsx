@@ -14,14 +14,11 @@ type Props = {
   translationLanguageId: string;
 };
 
-function DeveloperAnnotationPanel(props: Props) {
-  const {
-    textLine,
-    annotations,
-    nodeResources,
-    translationLanguageId,
-  } = props;
-  const hasDetails = Boolean(
+function hasDeveloperAnnotationDetails({
+  textLine,
+  nodeResources,
+}: Pick<Props, "textLine" | "nodeResources">) {
+  return Boolean(
     textLine.textLineRefs?.length ||
       textLine.textLineMappings?.length ||
       Object.keys(textLine.selectorRecord ?? {}).length ||
@@ -30,11 +27,11 @@ function DeveloperAnnotationPanel(props: Props) {
       textLine.selections?.length ||
       nodeResources.length
   );
+}
 
-  if (!hasDetails) return null;
-
+function DeveloperAnnotationPanel(props: Props) {
+  const { textLine, annotations, nodeResources, translationLanguageId } = props;
   const dropdown = developerAnnotationPanelConfig.dropdown;
-  if (!dropdown.enabled) return null;
   const title = dropdown.title ?? "Annotations";
 
   return (
@@ -58,6 +55,12 @@ function DeveloperAnnotationPanel(props: Props) {
 export function DeveloperScriptLine(props: ScriptLineCompositionProps) {
   const { translationLanguageId, style, canPlay, onPlay } = props;
   const model = buildScriptLineModel(props);
+  const showAnnotationPanel =
+    developerAnnotationPanelConfig.dropdown.enabled &&
+    hasDeveloperAnnotationDetails({
+      textLine: model.textNode,
+      nodeResources: model.nodeResources,
+    });
 
   return (
     <ScriptLine
@@ -69,14 +72,14 @@ export function DeveloperScriptLine(props: ScriptLineCompositionProps) {
       style={style}
       layoutVariant="inline"
       textContent={model.originalText}
-      belowContent={
+      bottomSlot={showAnnotationPanel ? (
         <DeveloperAnnotationPanel
           textLine={model.textNode}
           annotations={model.annotations}
           nodeResources={model.nodeResources}
           translationLanguageId={translationLanguageId}
         />
-      }
+      ) : undefined}
     />
   );
 }
