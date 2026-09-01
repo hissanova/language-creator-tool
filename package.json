@@ -15,8 +15,9 @@
     "compile:lcm:file": "node scripts/lcm/compile-file.mjs",
     "check:lcm": "node scripts/lcm/check-lcm-compiler.mjs",
     "check:open-content": "node scripts/open-content/check-open-content.mjs",
+    "check:update": "node scripts/update/check-update.mjs",
     "check:annotated-text": "tsc -p tsconfig.annotated-text-tests.json && NODE_PATH=./node_modules node --test /tmp/lct-annotated-text-tests/app/components/AnnotatedText.test.js /tmp/lct-annotated-text-tests/app/components/script-line/resolveAnnotatedTextSegments.test.js",
-    "check": "npm run lint && npm run check:lcm && npm run check:open-content && npm run check:samples && npm run check:annotated-text && npm run build"
+    "check": "npm run lint && npm run check:lcm && npm run check:open-content && npm run check:update && npm run check:samples && npm run check:annotated-text && npm run build"
   },
   "dependencies": {
     "next": "16.2.6",

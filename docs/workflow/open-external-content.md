@@ -2,6 +2,35 @@
 
 This workflow is intended for Simon's day-to-day editing of learning materials that live outside the Language Creator Tool (LCT) repository.
 
+## Update LCT separately
+
+### One-time bootstrap for an older checkout
+
+A newly cloned LCT repository already includes `./scripts/update.sh`, so you can skip this bootstrap and use the normal update command below.
+
+If your checkout predates the update script, update it manually once from the LCT repository:
+
+```sh
+git status --short
+git switch main
+git pull --ff-only
+./scripts/update.sh
+```
+
+Check the output of `git status --short` before running any later command. If it prints anything, the LCT repository contains uncommitted changes or untracked files: stop there, do not delete or move those changes, and ask an administrator for help. The remaining commands switch to the clean `main` branch, update it from its configured tracking upstream only when a fast-forward is possible, and then run the new updater. If switching branches or the fast-forward-only pull fails, stop without discarding or stashing anything and ask an administrator for help.
+
+### Normal updates
+
+After the one-time bootstrap—or immediately in a newly cloned repository—use this command whenever you want the latest stable LCT code:
+
+```sh
+./scripts/update.sh
+```
+
+This updates only LCT's clean, upstream-tracking `main` branch with a fast-forward-safe Git update, then runs `npm ci`. It never reads, writes, updates, or Git-manages your external teaching-materials folder. Local changes or untracked files inside the LCT repository cause the update to stop safely; commit or remove them manually before trying again.
+
+If the command reports an unsupported Node.js version, install or select the version required by `package.json`, then run `npm ci`. If `npm ci` fails after Git was updated, fix the reported npm error and retry `npm ci`; the command will clearly say that the code update already completed.
+
 ## First-time setup
 
 Install Node.js 20.9.0 or newer and install the LCT dependencies once:
@@ -18,6 +47,16 @@ From the LCT repository root, run exactly one project-folder argument:
 
 ```sh
 ./scripts/open-content.sh <project-folder>
+```
+
+This opens the external project but does not update LCT. A normal update-and-open sequence is:
+
+```sh
+# Update LCT itself
+./scripts/update.sh
+
+# Open an external content project
+./scripts/open-content.sh ../simon-materials
 ```
 
 Both relative and absolute paths work, including paths containing spaces:
