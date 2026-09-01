@@ -17,7 +17,8 @@
     "check:open-content": "node scripts/open-content/check-open-content.mjs",
     "check:update": "node scripts/update/check-update.mjs",
     "check:annotated-text": "tsc -p tsconfig.annotated-text-tests.json && NODE_PATH=./node_modules node --test /tmp/lct-annotated-text-tests/app/components/AnnotatedText.test.js /tmp/lct-annotated-text-tests/app/components/script-line/resolveAnnotatedTextSegments.test.js",
-    "check": "npm run lint && npm run check:lcm && npm run check:open-content && npm run check:update && npm run check:samples && npm run check:annotated-text && npm run build"
+    "check:playback": "tsc -p tsconfig.playback-tests.json && NODE_PATH=./node_modules node --test /tmp/lct-playback-tests/app/components/playback/playbackState.test.js",
+    "check": "npm run lint && npm run check:lcm && npm run check:open-content && npm run check:update && npm run check:samples && npm run check:annotated-text && npm run check:playback && npm run build"
   },
   "dependencies": {
     "next": "16.2.6",

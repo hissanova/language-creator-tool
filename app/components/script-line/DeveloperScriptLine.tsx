@@ -53,7 +53,18 @@ function DeveloperAnnotationPanel(props: Props) {
 }
 
 export function DeveloperScriptLine(props: ScriptLineCompositionProps) {
-  const { translationLanguageId, style, canPlay, onPlay } = props;
+  const {
+    translationLanguageId,
+    style,
+    playbackRange,
+    hasPlaybackTiming,
+    isLoopSelected,
+    isLinePlaying,
+    loopEnabled,
+    onPause,
+    onPlayLine,
+    onToggleLineLoop,
+  } = props;
   const model = buildScriptLineModel(props);
   const showAnnotationPanel =
     developerAnnotationPanelConfig.dropdown.enabled &&
@@ -66,9 +77,14 @@ export function DeveloperScriptLine(props: ScriptLineCompositionProps) {
     <ScriptLine
       speaker={model.speaker}
       speakerId={model.speakerId}
-      alignment={model.alignment}
-      canPlay={canPlay}
-      onPlay={onPlay}
+      playbackRange={playbackRange}
+      hasPlaybackTiming={hasPlaybackTiming}
+      isLoopSelected={isLoopSelected}
+      isLinePlaying={isLinePlaying}
+      loopEnabled={loopEnabled}
+      onPause={onPause}
+      onPlayLine={onPlayLine}
+      onToggleLineLoop={onToggleLineLoop}
       style={style}
       layoutVariant="inline"
       textContent={model.originalText}

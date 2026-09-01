@@ -1,8 +1,8 @@
 import type { ComponentType } from "react";
-import type { TimeSpan } from "../../types/core/common";
 import type { Language, Resource, Speaker } from "../../types/core/document";
 import type { TextLine } from "../../types/core/textLine";
 import type { ViewerStyle } from "../../types/viewerStyle";
+import type { LinePlaybackRange } from "../playback/playbackState";
 
 export type ScriptLineCompositionProps = {
   textNode: TextLine;
@@ -13,8 +13,14 @@ export type ScriptLineCompositionProps = {
   formId: string;
   translationLanguageId: string;
   style: ViewerStyle;
-  canPlay?: boolean;
-  onPlay?: (interval: TimeSpan) => void;
+  playbackRange?: LinePlaybackRange | null;
+  hasPlaybackTiming?: boolean;
+  isLoopSelected?: boolean;
+  isLinePlaying?: boolean;
+  loopEnabled?: boolean;
+  onPause?: () => void;
+  onPlayLine?: (range: LinePlaybackRange) => void;
+  onToggleLineLoop?: (range: LinePlaybackRange) => void;
 };
 
 export type ScriptLineComponent = ComponentType<ScriptLineCompositionProps>;
