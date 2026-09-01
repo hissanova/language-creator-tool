@@ -35,3 +35,49 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* The range remains the seek interaction layer while the track is drawn in JSX. */
+.playback-seek-input {
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.playback-seek-input::-webkit-slider-runnable-track {
+  height: 0.5rem;
+  border: 0;
+  background: transparent;
+}
+
+.playback-seek-input::-moz-range-track,
+.playback-seek-input::-moz-range-progress {
+  height: 0.5rem;
+  border: 0;
+  background: transparent;
+}
+
+.playback-seek-input::-webkit-slider-thumb {
+  width: 1.125rem;
+  height: 1.125rem;
+  margin-top: -0.3125rem;
+  appearance: none;
+  -webkit-appearance: none;
+  border: 2px solid white;
+  border-radius: 9999px;
+  background: #1d4ed8;
+  box-shadow: 0 0 0 1px #1e3a8a;
+}
+
+.playback-seek-input::-moz-range-thumb {
+  width: 0.875rem;
+  height: 0.875rem;
+  border: 2px solid white;
+  border-radius: 9999px;
+  background: #1d4ed8;
+  box-shadow: 0 0 0 1px #1e3a8a;
+}
+
+.playback-seek-input:disabled::-webkit-slider-thumb,
+.playback-seek-input:disabled::-moz-range-thumb {
+  background: #9ca3af;
+  box-shadow: 0 0 0 1px #6b7280;
+}

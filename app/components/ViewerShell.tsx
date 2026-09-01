@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import type {
   Document,
   FigureBlock,
@@ -9,10 +9,17 @@ import type {
   SectionBlock,
   TableBlock,
 } from "../types/core/document";
-import type { FormedText, TimeSpan } from "../types/core/common";
+import type { FormedText } from "../types/core/common";
 import type { ViewerStyle } from "../types/viewerStyle";
 import type { ScriptLineComponent } from "./script-line/types";
 import { viewerStyle as defaultStyle } from "../styles/viewerStyle";
+import { PlaybackBar } from "./playback/PlaybackBar";
+import { resolveLinePlaybackRange } from "./playback/linePlayback";
+import type { LinePlaybackRange } from "./playback/playbackState";
+import { usePlaybackController } from "./playback/usePlaybackController";
+import { isLineCurrentlyPlaying } from "./playback/playbackDisplay";
+import { PlayIcon } from "./playback/PlaybackIcons";
+import { getAlignmentRef } from "./script-line/coreQueries";
 
 type Props = {
   document: Document;
@@ -187,8 +194,6 @@ export function ViewerShell({
   showMetadata = false,
   showViewerControls = false,
 }: ViewerShellProps) {
-  const mediaRef = useRef<HTMLMediaElement | null>(null);
-
   const formOptions = document.metadata.forms ?? [];
   const translationLanguageOptions = withNone(document.metadata.languages);
 
@@ -200,47 +205,33 @@ export function ViewerShell({
     "none"
   );
 
-  const [playbackEndTime, setPlaybackEndTime] = useState<number | null>(null);
-
-  const media = document.resources?.find((resource) => resource.type === "media");
-  const mediaSrc = media ? normalizeMediaSrc(media.src) : undefined;
-
-  const playSpan = (span: TimeSpan) => {
-    if (!mediaRef.current) return;
-
-    mediaRef.current.currentTime = span.start;
-    setPlaybackEndTime(span.end ?? null);
-    mediaRef.current.play();
-  };
-
-  const playSection = (section: Section) => {
-    if (!section.time) return;
-    playSpan(section.time);
-  };
-
-  useEffect(() => {
-    const mediaElement = mediaRef.current;
-    if (!mediaElement || playbackEndTime === null) return;
-
-    const handleTimeUpdate = () => {
-      if (mediaElement.currentTime >= playbackEndTime) {
-        mediaElement.pause();
-        setPlaybackEndTime(null);
-      }
-    };
-
-    mediaElement.addEventListener("timeupdate", handleTimeUpdate);
-
-    return () => {
-      mediaElement.removeEventListener("timeupdate", handleTimeUpdate);
-    };
-  }, [playbackEndTime]);
+  const audioResources = useMemo(
+    () => (document.resources ?? []).filter(
+      (resource): resource is Extract<typeof resource, { type: "media" }> =>
+        resource.type === "media" && resource.mediaType === "audio",
+    ),
+    [document.resources],
+  );
+  const fallbackVideo = document.resources?.find(
+    (resource) => resource.type === "media" && resource.mediaType === "video",
+  );
+  const playback = usePlaybackController(audioResources, normalizeMediaSrc);
 
   const speakers = useMemo(() => document.metadata.speakers ?? [], [document]);
 
   const renderBlock = (block: SectionBlock) => {
     switch (block.type) {
-      case "text":
+      case "text": {
+        const playbackRange = resolveLinePlaybackRange(
+          block.text,
+          document.resources ?? [],
+          normalizeMediaSrc,
+          {
+            mediaSource: playback.state.mediaSource,
+            duration: playback.state.duration,
+          },
+        );
+        const hasPlaybackTiming = Boolean(getAlignmentRef(block.text.textLineRefs));
         return (
           <LineComponent
             key={block.text.id}
@@ -252,10 +243,17 @@ export function ViewerShell({
             formId={formId}
             translationLanguageId={translationLanguageId}
             style={style}
-            canPlay={Boolean(media)}
-            onPlay={playSpan}
+            playbackRange={playbackRange}
+            hasPlaybackTiming={hasPlaybackTiming}
+            isLoopSelected={playback.state.selectedLoopRange?.lineId === block.text.id}
+            isLinePlaying={isLineCurrentlyPlaying(playback.state, playbackRange)}
+            loopEnabled={playback.state.loopEnabled}
+            onPause={playback.actions.pause}
+            onPlayLine={playback.actions.playLine}
+            onToggleLineLoop={playback.actions.toggleLineLoop}
           />
         );
+      }
       case "note":
         return <NoteBlockView key={block.note.id} note={block.note} />;
       case "figure":
@@ -271,16 +269,21 @@ export function ViewerShell({
     <section key={section.id} className={style.layout.section}>
       <div className={style.layout.sectionHeader}>
         <div className="flex items-center gap-3">
-          {media && section.time && (
+          {audioResources[0] && section.time?.end != null && (
             <button
-              onClick={() => playSection(section)}
+              onClick={() => playback.actions.playLine({
+                type: "line",
+                lineId: section.id,
+                mediaResourceId: audioResources[0].id,
+                mediaSource: normalizeMediaSrc(audioResources[0].src),
+                start: section.time!.start,
+                end: section.time!.end!,
+              } satisfies LinePlaybackRange)}
               className={style.layout.playButton}
               aria-label="Play section"
               title="Play section"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden>
-                <path d="M8 5v14l11-7z" />
-              </svg>
+              <PlayIcon />
             </button>
           )}
 
@@ -308,29 +311,19 @@ export function ViewerShell({
 
       {showMetadata && <MetadataDetails document={document} />}
 
-      {media && (
+      {audioResources.length > 0 && (
         <div className={style.layout.mediaBar}>
-          {media.mediaType === "audio" && (
-            <audio
-              ref={(element) => {
-                mediaRef.current = element;
-              }}
-              className="w-full"
-              controls
-              src={mediaSrc}
-            />
-          )}
+          <PlaybackBar controller={playback} />
+        </div>
+      )}
 
-          {media.mediaType === "video" && (
-            <video
-              ref={(element) => {
-                mediaRef.current = element;
-              }}
-              className="max-h-64 w-full"
-              controls
-              src={mediaSrc}
-            />
-          )}
+      {audioResources.length === 0 && fallbackVideo?.type === "media" && (
+        <div className={style.layout.mediaBar}>
+          <video
+            className="max-h-64 w-full"
+            controls
+            src={normalizeMediaSrc(fallbackVideo.src)}
+          />
         </div>
       )}
 

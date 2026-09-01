@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noEmit": false,
+    "outDir": "/tmp/lct-playback-tests",
+    "rootDir": "."
+  },
+  "include": [
+    "app/components/playback/playbackState.test.tsx"
+  ]
+}

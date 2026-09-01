@@ -202,7 +202,20 @@ function ConversationAnnotationDisclosure({
 }
 
 export function ConversationScriptLine(props: ScriptLineCompositionProps) {
-  const { textNode, resources = [], translationLanguageId, style, canPlay, onPlay } = props;
+  const {
+    textNode,
+    resources = [],
+    translationLanguageId,
+    style,
+    playbackRange,
+    hasPlaybackTiming,
+    isLoopSelected,
+    isLinePlaying,
+    loopEnabled,
+    onPause,
+    onPlayLine,
+    onToggleLineLoop,
+  } = props;
   const model = buildScriptLineModel(props);
   const annotatedTextSegments = resolveAnnotatedTextSegments(
     model.displayTextValue,
@@ -258,9 +271,14 @@ export function ConversationScriptLine(props: ScriptLineCompositionProps) {
     <ScriptLine
       speaker={model.speaker}
       speakerId={model.speakerId}
-      alignment={model.alignment}
-      canPlay={canPlay}
-      onPlay={onPlay}
+      playbackRange={playbackRange}
+      hasPlaybackTiming={hasPlaybackTiming}
+      isLoopSelected={isLoopSelected}
+      isLinePlaying={isLinePlaying}
+      loopEnabled={loopEnabled}
+      onPause={onPause}
+      onPlayLine={onPlayLine}
+      onToggleLineLoop={onToggleLineLoop}
       style={style}
       layoutVariant="grid"
       languageLabel={model.lineLanguageLabel}
