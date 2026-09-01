@@ -4,6 +4,7 @@ This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-
 
 - [Language Creator Tool workflow](docs/workflow.md)
 - [Compiling LCM to Core JSON fixtures](docs/workflow/lcm-compiler.md)
+- [Updating LCT and opening external content](docs/workflow/open-external-content.md)
 
 ## Getting Started
 
