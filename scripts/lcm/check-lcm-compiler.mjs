@@ -63,6 +63,30 @@ function checkConversation(document) {
   );
 }
 
+function checkCheatSheet(document) {
+  assert.equal(document.metadata.title, "LCM creator cheat sheet");
+  assert.equal(document.sections.length, 2);
+  const lines = textLines(document);
+  assert.equal(lines.length, 7);
+  assert.ok(
+    lines[0].textLineMappings?.some(
+      (mapping) =>
+        mapping.mappingType === "translation" &&
+        mapping.image.content.languageId === "en" &&
+        mappingText(mapping) === "Hello everyone",
+    ),
+  );
+  assert.ok(tags(lines[1].textLineRefs).includes("keyphrase"));
+  assert.ok(lines[2].textLineRefs?.some((ref) => ref.body.type === "note"));
+  assert.ok(
+    lines[2].selectedTextMappings?.some((bundle) =>
+      bundle.mappings.some(
+        (mapping) => mapping.mappingType === "gloss" && mappingText(mapping) === "can hear",
+      ),
+    ),
+  );
+}
+
 function checkMinimum(document) {
   const [line] = textLines(document);
   assert.equal(line.content.text, "喫到飽");
@@ -134,6 +158,7 @@ function checkNested(document) {
 
 const checks = {
   "viewer-conversation-smoke": checkConversation,
+  "lcm-cheat-sheet": checkCheatSheet,
   "decomposition-minimum": checkMinimum,
   "decomposition-nested-minimum": checkNested,
 };

@@ -1,5 +1,9 @@
 # Compiling LCM to Core JSON Fixtures
 
+This is the implementation-oriented reference for maintainers extending or
+testing the MVP compiler. Content creators should begin with
+[Authoring LCM content](authoring-lcm.md).
+
 ## Overview
 
 The current compilation pipeline is:
@@ -123,6 +127,11 @@ Single-text selectors use zero-based UTF-16 offsets. The target must have exactl
 - No automatic fixture discovery; supported inputs must be registered explicitly
 
 The compiler is intentionally fixture-driven. Add syntax only when a small accepted sample requires it.
+
+The creator-facing executable reference is
+[`samples/markup/lcm-cheat-sheet.lcm`](../../samples/markup/lcm-cheat-sheet.lcm).
+Keep proposed or unsupported syntax out of that file; track it in an Issue or
+RFC until the compiler and semantic checks implement it.
 
 ## Adding a New Sample
 

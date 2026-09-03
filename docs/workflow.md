@@ -1,74 +1,170 @@
 # Language Creator Tool Workflow
 
-This document defines the recommended workflow for changing the Language Creator Tool data model, markup, samples, and viewer behavior.
+This document describes how maintainers and contributors change LCT content,
+the LCM compiler, the Core JSON model, and Viewer presentation.
 
-For the current fixture-driven compiler commands and supported LCM subset, see [Compiling LCM to Core JSON Fixtures](workflow/lcm-compiler.md).
+Content creators should start with [Authoring LCM content](workflow/authoring-lcm.md).
+For the commands and implementation details of the current compiler, see
+[Compiling LCM to Core JSON fixtures](workflow/lcm-compiler.md).
 
-## Pipeline
+## Current data flow
 
 ```text
-Markup
+LCM markup
+  -> MVP LCM compiler
   -> Core JSON
-  -> Core JSON + displayStyle.yaml
+  -> optional Viewer configuration
   -> Viewer
 ```
 
-## Roles
+- **LCM** is the human-authored source format.
+- **Core JSON** is the canonical structured representation of content and its
+  meaning.
+- **Viewer configuration** controls presentation such as visibility, ordering,
+  labels, and layout. It is optional and is not an intermediate data model.
+- **Viewers** render Core JSON, optionally using Viewer configuration.
 
-### Markup
+Do not introduce a separate Viewer JSON or Display JSON layer unless the
+project explicitly adopts one in the future.
 
-Human-authored source text.
+## Two compilation workflows
 
-Stored in:
+### Repository fixtures
 
-```text
-samples/markup/
-```
-
-### Core JSON
-
-Canonical structured representation of the language content.
-
-Core JSON should describe meaning, structure, references, timing, and annotations, but should avoid viewer-specific presentation choices.
-
-Stored in:
+Registered fixtures exercise and test the compiler:
 
 ```text
-samples/core-json/
+samples/markup/example.lcm
+  -> npm run compile:lcm
+  -> samples/core-json/generated/example.generated.ts
 ```
 
-### Display Style
+The generated TypeScript files are test artifacts. Do not edit them by hand;
+edit the source `.lcm` file or the compiler and regenerate them.
 
-Viewer-specific presentation configuration.
+Hand-written TypeScript fixtures under `samples/core-json/` may be used as
+focused reference examples. Generated and hand-written fixtures do not need
+identical IDs or formatting; semantic checks define the required equivalence.
 
-Display Style defines how annotations and content blocks should be presented, for example labels, ordering, visibility, and grouping.
+### External content projects
 
-Stored in:
+Creators can keep teaching materials outside the LCT repository:
 
 ```text
-samples/display-style/
+external-project/episode.lcm
+  -> compile on demand
+  -> Core JSON in memory
+  -> Viewer
 ```
 
-## Recommended Change Flow
+This workflow does not create or update a generated fixture in the repository.
+See [Opening an external content project](workflow/open-external-content.md).
 
-Use this order when making non-trivial structural or presentation changes:
+## Choose the workflow by change type
 
-1. Write or update an RFC in `docs/rfc/`.
-2. Add or update a markup sample in `samples/markup/`.
-3. Add or update the expected Core JSON in `samples/core-json/`.
-4. Add or update a Display Style YAML file in `samples/display-style/`.
-6. Update TypeScript types in `app/types/`.
-7. Update parser and transformation logic.
-8. Update the viewer.
-9. Verify that the samples render correctly.
-10. Update accepted specs in `docs/spec/`.
+### Content-only change
 
-## Naming Convention
-
-Use matching base names across sample stages.
+Use this flow when the compiler already supports everything the content needs:
 
 ```text
-samples/markup/basic-conversation.lct
-samples/core-json/basic-conversation.json
-samples/display-style/basic-viewer.yaml
+Edit .lcm
+  -> compile
+  -> inspect the Viewer
 ```
+
+Do not add proposed or unsupported syntax to production content as a
+placeholder. It may fail compilation or be interpreted as ordinary text.
+
+### Documentation change
+
+Use this flow when the capability exists but creators cannot discover or use it
+reliably:
+
+```text
+Confirm current compiler behavior
+  -> update an executable example when appropriate
+  -> update documentation
+  -> run the relevant checks
+```
+
+### LCM compiler extension
+
+Use this flow when an authoring use case cannot be represented by the supported
+LCM subset:
+
+```text
+Creator use case
+  -> Core JSON representation
+  -> LCM syntax decision
+  -> focused fixture
+  -> compiler implementation
+  -> semantic checks
+  -> Viewer support when required
+  -> documentation
+```
+
+A request for new LCM syntax is not only a documentation request. The syntax
+has meaning only after the compiler maps it to an agreed Core JSON
+representation.
+
+### Core model change
+
+Use an Issue or RFC when the canonical meaning or structure changes:
+
+```text
+Issue or RFC
+  -> accepted Core design
+  -> TypeScript types and specifications
+  -> compiler and fixtures
+  -> affected consumers
+  -> verification
+```
+
+Prefer additive changes. Do not update an accepted specification before the
+implementation has been validated.
+
+### Viewer-only change
+
+Use this flow when Core JSON already contains the required meaning and only its
+presentation changes:
+
+```text
+Viewer requirement
+  -> Viewer configuration or component
+  -> representative sample verification
+```
+
+Do not add presentation-only fields to Core JSON.
+
+## Sources of truth
+
+| Concern | Source of truth |
+| --- | --- |
+| Core JSON structure | Accepted specifications and `app/types/core/` |
+| Current compiler behavior | Compiler implementation and registered fixture checks |
+| Supported LCM subset | `docs/workflow/lcm-compiler.md` and executable fixtures |
+| Viewer presentation | Viewer types, configuration, and components |
+| Proposed changes | GitHub Issues and `docs/rfc/` |
+
+If these disagree, open an Issue and reconcile them rather than silently
+choosing one representation.
+
+## Verification
+
+Run the checks relevant to the change:
+
+```sh
+npm run compile:lcm
+npm run check:lcm
+npm run check:samples
+npm run lint
+npm run build
+```
+
+- `compile:lcm` regenerates registered Core JSON fixture modules.
+- `check:lcm` checks deterministic compilation and required semantics.
+- `check:samples` type-checks TypeScript samples against the Core types.
+- `lint` checks source style and common mistakes.
+- `build` verifies the production application build.
+
+Use `npm run check` to run the full project check suite.

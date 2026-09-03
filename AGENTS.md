@@ -20,7 +20,7 @@ Markup
 → Core JSON
 → Viewer
 
-Optional viewer style/config may be applied at render time, but do not introduce Viewer JSON or Display JSON unless the project explicitly re-adopts that layer.
+Optional Viewer configuration may be applied at render time, but do not introduce Viewer JSON or Display JSON unless the project explicitly re-adopts that layer.
 
 ### Source of Truth
 
@@ -77,7 +77,7 @@ RFC
 ### Do
 
 * Keep Core JSON as the primary internal model.
-* Render viewers from Core JSON plus optional style/config.
+* Render viewers from Core JSON plus optional Viewer configuration.
 * Preserve section order with `blocks[]`; keep `lines[]` only as a deprecated migration fallback.
 * Prefer additive changes over breaking changes.
 * Keep samples synchronized with specifications.
@@ -106,27 +106,27 @@ When conflicts arise, follow this order:
 
 The implementation should follow the specification, not the other way around.
 
-## Display Pipeline
+## Viewer Configuration
 
 Core JSON is rendered directly by the viewer.
 
 The current viewer direction is:
 
 - Core JSON
-- optional style/config, such as `displayStyle.yaml`
+- optional Viewer configuration
 - Viewer
 
-`displayStyle.yaml` or an equivalent style object may define how annotations, speakers, translations, notes, and other content blocks are presented in a specific viewer.
+Viewer configuration may define how annotations, speakers, translations, notes, and other content blocks are presented in a specific viewer.
 
 Core JSON defines what the content means.
-Display Style defines how the content is shown.
+Viewer configuration defines how the content is shown.
 
 Do not add a Viewer JSON or Display JSON layer for the current universal/debug viewer.
 
 ## Samples are executable TypeScript fixtures.
 
 Do not write canonical samples as plain JSON.
-Use `.sample.ts` files with `satisfies` and import the corresponding type from `app/types`.
+Use TypeScript fixture files with `satisfies` and import the corresponding type from `app/types`.
 
 ## Generated Core JSON fixtures
 
