@@ -2,6 +2,10 @@
 
 This workflow is intended for Simon's day-to-day editing of learning materials that live outside the Language Creator Tool (LCT) repository.
 
+Before using this procedure, read [Authoring LCM content](authoring-lcm.md) for
+an explanation of compilation, the current support boundary, and how to request
+an extension when a content need is not supported.
+
 ## Update LCT separately
 
 ### One-time bootstrap for an older checkout

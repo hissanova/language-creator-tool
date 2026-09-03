@@ -1,0 +1,84 @@
+---
+specVersion: "0.5-draft"
+title: "LCM creator cheat sheet"
+documentType: "conversation"
+defaultLanguageId: "zh-Hant"
+defaultFormId: "surface"
+
+languages:
+  - id: "zh-Hant"
+    label: "Traditional Chinese"
+  - id: "en"
+    label: "English"
+  - id: "ja"
+    label: "Japanese"
+
+forms:
+  - id: "surface"
+    label: "Surface"
+
+speakers:
+  - id: "speaker-a"
+    name: "Speaker A"
+  - id: "speaker-b"
+    name: "Speaker B"
+
+resources:
+  - id: "cheat-sheet-audio"
+    type: "media"
+    mediaType: "audio"
+    src: "audio/replace-with-project-audio.mp3"
+    label: "Replace this path with the project audio file"
+---
+
+# Common examples
+
+00:00:00,000 --> 00:00:03,000
+>speaker-a: 大家好
+  @line
+    -> translation lang:en:
+      Hello everyone
+    -> translation lang:ja:
+      みなさん、こんにちは
+
+00:00:03,000 --> 00:00:06,000
+>speaker-b: 聽得到嗎？
+  @line
+    +tag:
+      - keyphrase
+
+00:00:06,000 --> 00:00:09,000
+>speaker-a: 聽得到
+  @line
+    +note:
+      This is an editorial note attached to the whole line.
+
+  @"聽得到"
+    -> gloss lang:en:
+      can hear
+
+# Copy-and-replace templates
+
+00:01:00,000 --> 00:01:05,000
+>speaker-a: DIALOGUE PLACEHOLDER
+  @line
+    -> translation lang:en:
+      TRANSLATION PLACEHOLDER
+
+00:01:05,000 --> 00:01:10,000
+>speaker-b: DIALOGUE WITH SELECTED TEXT
+  @"SELECTED TEXT"
+    -> gloss lang:en:
+      GLOSS PLACEHOLDER
+
+00:01:10,000 --> 00:01:15,000
+>speaker-a: TAGGED DIALOGUE PLACEHOLDER
+  @line
+    +tag:
+      - replace-with-a-project-tag
+
+00:01:15,000 --> 00:01:20,000
+>speaker-b: NOTED DIALOGUE PLACEHOLDER
+  @line
+    +note:
+      NOTE PLACEHOLDER

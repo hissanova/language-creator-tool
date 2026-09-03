@@ -5,6 +5,7 @@ const repositoryRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url))
 
 export const lcmFixtures = [
   "viewer-conversation-smoke",
+  "lcm-cheat-sheet",
   "decomposition-minimum",
   "decomposition-nested-minimum",
 ].map((name) => ({
@@ -18,4 +19,3 @@ export const lcmFixtures = [
     `${name}.generated.ts`,
   ),
 }));
-
