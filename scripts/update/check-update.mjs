@@ -101,6 +101,30 @@ exit 0
   assert.match(argumentResult.stderr, /does not accept arguments/);
   assert.match(argumentResult.stderr, /No files were changed/);
 
+  const dirtyPackageLock = await createClone("dirty package lock checkout");
+  const dirtyPackageLockContents = "changed lockfile contents\n";
+  await writeFile(path.join(dirtyPackageLock, "package-lock.json"), dirtyPackageLockContents);
+  const dirtyPackageLockResult = runUpdate(dirtyPackageLock);
+  assert.notEqual(dirtyPackageLockResult.status, 0);
+  assert.match(dirtyPackageLockResult.stderr, /internal dependency file package-lock\.json was changed locally/);
+  assert.match(dirtyPackageLockResult.stderr, /external teaching materials were not changed/);
+  assert.match(dirtyPackageLockResult.stderr, /No files were discarded or overwritten/);
+  assert.match(dirtyPackageLockResult.stderr, /ask a maintainer for recovery help/);
+  assert.match(dirtyPackageLockResult.stderr, /Do not run npm install or remove files manually/);
+  assert.doesNotMatch(dirtyPackageLockResult.stderr, /Commit or remove those changes manually/);
+  assert.equal(await readFile(path.join(dirtyPackageLock, "package-lock.json"), "utf8"), dirtyPackageLockContents);
+
+  const dirtyPackageLockAndSource = await createClone("dirty package lock and source checkout");
+  const dirtyPackageLockAndSourceContents = "changed lockfile and source\n";
+  await writeFile(path.join(dirtyPackageLockAndSource, "package-lock.json"), dirtyPackageLockAndSourceContents);
+  await writeFile(path.join(dirtyPackageLockAndSource, "package.json"), "changed locally too\n");
+  const dirtyPackageLockAndSourceResult = runUpdate(dirtyPackageLockAndSource);
+  assert.notEqual(dirtyPackageLockAndSourceResult.status, 0);
+  assert.match(dirtyPackageLockAndSourceResult.stderr, /working tree has local changes/);
+  assert.doesNotMatch(dirtyPackageLockAndSourceResult.stderr, /internal dependency file package-lock\.json was changed locally/);
+  assert.equal(await readFile(path.join(dirtyPackageLockAndSource, "package-lock.json"), "utf8"), dirtyPackageLockAndSourceContents);
+  assert.equal(await readFile(path.join(dirtyPackageLockAndSource, "package.json"), "utf8"), "changed locally too\n");
+
   const dirtyTracked = await createClone("dirty tracked checkout");
   await writeFile(path.join(dirtyTracked, "package.json"), "changed locally\n");
   const dirtyTrackedResult = runUpdate(dirtyTracked);

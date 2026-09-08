@@ -39,6 +39,19 @@ function stop(message, nextAction) {
   process.exitCode = 1;
 }
 
+function isPackageLockOnlyModification(status) {
+  const entries = status.split("\n").filter(Boolean);
+  return entries.length === 1 && /^(?:M {1,2}|MM )package-lock\.json$/.test(entries[0]);
+}
+
+function stopForPackageLockModification() {
+  console.error("Update stopped: LCT's internal dependency file package-lock.json was changed locally.");
+  console.error("Your external teaching materials were not changed.");
+  console.error("No files were discarded or overwritten.");
+  console.error("Next: Copy this terminal output and ask a maintainer for recovery help. Do not run npm install or remove files manually.");
+  process.exitCode = 1;
+}
+
 function parseMinimumVersion(requirement) {
   const match = requirement.match(/^>=\s*(\d+)\.(\d+)\.(\d+)$/);
   return match ? match.slice(1).map(Number) : undefined;
@@ -74,7 +87,11 @@ async function runUpdate() {
 
   const status = await git(["status", "--porcelain=v1", "--untracked-files=normal"]);
   if (status.stdout) {
-    stop("the LCT working tree has local changes.", "Commit or remove those changes manually, then run ./scripts/update.sh again.");
+    if (isPackageLockOnlyModification(status.stdout)) {
+      stopForPackageLockModification();
+    } else {
+      stop("the LCT working tree has local changes.", "Commit or remove those changes manually, then run ./scripts/update.sh again.");
+    }
     return;
   }
 
