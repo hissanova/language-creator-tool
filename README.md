@@ -6,11 +6,14 @@ languages.
 
 ## For content creators
 
+- **[New to LCT? Start here](docs/workflow/creator-getting-started.md)** — complete
+  the first-time setup, update LCT, and open a teaching-materials folder using
+  copyable terminal commands.
 - [Authoring LCM content](docs/workflow/authoring-lcm.md) — understand what
   compilation does, which authoring features are supported, and how to request
   an extension.
 - [Opening an external content project](docs/workflow/open-external-content.md)
-  — update LCT and open a folder of `.lcm` teaching materials.
+  — understand the launcher and project-folder rules in detail.
 - [Executable LCM cheat sheet](samples/markup/lcm-cheat-sheet.lcm) — copyable
   examples that are checked against the current compiler.
 
@@ -30,7 +33,7 @@ Requirements:
 Install dependencies and run the development server:
 
 ```sh
-npm install
+npm ci
 npm run dev
 ```
 
