@@ -28,7 +28,7 @@ languages.
 - [Samples](samples/README.md) — current sample directories and the distinction
   between generated and hand-written fixtures.
 - [Specification index](docs/spec/README.md) — Core JSON, LCM, Viewer
-  configuration, and the status of legacy proposals.
+  configuration, and each document's implementation status.
 - [Repository instructions](AGENTS.md) — contribution rules that apply to all
   changes in this repository.
 

@@ -1,8 +1,8 @@
 # Specification Index
 
-This index helps maintainers distinguish current architecture, draft
-specifications, and legacy proposals. Each document's own status line remains
-authoritative; appearing in this index does not make a draft accepted.
+This index helps maintainers distinguish current architecture from draft
+specifications. Each document's own status line remains authoritative;
+appearing in this index does not make a draft accepted.
 
 ## Architecture references
 
@@ -36,11 +36,6 @@ For the implementation-oriented source-of-truth rules, see the
 The executable description of the currently supported compiler subset is the
 [compiler workflow](../workflow/lcm-compiler.md) and its registered fixtures.
 Draft syntax is not supported merely because it appears in a specification.
-
-## Legacy proposals
-
-- [Viewer JSON](viewer-json.md) — retained as a historical note; it is not a
-  layer in the current architecture.
 
 ## RFCs
 
