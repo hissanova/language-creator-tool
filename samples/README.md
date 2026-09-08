@@ -1,34 +1,51 @@
 # Samples
 
-Samples are used to keep markup, Core JSON, Display Style, and the viewer implementation aligned.
+Samples exercise LCM authoring, Core JSON, and Viewer behavior. Core JSON is the
+canonical content model; optional Viewer configuration is applied when the
+Viewer renders it. There is no generated Display JSON layer in the current
+architecture.
 
-The registered `.lcm` samples can be compiled into generated Core JSON TypeScript fixtures. See [Compiling LCM to Core JSON Fixtures](../docs/workflow/lcm-compiler.md). Generated files under `samples/core-json/generated/` should not be edited by hand.
+## Current structure
 
-## Structure
+| Directory | Purpose |
+| --- | --- |
+| `samples/markup/` | Human-authored `.lcm` examples and registered compiler inputs |
+| `samples/core-json/generated/` | Generated TypeScript `Document` fixtures; never edit by hand |
+| `samples/core-json/` | Focused hand-written TypeScript `Document` reference fixtures |
+| `samples/display-style/` | Illustrative Viewer-configuration examples; not compiler output |
+| `samples/conversation-*/` | Larger content and media used for Viewer development |
+
+## Repository fixture pipeline
 
 ```text
-samples/
-  markup/
-  core-json/
-  display-style/
-  display-json/
+samples/markup/example.lcm
+  -> npm run compile:lcm
+  -> samples/core-json/generated/example.generated.ts
 ```
 
-## Pipeline
+Registered inputs and outputs are defined in `scripts/lcm/fixtures.mjs`. See
+[Compiling LCM to Core JSON fixtures](../docs/workflow/lcm-compiler.md) for the
+commands, supported subset, generated-file policy, and semantic checks.
 
-```text
-Markup
-  -> Core JSON
-  -> Core JSON + displayStyle + glossary autoscan
-  -> Viewer
-```
+Generated and hand-written fixtures serve different purposes. Generated files
+prove what the compiler emits. Hand-written fixtures provide small, readable
+Core JSON references. They do not need byte-for-byte equality or identical IDs;
+the registered semantic checks define the required correspondence.
 
 ## Naming
 
-Use matching base names for related sample files.
+Use the `.lcm` extension for markup and `.generated.ts` for generated Core JSON
+modules:
 
 ```text
-samples/markup/basic-conversation.lct
-samples/core-json/basic-conversation.json
-samples/display-style/basic-viewer.yaml
+samples/markup/example.lcm
+samples/core-json/generated/example.generated.ts
 ```
+
+A matching hand-written reference, when useful, is a TypeScript module:
+
+```text
+samples/core-json/example.ts
+```
+
+Not every registered compiler input needs a separate hand-written fixture.

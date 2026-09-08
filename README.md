@@ -14,15 +14,23 @@ languages.
   an extension.
 - [Opening an external content project](docs/workflow/open-external-content.md)
   — understand the launcher and project-folder rules in detail.
+- [Creator troubleshooting](docs/workflow/creator-troubleshooting.md) — understand
+  common terminal errors, what is safe, and what output to send to a maintainer.
 - [Executable LCM cheat sheet](samples/markup/lcm-cheat-sheet.lcm) — copyable
   examples that are checked against the current compiler.
 
 ## For maintainers and contributors
 
-- [Language Creator Tool workflow](docs/workflow.md)
-- [Compiling LCM to Core JSON fixtures](docs/workflow/lcm-compiler.md)
-- [LCM specification overview](docs/spec/lcm-overview.md)
-- [Core JSON specification](docs/spec/core-json.md)
+- [Language Creator Tool workflow](docs/workflow.md) — current architecture,
+  change paths, sources of truth, and documentation ownership.
+- [Compiling LCM to Core JSON fixtures](docs/workflow/lcm-compiler.md) — compiler
+  commands, registered fixtures, generated-file policy, and verification.
+- [Samples](samples/README.md) — current sample directories and the distinction
+  between generated and hand-written fixtures.
+- [Specification index](docs/spec/README.md) — Core JSON, LCM, Viewer
+  configuration, and the status of legacy proposals.
+- [Repository instructions](AGENTS.md) — contribution rules that apply to all
+  changes in this repository.
 
 ## Development
 

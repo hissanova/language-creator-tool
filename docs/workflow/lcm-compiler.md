@@ -2,6 +2,7 @@
 
 This is the implementation-oriented reference for maintainers extending or
 testing the MVP compiler. Content creators should begin with
+[Creator Getting Started](creator-getting-started.md) and
 [Authoring LCM content](authoring-lcm.md).
 
 ## Overview
@@ -49,6 +50,9 @@ The MVP compiler currently knows these pairs:
 samples/markup/viewer-conversation-smoke.lcm
   -> samples/core-json/generated/viewer-conversation-smoke.generated.ts
 
+samples/markup/lcm-cheat-sheet.lcm
+  -> samples/core-json/generated/lcm-cheat-sheet.generated.ts
+
 samples/markup/decomposition-minimum.lcm
   -> samples/core-json/generated/decomposition-minimum.generated.ts
 
@@ -56,7 +60,7 @@ samples/markup/decomposition-nested-minimum.lcm
   -> samples/core-json/generated/decomposition-nested-minimum.generated.ts
 ```
 
-The corresponding hand-written reference fixtures are:
+Hand-written reference fixtures exist for three focused cases:
 
 ```text
 samples/core-json/viewer-conversation-smoke.ts
@@ -92,7 +96,7 @@ Generated files must not be edited by hand. Edit the source `.lcm` file or the c
 
 ## Supported LCM Subset
 
-The compiler only supports syntax exercised by the three registered fixtures:
+The compiler only supports syntax exercised by the registered fixtures:
 
 - YAML-like front matter with the scalar metadata and object lists used by the fixtures
 - front-matter resources, including the first media resource as the alignment target

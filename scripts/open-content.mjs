@@ -40,7 +40,7 @@ async function validateEnvironment() {
   try {
     await access(path.join(repositoryRoot, "node_modules", "next", "package.json"), constants.R_OK);
   } catch {
-    throw new Error("npm dependencies are not installed. Run: npm install");
+    throw new Error("npm dependencies are not installed. Run: ./scripts/update.sh");
   }
 }
 

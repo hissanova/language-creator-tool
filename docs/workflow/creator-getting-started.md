@@ -106,16 +106,10 @@ copyable examples.
 
 ## If a command stops
 
-Read the final `Update stopped` or error message and its `Next` instruction.
-Unless the message explicitly asks for another command:
-
-1. do not delete or restore files
-2. do not run `npm install` as a workaround
-3. copy the complete terminal output or take a screenshot
-4. send it to a maintainer
-
-LCT's updater stops before discarding local changes. Teaching materials stored
-outside the LCT repository are not changed by the updater.
+Read the final error and its `Next` instruction. Do not try unrelated Git or
+npm commands. See [Creator troubleshooting](creator-troubleshooting.md) for
+plain-language explanations, safe next actions, and the output to send to a
+maintainer.
 
 For the project-folder rules and launcher details, see
 [Opening an external content project](open-external-content.md).

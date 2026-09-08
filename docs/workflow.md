@@ -3,9 +3,27 @@
 This document describes how maintainers and contributors change LCT content,
 the LCM compiler, the Core JSON model, and Viewer presentation.
 
-Content creators should start with [Authoring LCM content](workflow/authoring-lcm.md).
-For the commands and implementation details of the current compiler, see
+Content creators should start with
+[Creator Getting Started](workflow/creator-getting-started.md), not this
+maintainer-oriented document. For the commands and implementation details of
+the current compiler, see
 [Compiling LCM to Core JSON fixtures](workflow/lcm-compiler.md).
+
+## Documentation ownership
+
+Each recurring subject has one canonical home. Other pages should link to it
+instead of copying the complete instructions.
+
+| Subject | Canonical documentation |
+| --- | --- |
+| Creator setup, update, launch, and daily loop | [Creator Getting Started](workflow/creator-getting-started.md) |
+| Creator-facing errors and safe next actions | [Creator troubleshooting](workflow/creator-troubleshooting.md) |
+| Supported authoring workflow and feature-request boundary | [Authoring LCM content](workflow/authoring-lcm.md) |
+| External project-folder and launcher behavior | [Opening an external content project](workflow/open-external-content.md) |
+| Maintainer architecture and change paths | This document |
+| Compiler commands, fixtures, and generated files | [Compiling LCM to Core JSON fixtures](workflow/lcm-compiler.md) |
+| Sample directory inventory and conventions | [Samples](../samples/README.md) |
+| Specifications and proposal status | [Specification index](spec/README.md) and [RFCs](rfc/) |
 
 ## Current data flow
 
