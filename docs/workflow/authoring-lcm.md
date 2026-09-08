@@ -5,7 +5,9 @@ an LCT Viewer. It explains what compilation does, how to tell whether a feature
 is supported, and what to do when the current compiler cannot represent a
 content need.
 
-For the command used to open an external teaching-materials folder, see
+If LCT is not set up yet, begin with
+[Creator Getting Started](creator-getting-started.md). For the detailed launcher
+behavior and project-folder rules, see
 [Opening an external content project](open-external-content.md).
 
 ## The basic idea
@@ -94,8 +96,8 @@ For an external content project:
 6. Confirm that annotations appear with the intended meaning, not merely that
    the page opens.
 
-The exact setup and commands are documented in
-[Opening an external content project](open-external-content.md).
+The exact setup and normal commands are documented in
+[Creator Getting Started](creator-getting-started.md).
 
 ## Before requesting a new compiler feature
 
