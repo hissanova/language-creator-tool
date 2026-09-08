@@ -1,19 +1,18 @@
-# Display Style Specification
+# Viewer Style and Configuration
 
 Status: Draft placeholder
 
-Display Style defines how Core JSON should be presented in a viewer.
+Viewer style and configuration define how Core JSON should be presented in a
+Viewer. They are intentionally separate from Core JSON and are applied at
+render time, not compiled into another content model.
 
-It is intentionally separate from Core JSON.
+The currently implemented style type is `app/types/viewerStyle.ts`. Related
+Viewer configuration types live under `app/types/viewer/`.
 
-## Canonical TypeScript definition:
-
-`app/types/viewerStyle.ts`
-
-## Input and Output
+## Current data flow
 
 ```text
-Core JSON + displayStyle.yaml -> Display JSON
+Core JSON + optional Viewer configuration -> Viewer
 ```
 
 ## Purpose
@@ -29,7 +28,11 @@ Display Style may define:
 - figure and table presentation
 - reference presentation
 
-## Example
+## Illustrative example
+
+`samples/display-style/basic-viewer.yaml` shows a possible configuration shape.
+It is an illustrative draft and is not currently loaded by the creator launcher
+or emitted by the LCM compiler.
 
 ```yaml
 viewer: basic
@@ -58,6 +61,6 @@ annotationDisplay:
 
 Core JSON defines what the content means.
 
-Display Style defines how the content is shown.
-
-Display JSON is the viewer-ready result of combining both.
+Viewer configuration defines how the content is shown. Do not introduce a
+Viewer JSON, Display JSON, or another serialized intermediate layer unless the
+project explicitly adopts one in a future RFC.

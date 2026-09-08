@@ -18,6 +18,12 @@ const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "lct external content
 const projectRoot = path.join(temporaryRoot, "project with spaces");
 const outsideFile = path.join(temporaryRoot, "outside.mp3");
 
+for (const launcherPath of ["scripts/open-content.sh", "scripts/open-content.mjs"]) {
+  const launcherSource = await readFile(path.join(repositoryRoot, launcherPath), "utf8");
+  assert.match(launcherSource, /\.\/scripts\/update\.sh/);
+  assert.doesNotMatch(launcherSource, /npm install/);
+}
+
 function lcm(title, resource = "") {
   return `---
 specVersion: "0.5-draft"

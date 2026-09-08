@@ -2,7 +2,7 @@
 
 Status: Draft
 
-Canonical TypeScript definition: `app/types/lcm.ts`
+Canonical TypeScript definitions: `app/types/core/`
 
 Core JSON is the canonical internal representation of Language Creator Tool content. It describes content structure and meaning, not viewer-specific presentation rules.
 
