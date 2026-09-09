@@ -1,5 +1,12 @@
 import assert from "node:assert/strict";
-import { compileLcmToDocument } from "./compile-lcm.mjs";
+import { access, mkdtemp, readFile, rm, writeFile } from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+import {
+  compileLcm,
+  compileLcmFileToModule,
+  compileLcmToDocument,
+} from "./compile-lcm.mjs";
 import { lcmFixtures } from "./fixtures.mjs";
 
 function textLines(document) {
@@ -28,6 +35,139 @@ function tags(refs) {
 
 function localMappings(selection) {
   return selection.localSelectedTextMappings?.flatMap((bundle) => bundle.mappings) ?? [];
+}
+
+function sourceWithLanguages({
+  defaultLanguageId = "zh-Hant",
+  languages = ["zh-Hant", "en", "ja"],
+  annotation,
+}) {
+  const languageFrontMatter =
+    languages == null
+      ? ""
+      : `\nlanguages:\n${languages.map((id) => `  - id: ${id}`).join("\n")}\n`;
+  return `---
+title: Language validation test
+defaultLanguageId: ${defaultLanguageId}
+${languageFrontMatter}---
+
+# Test
+
+>: source text
+${annotation}`;
+}
+
+function errorFor(source, sourceName = "episode.lcm") {
+  try {
+    compileLcm(source, sourceName);
+  } catch (error) {
+    assert.ok(error instanceof Error);
+    return error.message;
+  }
+  assert.fail("Expected LCM compilation to fail");
+}
+
+function lineNumberContaining(source, text) {
+  return source.split("\n").findIndex((line) => line.includes(text)) + 1;
+}
+
+function checkLanguageIdValidation() {
+  const validWholeLine = sourceWithLanguages({
+    annotation: "  @line\n    -> translation lang:zh-Hant:\n      譯文",
+  });
+  const validDocument = compileLcm(validWholeLine, "declared-language.lcm");
+  assert.equal(
+    textLines(validDocument)[0].textLineMappings?.[0].image.content.languageId,
+    "zh-Hant",
+  );
+
+  const invalidWholeLine = sourceWithLanguages({
+    annotation: "  @line\n    -> translation lang:zh:\n      譯文",
+  });
+  const wholeLineError = errorFor(invalidWholeLine);
+  assert.match(wholeLineError, /Unknown language ID "zh"/);
+  assert.match(
+    wholeLineError,
+    new RegExp(`episode\\.lcm:${lineNumberContaining(invalidWholeLine, "lang:zh:")}`),
+  );
+  assert.match(wholeLineError, /Declared language IDs: zh-Hant, en, ja\./);
+  assert.match(wholeLineError, /Did you mean "zh-Hant"\?/);
+
+  const invalidSelectedText = sourceWithLanguages({
+    annotation: '  @"source"\n    -> gloss lang:zh:\n      譯文',
+  });
+  assert.match(errorFor(invalidSelectedText), /Unknown language ID "zh"/);
+
+  const invalidNestedMapping = sourceWithLanguages({
+    annotation:
+      '  @"source"\n    -> gloss lang:en:\n      output\n        @"output"\n          -> gloss lang:zh:\n            譯文',
+  });
+  const nestedError = errorFor(invalidNestedMapping);
+  assert.match(nestedError, /Unknown language ID "zh"/);
+  assert.match(
+    nestedError,
+    new RegExp(`episode\\.lcm:${lineNumberContaining(invalidNestedMapping, "lang:zh:")}`),
+  );
+
+  const invalidDefault = sourceWithLanguages({
+    defaultLanguageId: "zh",
+    annotation: "",
+  });
+  const defaultError = errorFor(invalidDefault);
+  assert.match(defaultError, /Unknown language ID "zh"/);
+  assert.match(
+    defaultError,
+    new RegExp(`episode\\.lcm:${lineNumberContaining(invalidDefault, "defaultLanguageId")}`),
+  );
+
+  const ambiguous = sourceWithLanguages({
+    languages: ["zh-Hant", "zh-Hans", "en"],
+    annotation: "  @line\n    -> translation lang:zh:\n      譯文",
+  });
+  assert.doesNotMatch(errorFor(ambiguous), /Did you mean/);
+
+  const withoutRegistry = sourceWithLanguages({
+    languages: null,
+    annotation: "  @line\n    -> translation lang:undeclared:\n      Translation",
+  });
+  assert.equal(
+    textLines(compileLcm(withoutRegistry, "legacy.lcm"))[0].textLineMappings?.[0].image.content
+      .languageId,
+    "undeclared",
+  );
+}
+
+async function checkInvalidInputDoesNotWriteOutput() {
+  const temporaryDirectory = await mkdtemp(path.join(os.tmpdir(), "lct-language-validation-"));
+  const inputPath = path.join(temporaryDirectory, "episode.lcm");
+  const newOutputPath = path.join(temporaryDirectory, "new-output.ts");
+  const existingOutputPath = path.join(temporaryDirectory, "existing-output.ts");
+  const originalOutput = "existing output must remain unchanged\n";
+  const invalidSource = sourceWithLanguages({
+    annotation: "  @line\n    -> translation lang:zh:\n      譯文",
+  });
+
+  try {
+    await writeFile(inputPath, invalidSource, "utf8");
+    await assert.rejects(
+      compileLcmFileToModule({ inputPath, outputPath: newOutputPath, exportName: "test" }),
+      /Unknown language ID "zh"/,
+    );
+    await assert.rejects(access(newOutputPath));
+
+    await writeFile(existingOutputPath, originalOutput, "utf8");
+    await assert.rejects(
+      compileLcmFileToModule({
+        inputPath,
+        outputPath: existingOutputPath,
+        exportName: "test",
+      }),
+      /Unknown language ID "zh"/,
+    );
+    assert.equal(await readFile(existingOutputPath, "utf8"), originalOutput);
+  } finally {
+    await rm(temporaryDirectory, { recursive: true, force: true });
+  }
 }
 
 function checkConversation(document) {
@@ -162,6 +302,10 @@ const checks = {
   "decomposition-minimum": checkMinimum,
   "decomposition-nested-minimum": checkNested,
 };
+
+checkLanguageIdValidation();
+await checkInvalidInputDoesNotWriteOutput();
+console.log("Checked language ID validation");
 
 for (const fixture of lcmFixtures) {
   const document = await compileLcmToDocument(fixture.sourcePath);

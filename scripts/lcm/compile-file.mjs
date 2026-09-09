@@ -1,5 +1,5 @@
 import path from "node:path";
-import { compileLcmToDocument, writeDocumentModule } from "./compile-lcm.mjs";
+import { compileLcmFileToModule } from "./compile-lcm.mjs";
 
 const usage =
   "Usage: npm run compile:lcm:file -- --input <path> --output <path> --exportName <name>";
@@ -30,12 +30,10 @@ function parseArguments(args) {
 
 try {
   const options = parseArguments(process.argv.slice(2));
-  const document = await compileLcmToDocument(options.inputPath);
-  await writeDocumentModule({ document, ...options });
+  await compileLcmFileToModule(options);
   console.log(`Generated ${path.relative(process.cwd(), options.outputPath)}`);
 } catch (error) {
   console.error(`compile:lcm:file: ${error instanceof Error ? error.message : String(error)}`);
   console.error(usage);
   process.exitCode = 1;
 }
-
