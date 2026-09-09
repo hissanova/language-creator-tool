@@ -104,6 +104,19 @@ See [Authoring LCM content](authoring-lcm.md) for supported syntax and the
 [Executable LCM cheat sheet](../../samples/markup/lcm-cheat-sheet.lcm) for
 copyable examples.
 
+## Review audio in the Viewer
+
+When the open document has audio, use these shortcuts while focus is outside
+form fields, editors, and playback buttons:
+
+| Shortcut | Action |
+| --- | --- |
+| Space | Play or pause |
+| Left Arrow | Go back 5 seconds |
+| Right Arrow | Go forward 5 seconds |
+| Shift + Left Arrow | Go back 1 second |
+| Shift + Right Arrow | Go forward 1 second |
+
 ## If a command stops
 
 Read the final error and its `Next` instruction. Do not try unrelated Git or
