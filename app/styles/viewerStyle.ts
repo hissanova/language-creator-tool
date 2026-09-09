@@ -50,10 +50,14 @@ export const viewerStyle: ViewerStyle = {
   },
   speakers: {
     simon: {
-      nameColor: "#7c3aed",
+      backgroundColor: "#f5f3ff",
+      accentColor: "#7c3aed",
+      nameColor: "#5b21b6",
     },
     lan: {
-      nameColor: "#047857",
+      backgroundColor: "#ecfdf5",
+      accentColor: "#059669",
+      nameColor: "#065f46",
     },
   },
   layout: {
@@ -70,7 +74,7 @@ export const viewerStyle: ViewerStyle = {
   },
   speaker: {
     default: {
-      container: "rounded-xl border p-1 border-gray-300 bg-gray-50",
+      container: "rounded-xl border border-gray-200 p-2",
       name: "mb-2 font-bold",
     },
     colors: {

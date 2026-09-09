@@ -14,11 +14,21 @@ export type TagTextDisplayStyle = {
 export type TagDisplayStyle = TagTextDisplayStyle;
 
 export type SpeakerDisplayStyle = {
+  backgroundColor?: string;
+  accentColor?: string;
   nameColor?: string;
   className?: string;
   style?: {
     color?: string;
   };
+};
+
+export type ScriptLinePresentation = {
+  backgroundColor: string;
+  accentColor: string;
+  labelColor: string;
+  labelClassName?: string;
+  labelStyle?: SpeakerDisplayStyle["style"];
 };
 
 export type ViewerStyle = {

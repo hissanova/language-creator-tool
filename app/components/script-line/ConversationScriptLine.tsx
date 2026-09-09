@@ -17,6 +17,7 @@ import {
 } from "./coreQueries";
 import { resolveAnnotatedTextSegments } from "./resolveAnnotatedTextSegments";
 import type { ScriptLineCompositionProps } from "./types";
+import { resolveSpeakerLinePresentation } from "../../styles/speakerLinePresentation";
 
 function mergeTagTextDisplayStyles(tags: string[], style: ViewerStyle) {
   const configuredStyles = tags
@@ -217,6 +218,11 @@ export function ConversationScriptLine(props: ScriptLineCompositionProps) {
     onToggleLineLoop,
   } = props;
   const model = buildScriptLineModel(props);
+  const linePresentation = resolveSpeakerLinePresentation({
+    speakerId: model.speakerId,
+    speakers: props.speakers,
+    overrides: style.speakers,
+  });
   const annotatedTextSegments = resolveAnnotatedTextSegments(
     model.displayTextValue,
     model.annotations,
@@ -270,7 +276,7 @@ export function ConversationScriptLine(props: ScriptLineCompositionProps) {
   return (
     <ScriptLine
       speaker={model.speaker}
-      speakerId={model.speakerId}
+      linePresentation={linePresentation}
       playbackRange={playbackRange}
       hasPlaybackTiming={hasPlaybackTiming}
       isLoopSelected={isLoopSelected}
