@@ -21,8 +21,6 @@ import { usePlaybackKeyboardShortcuts } from "./playback/playbackKeyboardShortcu
 import { isLineCurrentlyPlaying } from "./playback/playbackDisplay";
 import { PlayIcon } from "./playback/PlaybackIcons";
 import { getAlignmentRef } from "./script-line/coreQueries";
-import { getSpeakerRef } from "./script-line/coreQueries";
-import { resolveSpeakerPresentation } from "../styles/speakerPresentation";
 
 type Props = {
   document: Document;
@@ -226,7 +224,6 @@ export function ViewerShell({
   const renderBlock = (block: SectionBlock) => {
     switch (block.type) {
       case "text": {
-        const speakerId = getSpeakerRef(block.text.textLineRefs)?.body.speakerId;
         const playbackRange = resolveLinePlaybackRange(
           block.text,
           document.resources ?? [],
@@ -248,11 +245,6 @@ export function ViewerShell({
             formId={formId}
             translationLanguageId={translationLanguageId}
             style={style}
-            speakerPresentation={resolveSpeakerPresentation({
-              speakerId,
-              speakers,
-              overrides: style.speakers,
-            })}
             playbackRange={playbackRange}
             hasPlaybackTiming={hasPlaybackTiming}
             isLoopSelected={playback.state.selectedLoopRange?.lineId === block.text.id}

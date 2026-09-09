@@ -6,7 +6,6 @@ export type ScriptLineFrameProps = {
   bottomSlot?: ReactNode;
   className?: string;
   style?: CSSProperties;
-  speakerId?: string;
 };
 
 export function ScriptLineFrame({
@@ -15,7 +14,6 @@ export function ScriptLineFrame({
   bottomSlot,
   className,
   style,
-  speakerId,
 }: ScriptLineFrameProps) {
   return (
     <div
@@ -23,7 +21,6 @@ export function ScriptLineFrame({
         .filter(Boolean)
         .join(" ")}
       style={style}
-      data-speaker-id={speakerId}
     >
       {topSlot != null ? <div className="min-w-0">{topSlot}</div> : null}
       {children}

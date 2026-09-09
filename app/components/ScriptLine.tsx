@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 import type { Speaker } from "../types/core/document";
-import type { SpeakerPresentation, ViewerStyle } from "../types/viewerStyle";
+import type { ScriptLinePresentation, ViewerStyle } from "../types/viewerStyle";
 import type { LinePlaybackRange } from "./playback/playbackState";
 import { LoopIcon, PauseIcon, PlayIcon } from "./playback/PlaybackIcons";
 import { loopButtonClass } from "./playback/playbackButtonStyles";
@@ -10,8 +10,7 @@ import { ScriptLineRow } from "./script-line/ScriptLineRow";
 
 type Props = {
   speaker?: Speaker;
-  speakerId?: string;
-  speakerPresentation: SpeakerPresentation;
+  linePresentation: ScriptLinePresentation;
   playbackRange?: LinePlaybackRange | null;
   hasPlaybackTiming?: boolean;
   isLoopSelected?: boolean;
@@ -34,8 +33,7 @@ type Props = {
 
 export function ScriptLine({
   speaker,
-  speakerId,
-  speakerPresentation,
+  linePresentation,
   playbackRange,
   hasPlaybackTiming = false,
   isLoopSelected = false,
@@ -56,9 +54,9 @@ export function ScriptLine({
   bottomSlot,
 }: Props) {
   const speakerStyle = style.speaker.default;
-  const speakerNameStyle: CSSProperties = {
-    ...speakerPresentation.nameStyle,
-    color: speakerPresentation.nameColor,
+  const labelStyle: CSSProperties = {
+    ...linePresentation.labelStyle,
+    color: linePresentation.labelColor,
   };
   const isGridLayout = layoutVariant === "grid";
   const linePlaybackLabel = isLinePlaying ? "Pause this line" : "Play this line";
@@ -104,11 +102,11 @@ export function ScriptLine({
     <span
       className={[
         speakerStyle.name,
-        speakerPresentation.nameClassName,
+        linePresentation.labelClassName,
       ]
         .filter(Boolean)
         .join(" ")}
-      style={speakerNameStyle}
+      style={labelStyle}
     >
       {speaker.name}:{isGridLayout ? null : " "}
     </span>
@@ -138,12 +136,11 @@ export function ScriptLine({
     <ScriptLineFrame
       className={speakerStyle.container}
       style={{
-        backgroundColor: speakerPresentation.backgroundColor,
-        borderLeftColor: speakerPresentation.accentColor,
+        backgroundColor: linePresentation.backgroundColor,
+        borderLeftColor: linePresentation.accentColor,
         borderLeftStyle: "solid",
         borderLeftWidth: 3,
       }}
-      speakerId={speakerId}
       topSlot={topSlot}
       bottomSlot={bottomSlot}
     >

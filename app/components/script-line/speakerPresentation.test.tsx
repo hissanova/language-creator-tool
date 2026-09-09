@@ -1,14 +1,15 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 import { renderToStaticMarkup } from "react-dom/server";
 import type { Speaker } from "../../types/core/document";
 import type { TextLine } from "../../types/core/textLine";
 import { viewerStyle } from "../../styles/viewerStyle";
 import {
-  NEUTRAL_SPEAKER_PRESENTATION,
-  SPEAKER_FALLBACK_PALETTE,
-  resolveSpeakerPresentation,
-} from "../../styles/speakerPresentation";
+  SPEAKER_LINE_FALLBACK_PALETTE,
+  resolveSpeakerLinePresentation,
+} from "../../styles/speakerLinePresentation";
+import { NEUTRAL_SCRIPT_LINE_PRESENTATION } from "../../styles/scriptLinePresentation";
 import { ScriptLine } from "../ScriptLine";
 import { ConversationScriptLine } from "./ConversationScriptLine";
 import { DeveloperScriptLine } from "./DeveloperScriptLine";
@@ -19,7 +20,7 @@ const speakers: Speaker[] = Array.from({ length: 10 }, (_, index) => ({
 }));
 
 function resolve(speakerId?: string, speakerList: readonly Speaker[] = speakers) {
-  return resolveSpeakerPresentation({ speakerId, speakers: speakerList });
+  return resolveSpeakerLinePresentation({ speakerId, speakers: speakerList });
 }
 
 function relativeLuminance(hex: string) {
@@ -64,19 +65,18 @@ const sharedCompositionProps = {
   formId: "written",
   translationLanguageId: "none",
   style: viewerStyle,
-  speakerPresentation: resolve("speaker-0"),
 };
 
 test("assigns deterministic fallback styles from metadata order", () => {
-  speakers.slice(0, SPEAKER_FALLBACK_PALETTE.length).forEach((speaker, index) => {
+  speakers.slice(0, SPEAKER_LINE_FALLBACK_PALETTE.length).forEach((speaker, index) => {
     const presentation = resolve(speaker.id);
     assert.deepEqual(
       {
         backgroundColor: presentation.backgroundColor,
         accentColor: presentation.accentColor,
-        nameColor: presentation.nameColor,
+        labelColor: presentation.labelColor,
       },
-      SPEAKER_FALLBACK_PALETTE[index],
+      SPEAKER_LINE_FALLBACK_PALETTE[index],
     );
   });
   assert.deepEqual(resolve("speaker-3"), resolve("speaker-3"));
@@ -91,13 +91,13 @@ test("appending metadata speakers preserves existing assignments", () => {
 });
 
 test("cycles the eight-entry palette deterministically", () => {
-  assert.equal(SPEAKER_FALLBACK_PALETTE.length, 8);
+  assert.equal(SPEAKER_LINE_FALLBACK_PALETTE.length, 8);
   assert.deepEqual(resolve("speaker-8"), resolve("speaker-0"));
   assert.deepEqual(resolve("speaker-9"), resolve("speaker-1"));
 });
 
 test("explicit and partial Viewer overrides take precedence over fallback fields", () => {
-  const full = resolveSpeakerPresentation({
+  const full = resolveSpeakerLinePresentation({
     speakerId: "speaker-0",
     speakers,
     overrides: {
@@ -111,31 +111,31 @@ test("explicit and partial Viewer overrides take precedence over fallback fields
   assert.deepEqual(full, {
     backgroundColor: "#ffffff",
     accentColor: "#111111",
-    nameColor: "#222222",
-    nameClassName: undefined,
-    nameStyle: undefined,
+    labelColor: "#222222",
+    labelClassName: undefined,
+    labelStyle: undefined,
   });
 
-  const partial = resolveSpeakerPresentation({
+  const partial = resolveSpeakerLinePresentation({
     speakerId: "speaker-1",
     speakers,
     overrides: { "speaker-1": { nameColor: "#123456" } },
   });
-  assert.equal(partial.nameColor, "#123456");
-  assert.equal(partial.backgroundColor, SPEAKER_FALLBACK_PALETTE[1].backgroundColor);
-  assert.equal(partial.accentColor, SPEAKER_FALLBACK_PALETTE[1].accentColor);
+  assert.equal(partial.labelColor, "#123456");
+  assert.equal(partial.backgroundColor, SPEAKER_LINE_FALLBACK_PALETTE[1].backgroundColor);
+  assert.equal(partial.accentColor, SPEAKER_LINE_FALLBACK_PALETTE[1].accentColor);
 });
 
 test("unknown and missing speaker IDs use the neutral fallback", () => {
   assert.deepEqual(resolve("not-in-metadata"), {
-    ...NEUTRAL_SPEAKER_PRESENTATION,
-    nameClassName: undefined,
-    nameStyle: undefined,
+    ...NEUTRAL_SCRIPT_LINE_PRESENTATION,
+    labelClassName: undefined,
+    labelStyle: undefined,
   });
   assert.deepEqual(resolve(), {
-    ...NEUTRAL_SPEAKER_PRESENTATION,
-    nameClassName: undefined,
-    nameStyle: undefined,
+    ...NEUTRAL_SCRIPT_LINE_PRESENTATION,
+    labelClassName: undefined,
+    labelStyle: undefined,
   });
 });
 
@@ -143,17 +143,17 @@ test("resolution does not mutate Core speaker metadata or Viewer overrides", () 
   const speakerInput = structuredClone(speakers);
   const overrides = { "speaker-0": { nameColor: "#123456" } };
   const overridesInput = structuredClone(overrides);
-  resolveSpeakerPresentation({ speakerId: "speaker-0", speakers, overrides });
+  resolveSpeakerLinePresentation({ speakerId: "speaker-0", speakers, overrides });
   assert.deepEqual(speakers, speakerInput);
   assert.deepEqual(overrides, overridesInput);
 });
 
 test("palette label colors meet WCAG AA contrast against their backgrounds", () => {
   for (const presentation of [
-    ...SPEAKER_FALLBACK_PALETTE,
-    NEUTRAL_SPEAKER_PRESENTATION,
+    ...SPEAKER_LINE_FALLBACK_PALETTE,
+    NEUTRAL_SCRIPT_LINE_PRESENTATION,
   ]) {
-    assert.ok(contrastRatio(presentation.nameColor, presentation.backgroundColor) >= 4.5);
+    assert.ok(contrastRatio(presentation.labelColor, presentation.backgroundColor) >= 4.5);
   }
 });
 
@@ -162,8 +162,7 @@ test("ScriptLine applies presentation only to the outer frame and speaker label"
   const html = renderToStaticMarkup(
     <ScriptLine
       speaker={speakers[0]}
-      speakerId="speaker-0"
-      speakerPresentation={presentation}
+      linePresentation={presentation}
       style={viewerStyle}
       layoutVariant="grid"
       textContent="Body text"
@@ -173,7 +172,7 @@ test("ScriptLine applies presentation only to the outer frame and speaker label"
   );
 
   const outerFrame = frameTag(html);
-  assert.match(outerFrame, /data-speaker-id="speaker-0"/);
+  assert.doesNotMatch(outerFrame, /data-speaker-id/);
   assert.match(outerFrame, /background-color:#eff6ff/);
   assert.match(outerFrame, /border-left-color:#2563eb/);
   assert.match(outerFrame, /border-left-width:3px/);
@@ -199,7 +198,7 @@ test("annotation slots remain inside a stable full-width outer frame", () => {
   const presentation = resolve("speaker-0");
   const withoutPanel = renderToStaticMarkup(
     <ScriptLine
-      speakerPresentation={presentation}
+      linePresentation={presentation}
       style={viewerStyle}
       layoutVariant="grid"
       textContent="Body text"
@@ -207,7 +206,7 @@ test("annotation slots remain inside a stable full-width outer frame", () => {
   );
   const withPanel = renderToStaticMarkup(
     <ScriptLine
-      speakerPresentation={presentation}
+      linePresentation={presentation}
       style={viewerStyle}
       layoutVariant="grid"
       textContent="Body text"
@@ -218,4 +217,15 @@ test("annotation slots remain inside a stable full-width outer frame", () => {
   assert.match(frameTag(withPanel), /w-full/);
   assert.equal(frameStyle(withoutPanel), frameStyle(withPanel));
   assert.match(withPanel, /data-test-panel="true"/);
+});
+
+test("shared Viewer and frame layers contain no speaker presentation resolution API", () => {
+  const viewerShellSource = readFileSync("app/components/ViewerShell.tsx", "utf8");
+  const frameSource = readFileSync(
+    "app/components/script-line/ScriptLineFrame.tsx",
+    "utf8",
+  );
+
+  assert.doesNotMatch(viewerShellSource, /getSpeakerRef|resolveSpeakerLinePresentation/);
+  assert.doesNotMatch(frameSource, /speakerId|data-speaker-id/);
 });

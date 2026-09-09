@@ -6,7 +6,7 @@ import type { TextLine } from "../../types/core/textLine";
 import { PlaybackBar } from "./PlaybackBar";
 import { ScriptLine } from "../ScriptLine";
 import { viewerStyle } from "../../styles/viewerStyle";
-import { NEUTRAL_SPEAKER_PRESENTATION } from "../../styles/speakerPresentation";
+import { NEUTRAL_SCRIPT_LINE_PRESENTATION } from "../../styles/scriptLinePresentation";
 import { resolveLinePlaybackRange } from "./linePlayback";
 import {
   formatPlaybackTime,
@@ -963,7 +963,7 @@ test("line controls have accessible names and expose invalid and selected states
   const invalidHtml = renderToStaticMarkup(
     <ScriptLine
       style={viewerStyle}
-      speakerPresentation={NEUTRAL_SPEAKER_PRESENTATION}
+      linePresentation={NEUTRAL_SCRIPT_LINE_PRESENTATION}
       layoutVariant="grid"
       textContent="Invalid"
       hasPlaybackTiming
@@ -976,7 +976,7 @@ test("line controls have accessible names and expose invalid and selected states
   const selectedHtml = renderToStaticMarkup(
     <ScriptLine
       style={viewerStyle}
-      speakerPresentation={NEUTRAL_SPEAKER_PRESENTATION}
+      linePresentation={NEUTRAL_SCRIPT_LINE_PRESENTATION}
       layoutVariant="grid"
       textContent="Selected"
       hasPlaybackTiming
@@ -1121,7 +1121,7 @@ test("global and row Loop controls share the same SVG icon without visible Loop 
   } as unknown as PlaybackController} />);
   const rowHtml = renderToStaticMarkup(<ScriptLine
     style={viewerStyle}
-    speakerPresentation={NEUTRAL_SPEAKER_PRESENTATION}
+    linePresentation={NEUTRAL_SCRIPT_LINE_PRESENTATION}
     layoutVariant="grid"
     textContent="Line"
     hasPlaybackTiming
@@ -1140,7 +1140,7 @@ test("global and row Loop controls share the same SVG icon without visible Loop 
 test("row control renders shared Pause icon when playback reaches the line", () => {
   const html = renderToStaticMarkup(<ScriptLine
     style={viewerStyle}
-    speakerPresentation={NEUTRAL_SPEAKER_PRESENTATION}
+    linePresentation={NEUTRAL_SCRIPT_LINE_PRESENTATION}
     layoutVariant="grid"
     textContent="Playing"
     hasPlaybackTiming

@@ -23,12 +23,12 @@ export type SpeakerDisplayStyle = {
   };
 };
 
-export type SpeakerPresentation = {
+export type ScriptLinePresentation = {
   backgroundColor: string;
   accentColor: string;
-  nameColor: string;
-  nameClassName?: string;
-  nameStyle?: SpeakerDisplayStyle["style"];
+  labelColor: string;
+  labelClassName?: string;
+  labelStyle?: SpeakerDisplayStyle["style"];
 };
 
 export type ViewerStyle = {
