@@ -17,6 +17,7 @@ import { PlaybackBar } from "./playback/PlaybackBar";
 import { resolveLinePlaybackRange } from "./playback/linePlayback";
 import type { LinePlaybackRange } from "./playback/playbackState";
 import { usePlaybackController } from "./playback/usePlaybackController";
+import { usePlaybackKeyboardShortcuts } from "./playback/playbackKeyboardShortcuts";
 import { isLineCurrentlyPlaying } from "./playback/playbackDisplay";
 import { PlayIcon } from "./playback/PlaybackIcons";
 import { getAlignmentRef } from "./script-line/coreQueries";
@@ -216,6 +217,7 @@ export function ViewerShell({
     (resource) => resource.type === "media" && resource.mediaType === "video",
   );
   const playback = usePlaybackController(audioResources, normalizeMediaSrc);
+  usePlaybackKeyboardShortcuts(playback, audioResources.length > 0);
 
   const speakers = useMemo(() => document.metadata.speakers ?? [], [document]);
 

@@ -30,6 +30,11 @@ import {
 import type { PlaybackController } from "./usePlaybackController";
 import { dispatchLineLoopSelection } from "./usePlaybackController";
 import { activateLinePlaybackControl } from "./linePlaybackControl";
+import {
+  handlePlaybackKeyboardShortcut,
+  isEditablePlaybackShortcutTarget,
+  resolvePlaybackKeyboardCommand,
+} from "./playbackKeyboardShortcuts";
 
 const firstRange: LinePlaybackRange = {
   type: "line",
@@ -50,6 +55,127 @@ const secondRange: LinePlaybackRange = {
 function reduce(state: PlaybackState, ...actions: Parameters<typeof playbackReducer>[1][]) {
   return actions.reduce(playbackReducer, state);
 }
+
+function keyboardEvent(
+  overrides: Partial<Parameters<typeof handlePlaybackKeyboardShortcut>[0]> = {},
+) {
+  let prevented = false;
+  return {
+    event: {
+      key: " ",
+      shiftKey: false,
+      ctrlKey: false,
+      metaKey: false,
+      altKey: false,
+      repeat: false,
+      defaultPrevented: false,
+      target: null,
+      preventDefault: () => { prevented = true; },
+      ...overrides,
+    },
+    wasPrevented: () => prevented,
+  };
+}
+
+function targetMatching(editableSelector: string): EventTarget {
+  const target = {
+    closest: (selectors: string) => selectors
+      .split(", ")
+      .includes(editableSelector)
+      ? target as unknown as Element
+      : null,
+  };
+  return target as unknown as EventTarget;
+}
+
+test("playback keyboard shortcuts resolve Space and Arrow mappings", () => {
+  assert.deepEqual(resolvePlaybackKeyboardCommand(keyboardEvent().event), { type: "toggle" });
+  assert.deepEqual(resolvePlaybackKeyboardCommand(keyboardEvent({ key: "ArrowLeft" }).event), { type: "skip", seconds: -5 });
+  assert.deepEqual(resolvePlaybackKeyboardCommand(keyboardEvent({ key: "ArrowRight" }).event), { type: "skip", seconds: 5 });
+  assert.deepEqual(resolvePlaybackKeyboardCommand(keyboardEvent({ key: "ArrowLeft", shiftKey: true }).event), { type: "skip", seconds: -1 });
+  assert.deepEqual(resolvePlaybackKeyboardCommand(keyboardEvent({ key: "ArrowRight", shiftKey: true }).event), { type: "skip", seconds: 1 });
+});
+
+test("playback keyboard shortcuts ignore modifiers, prevented events, and repeated Space", () => {
+  for (const override of [
+    { ctrlKey: true },
+    { metaKey: true },
+    { altKey: true },
+    { defaultPrevented: true },
+    { repeat: true },
+  ]) {
+    assert.equal(resolvePlaybackKeyboardCommand(keyboardEvent(override).event), null);
+  }
+});
+
+test("playback keyboard shortcuts ignore form controls, editable content, and textbox editors", () => {
+  for (const selector of [
+    "input",
+    "textarea",
+    "select",
+    "button",
+    "[contenteditable]:not([contenteditable=\"false\"])",
+    "[role=\"textbox\"]",
+    ".monaco-editor",
+  ]) {
+    const target = targetMatching(selector);
+    assert.equal(isEditablePlaybackShortcutTarget(target), true);
+    assert.equal(handlePlaybackKeyboardShortcut(keyboardEvent({ target }).event, {
+      playing: false,
+      canToggle: true,
+      canSkip: true,
+      play: () => assert.fail("editable targets must not play"),
+      pause: () => assert.fail("editable targets must not pause"),
+      skip: () => assert.fail("editable targets must not skip"),
+    }), false);
+  }
+});
+
+test("playback keyboard handler uses shared actions and prevents defaults only when handled", () => {
+  const calls: string[] = [];
+  const playback = {
+    playing: false,
+    canToggle: true,
+    canSkip: true,
+    play: () => { calls.push("play"); },
+    pause: () => { calls.push("pause"); },
+    skip: (seconds: number) => { calls.push(`skip ${seconds}`); },
+  };
+  const playEvent = keyboardEvent();
+  assert.equal(handlePlaybackKeyboardShortcut(playEvent.event, playback), true);
+  assert.equal(playEvent.wasPrevented(), true);
+
+  const pauseEvent = keyboardEvent();
+  assert.equal(handlePlaybackKeyboardShortcut(pauseEvent.event, { ...playback, playing: true }), true);
+  assert.equal(pauseEvent.wasPrevented(), true);
+
+  const skipEvent = keyboardEvent({ key: "ArrowLeft", shiftKey: true });
+  assert.equal(handlePlaybackKeyboardShortcut(skipEvent.event, playback), true);
+  assert.equal(skipEvent.wasPrevented(), true);
+  assert.deepEqual(calls, ["play", "pause", "skip -1"]);
+
+  const ignoredEvent = keyboardEvent({ key: "Escape" });
+  assert.equal(handlePlaybackKeyboardShortcut(ignoredEvent.event, playback), false);
+  assert.equal(ignoredEvent.wasPrevented(), false);
+});
+
+test("playback keyboard handler preserves safe no-op behavior before media is available", () => {
+  let actionCount = 0;
+  const playback = {
+    playing: false,
+    canToggle: false,
+    canSkip: false,
+    play: () => { actionCount += 1; },
+    pause: () => { actionCount += 1; },
+    skip: () => { actionCount += 1; },
+  };
+
+  for (const event of [keyboardEvent(), keyboardEvent({ key: "ArrowRight" })]) {
+    assert.equal(handlePlaybackKeyboardShortcut(event.event, playback), false);
+    assert.equal(event.wasPrevented(), false);
+  }
+  assert.equal(actionCount, 0);
+});
 
 test("starts paused with reset, non-persistent playback state", () => {
   assert.deepEqual(initialPlaybackState, {
