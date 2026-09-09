@@ -31,6 +31,7 @@ function splitFrontMatter(source, sourceName) {
 
 function parseFrontMatter(lines, sourceName) {
   const result = {};
+  const lineNumbers = new Map();
   let currentList;
   let currentItem;
 
@@ -48,6 +49,7 @@ function parseFrontMatter(lines, sourceName) {
       const match = text.match(/^([^:]+):(?:\s+(.*))?$/);
       if (!match) throw new Error(`${sourceName}:${index + 2}: invalid front matter entry`);
       const [, key, value] = match;
+      lineNumbers.set(key, index + 2);
       if (value == null) {
         result[key] = [];
         currentList = result[key];
@@ -78,7 +80,7 @@ function parseFrontMatter(lines, sourceName) {
     throw new Error(`${sourceName}:${index + 2}: unsupported front matter indentation`);
   }
 
-  return result;
+  return { values: result, lineNumbers };
 }
 
 function parseIndentedNodes(lines, sourceName, startingLine) {
@@ -140,11 +142,38 @@ function pushValue(owner, key, value) {
 }
 
 export class MinimumLcmCompiler {
-  constructor(frontMatter, sourceName) {
+  constructor(frontMatter, sourceName, frontMatterLineNumbers = new Map()) {
     this.frontMatter = frontMatter;
     this.sourceName = sourceName;
     this.slug = path.basename(sourceName, path.extname(sourceName));
     this.counts = new Map();
+    this.validateLanguageId(
+      frontMatter.defaultLanguageId,
+      frontMatterLineNumbers.get("defaultLanguageId"),
+    );
+  }
+
+  validateLanguageId(languageId, lineNumber) {
+    if (!Object.hasOwn(this.frontMatter, "languages")) return;
+
+    const declaredLanguageIds = this.frontMatter.languages
+      .map((language) => language.id)
+      .filter((id) => typeof id === "string");
+    if (declaredLanguageIds.includes(languageId)) return;
+
+    const location = lineNumber == null ? this.sourceName : `${this.sourceName}:${lineNumber}`;
+    const lines = [
+      `Unknown language ID ${JSON.stringify(languageId)} at ${location}.`,
+      `Declared language IDs: ${declaredLanguageIds.join(", ") || "(none)"}.`,
+    ];
+    const baseLanguageId = languageId.split("-")[0];
+    const suggestions = declaredLanguageIds.filter(
+      (declaredId) => declaredId.split("-")[0] === baseLanguageId,
+    );
+    if (suggestions.length === 1) {
+      lines.push(`Did you mean ${JSON.stringify(suggestions[0])}?`);
+    }
+    throw new Error(lines.join("\n"));
   }
 
   nextId(kind) {
@@ -220,6 +249,7 @@ export class MinimumLcmCompiler {
 
   createMapping(node) {
     const spec = mappingSpec(node.text, this.sourceName, node.lineNumber);
+    this.validateLanguageId(spec.languageId, node.lineNumber);
     const valueNode = node.children.find((child) => !child.text.startsWith("@"));
     if (!valueNode) {
       throw new Error(`${this.sourceName}:${node.lineNumber}: mapping is missing output text`);
@@ -517,12 +547,15 @@ function validateUniqueIds(document, sourceName) {
 
 export function compileLcm(source, sourceName = "document.lcm") {
   const { frontMatterLines, bodyLines } = splitFrontMatter(source, sourceName);
-  const frontMatter = parseFrontMatter(frontMatterLines, sourceName);
+  const { values: frontMatter, lineNumbers: frontMatterLineNumbers } = parseFrontMatter(
+    frontMatterLines,
+    sourceName,
+  );
   if (!frontMatter.title) throw new Error(`${sourceName}: front matter title is required`);
   if (!frontMatter.defaultLanguageId) {
     throw new Error(`${sourceName}: front matter defaultLanguageId is required`);
   }
-  const compiler = new MinimumLcmCompiler(frontMatter, sourceName);
+  const compiler = new MinimumLcmCompiler(frontMatter, sourceName, frontMatterLineNumbers);
   return compiler.compile(bodyLines, frontMatterLines.length + 3);
 }
 
@@ -560,4 +593,10 @@ export async function writeDocumentModule({ document, inputPath, outputPath, exp
   const moduleSource = serializeGeneratedFixture(document, inputPath, exportName);
   await mkdir(path.dirname(outputPath), { recursive: true });
   await writeFile(outputPath, moduleSource, "utf8");
+}
+
+export async function compileLcmFileToModule({ inputPath, outputPath, exportName }) {
+  const document = await compileLcmToDocument(inputPath);
+  await writeDocumentModule({ document, inputPath, outputPath, exportName });
+  return document;
 }

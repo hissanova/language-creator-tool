@@ -82,6 +82,14 @@ The executable reference is
 It is compiled in the project check suite, so its examples must remain aligned
 with the compiler.
 
+## Language IDs must match their declarations
+
+When front matter contains a `languages` list, every `lang:<id>` mapping and
+`defaultLanguageId` must exactly match one of its `languages[].id` values. For
+example, `zh` and `zh-Hant` are different IDs; the compiler does not normalize
+language tags or substitute aliases. If compilation reports an unknown language
+ID, choose the intended exact ID from the declared IDs listed in the error.
+
 ## Daily authoring loop
 
 For an external content project:
