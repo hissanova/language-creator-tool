@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 import type { Speaker } from "../types/core/document";
-import type { ViewerStyle } from "../types/viewerStyle";
+import type { SpeakerPresentation, ViewerStyle } from "../types/viewerStyle";
 import type { LinePlaybackRange } from "./playback/playbackState";
 import { LoopIcon, PauseIcon, PlayIcon } from "./playback/PlaybackIcons";
 import { loopButtonClass } from "./playback/playbackButtonStyles";
@@ -11,6 +11,7 @@ import { ScriptLineRow } from "./script-line/ScriptLineRow";
 type Props = {
   speaker?: Speaker;
   speakerId?: string;
+  speakerPresentation: SpeakerPresentation;
   playbackRange?: LinePlaybackRange | null;
   hasPlaybackTiming?: boolean;
   isLoopSelected?: boolean;
@@ -34,6 +35,7 @@ type Props = {
 export function ScriptLine({
   speaker,
   speakerId,
+  speakerPresentation,
   playbackRange,
   hasPlaybackTiming = false,
   isLoopSelected = false,
@@ -54,13 +56,10 @@ export function ScriptLine({
   bottomSlot,
 }: Props) {
   const speakerStyle = style.speaker.default;
-  const speakerDisplayStyle = speakerId ? style.speakers?.[speakerId] : undefined;
-  const speakerNameStyle: CSSProperties | undefined = speakerDisplayStyle
-    ? {
-        ...speakerDisplayStyle.style,
-        color: speakerDisplayStyle.nameColor ?? speakerDisplayStyle.style?.color,
-      }
-    : undefined;
+  const speakerNameStyle: CSSProperties = {
+    ...speakerPresentation.nameStyle,
+    color: speakerPresentation.nameColor,
+  };
   const isGridLayout = layoutVariant === "grid";
   const linePlaybackLabel = isLinePlaying ? "Pause this line" : "Play this line";
   const lineLoopLabel = isLoopSelected ? "Clear loop range" : "Loop this line";
@@ -105,7 +104,7 @@ export function ScriptLine({
     <span
       className={[
         speakerStyle.name,
-        speakerDisplayStyle?.className,
+        speakerPresentation.nameClassName,
       ]
         .filter(Boolean)
         .join(" ")}
@@ -138,6 +137,13 @@ export function ScriptLine({
   return (
     <ScriptLineFrame
       className={speakerStyle.container}
+      style={{
+        backgroundColor: speakerPresentation.backgroundColor,
+        borderLeftColor: speakerPresentation.accentColor,
+        borderLeftStyle: "solid",
+        borderLeftWidth: 3,
+      }}
+      speakerId={speakerId}
       topSlot={topSlot}
       bottomSlot={bottomSlot}
     >

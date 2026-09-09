@@ -215,6 +215,7 @@ export function ConversationScriptLine(props: ScriptLineCompositionProps) {
     onPause,
     onPlayLine,
     onToggleLineLoop,
+    speakerPresentation,
   } = props;
   const model = buildScriptLineModel(props);
   const annotatedTextSegments = resolveAnnotatedTextSegments(
@@ -271,6 +272,7 @@ export function ConversationScriptLine(props: ScriptLineCompositionProps) {
     <ScriptLine
       speaker={model.speaker}
       speakerId={model.speakerId}
+      speakerPresentation={speakerPresentation}
       playbackRange={playbackRange}
       hasPlaybackTiming={hasPlaybackTiming}
       isLoopSelected={isLoopSelected}

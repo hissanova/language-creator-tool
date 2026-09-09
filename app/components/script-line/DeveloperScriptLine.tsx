@@ -64,6 +64,7 @@ export function DeveloperScriptLine(props: ScriptLineCompositionProps) {
     onPause,
     onPlayLine,
     onToggleLineLoop,
+    speakerPresentation,
   } = props;
   const model = buildScriptLineModel(props);
   const showAnnotationPanel =
@@ -77,6 +78,7 @@ export function DeveloperScriptLine(props: ScriptLineCompositionProps) {
     <ScriptLine
       speaker={model.speaker}
       speakerId={model.speakerId}
+      speakerPresentation={speakerPresentation}
       playbackRange={playbackRange}
       hasPlaybackTiming={hasPlaybackTiming}
       isLoopSelected={isLoopSelected}

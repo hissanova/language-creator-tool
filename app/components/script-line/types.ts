@@ -1,7 +1,7 @@
 import type { ComponentType } from "react";
 import type { Language, Resource, Speaker } from "../../types/core/document";
 import type { TextLine } from "../../types/core/textLine";
-import type { ViewerStyle } from "../../types/viewerStyle";
+import type { SpeakerPresentation, ViewerStyle } from "../../types/viewerStyle";
 import type { LinePlaybackRange } from "../playback/playbackState";
 
 export type ScriptLineCompositionProps = {
@@ -13,6 +13,7 @@ export type ScriptLineCompositionProps = {
   formId: string;
   translationLanguageId: string;
   style: ViewerStyle;
+  speakerPresentation: SpeakerPresentation;
   playbackRange?: LinePlaybackRange | null;
   hasPlaybackTiming?: boolean;
   isLoopSelected?: boolean;
