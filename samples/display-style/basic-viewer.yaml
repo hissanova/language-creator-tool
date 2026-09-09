@@ -18,7 +18,7 @@ tags:
       textDecoration: "underline"
 
 speakers:
-  simon:
+  speaker-a:
     nameColor: "#2563eb"
 
 annotationDisplay:

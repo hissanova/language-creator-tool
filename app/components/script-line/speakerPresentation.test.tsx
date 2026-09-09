@@ -15,8 +15,8 @@ import { ConversationScriptLine } from "./ConversationScriptLine";
 import { DeveloperScriptLine } from "./DeveloperScriptLine";
 
 const speakers: Speaker[] = Array.from({ length: 10 }, (_, index) => ({
-  id: `speaker-${index}`,
-  name: `Speaker ${index}`,
+  id: `speaker-${String.fromCharCode(97 + index)}`,
+  name: `Speaker ${String.fromCharCode(65 + index)}`,
 }));
 
 function resolve(speakerId?: string, speakerList: readonly Speaker[] = speakers) {
@@ -55,7 +55,7 @@ const textNode: TextLine = {
   id: "line-1",
   content: { text: "Body text", languageId: "en", formId: "written" },
   textLineRefs: [
-    { id: "speaker-ref", body: { type: "speaker", speakerId: "speaker-0" } },
+    { id: "speaker-ref", body: { type: "speaker", speakerId: "speaker-a" } },
   ],
 };
 
@@ -79,7 +79,11 @@ test("assigns deterministic fallback styles from metadata order", () => {
       SPEAKER_LINE_FALLBACK_PALETTE[index],
     );
   });
-  assert.deepEqual(resolve("speaker-3"), resolve("speaker-3"));
+  assert.deepEqual(resolve("speaker-d"), resolve("speaker-d"));
+});
+
+test("application defaults contain no speaker-specific overrides", () => {
+  assert.equal(viewerStyle.speakers, undefined);
 });
 
 test("appending metadata speakers preserves existing assignments", () => {
@@ -92,16 +96,16 @@ test("appending metadata speakers preserves existing assignments", () => {
 
 test("cycles the eight-entry palette deterministically", () => {
   assert.equal(SPEAKER_LINE_FALLBACK_PALETTE.length, 8);
-  assert.deepEqual(resolve("speaker-8"), resolve("speaker-0"));
-  assert.deepEqual(resolve("speaker-9"), resolve("speaker-1"));
+  assert.deepEqual(resolve("speaker-i"), resolve("speaker-a"));
+  assert.deepEqual(resolve("speaker-j"), resolve("speaker-b"));
 });
 
 test("explicit and partial Viewer overrides take precedence over fallback fields", () => {
   const full = resolveSpeakerLinePresentation({
-    speakerId: "speaker-0",
+    speakerId: "speaker-a",
     speakers,
     overrides: {
-      "speaker-0": {
+      "speaker-a": {
         backgroundColor: "#ffffff",
         accentColor: "#111111",
         nameColor: "#222222",
@@ -117,13 +121,32 @@ test("explicit and partial Viewer overrides take precedence over fallback fields
   });
 
   const partial = resolveSpeakerLinePresentation({
-    speakerId: "speaker-1",
+    speakerId: "speaker-b",
     speakers,
-    overrides: { "speaker-1": { nameColor: "#123456" } },
+    overrides: { "speaker-b": { nameColor: "#123456" } },
   });
   assert.equal(partial.labelColor, "#123456");
   assert.equal(partial.backgroundColor, SPEAKER_LINE_FALLBACK_PALETTE[1].backgroundColor);
   assert.equal(partial.accentColor, SPEAKER_LINE_FALLBACK_PALETTE[1].accentColor);
+});
+
+test("an explicit override is scoped to the ViewerStyle that supplies it", () => {
+  const overridden = resolveSpeakerLinePresentation({
+    speakerId: "speaker-a",
+    speakers,
+    overrides: { "speaker-a": { backgroundColor: "#ffffff" } },
+  });
+  const withoutOverrides = resolveSpeakerLinePresentation({
+    speakerId: "speaker-a",
+    speakers,
+  });
+
+  assert.equal(overridden.backgroundColor, "#ffffff");
+  assert.deepEqual(withoutOverrides, {
+    ...SPEAKER_LINE_FALLBACK_PALETTE[0],
+    labelClassName: undefined,
+    labelStyle: undefined,
+  });
 });
 
 test("unknown and missing speaker IDs use the neutral fallback", () => {
@@ -141,9 +164,9 @@ test("unknown and missing speaker IDs use the neutral fallback", () => {
 
 test("resolution does not mutate Core speaker metadata or Viewer overrides", () => {
   const speakerInput = structuredClone(speakers);
-  const overrides = { "speaker-0": { nameColor: "#123456" } };
+  const overrides = { "speaker-a": { nameColor: "#123456" } };
   const overridesInput = structuredClone(overrides);
-  resolveSpeakerLinePresentation({ speakerId: "speaker-0", speakers, overrides });
+  resolveSpeakerLinePresentation({ speakerId: "speaker-a", speakers, overrides });
   assert.deepEqual(speakers, speakerInput);
   assert.deepEqual(overrides, overridesInput);
 });
@@ -158,7 +181,7 @@ test("palette label colors meet WCAG AA contrast against their backgrounds", () 
 });
 
 test("ScriptLine applies presentation only to the outer frame and speaker label", () => {
-  const presentation = resolve("speaker-0");
+  const presentation = resolve("speaker-a");
   const html = renderToStaticMarkup(
     <ScriptLine
       speaker={speakers[0]}
@@ -177,9 +200,24 @@ test("ScriptLine applies presentation only to the outer frame and speaker label"
   assert.match(outerFrame, /border-left-color:#2563eb/);
   assert.match(outerFrame, /border-left-width:3px/);
   assert.doesNotMatch(outerFrame, /(?:^|;)color:/);
-  assert.match(html, /<span[^>]*style="color:#1e40af"[^>]*>Speaker 0:/);
+  assert.match(html, /<span[^>]*style="color:#1e40af"[^>]*>Speaker A:/);
   assert.match(html, /<span>Body text<\/span>/);
   assert.doesNotMatch(html, /<button[^>]*style="[^"]*color:/);
+});
+
+test("ScriptLine keeps the generic speaker.default frame and name classes", () => {
+  const html = renderToStaticMarkup(
+    <ScriptLine
+      speaker={speakers[0]}
+      linePresentation={resolve("speaker-a")}
+      style={viewerStyle}
+      layoutVariant="grid"
+      textContent="Body text"
+    />,
+  );
+
+  assert.match(frameTag(html), /rounded-xl border border-gray-200 p-2/);
+  assert.match(html, /class="mb-2 font-bold"/);
 });
 
 test("Conversation and Developer compositions use the same speaker frame presentation", () => {
@@ -195,7 +233,7 @@ test("Conversation and Developer compositions use the same speaker frame present
 });
 
 test("annotation slots remain inside a stable full-width outer frame", () => {
-  const presentation = resolve("speaker-0");
+  const presentation = resolve("speaker-a");
   const withoutPanel = renderToStaticMarkup(
     <ScriptLine
       linePresentation={presentation}
