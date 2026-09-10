@@ -51,13 +51,6 @@ export type ViewerStyle = {
       container: string;
       name: string;
     };
-    colors: Record<
-      string,
-      {
-        container: string;
-        name: string;
-      }
-    >;
   };
   text: {
     line: string;

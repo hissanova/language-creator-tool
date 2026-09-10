@@ -1,10 +1,6 @@
 import type { ViewerStyle } from "../types/viewerStyle";
 
-/**
- * MVP用。
- * Next.jsでYAMLを直接importする設定をまだ入れない場合は、このTS版を使う。
- * style.yaml と同じ内容にしておく。
- */
+/** Application-wide Viewer defaults. Keep these independent of specific content. */
 export const viewerStyle: ViewerStyle = {
   tags: {
     grammar: {
@@ -48,18 +44,6 @@ export const viewerStyle: ViewerStyle = {
       },
     },
   },
-  speakers: {
-    simon: {
-      backgroundColor: "#f5f3ff",
-      accentColor: "#7c3aed",
-      nameColor: "#5b21b6",
-    },
-    lan: {
-      backgroundColor: "#ecfdf5",
-      accentColor: "#059669",
-      nameColor: "#065f46",
-    },
-  },
   layout: {
     main: "mx-auto max-w-4xl p-6",
     headerTitle: "mb-4 text-3xl font-bold",
@@ -76,24 +60,6 @@ export const viewerStyle: ViewerStyle = {
     default: {
       container: "rounded-xl border border-gray-200 p-2",
       name: "mb-2 font-bold",
-    },
-    colors: {
-      kanaa: {
-        container: "rounded-xl border p-2 border-blue-300 bg-blue-50",
-        name: "mb-2 font-bold",
-      },
-      green: {
-        container: "rounded-xl border p-2 border-green-300 bg-green-50",
-        name: "mb-2 font-bold",
-      },
-      purple: {
-        container: "rounded-xl border p-2 border-purple-300 bg-purple-50",
-        name: "mb-2 font-bold",
-      },
-      orange: {
-        container: "rounded-xl border p-2 border-orange-300 bg-orange-50",
-        name: "mb-2 font-bold",
-      },
     },
   },
   text: {

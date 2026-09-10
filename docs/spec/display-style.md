@@ -8,6 +8,9 @@ render time, not compiled into another content model.
 
 The currently implemented style type is `app/types/viewerStyle.ts`. Related
 Viewer configuration types live under `app/types/viewer/`.
+`app/styles/viewerStyle.ts` is the single source of truth for the application's
+generic Viewer defaults. Application defaults must not contain speaker IDs,
+creator names, or other values that belong to a particular teaching resource.
 
 ## Current data flow
 
@@ -31,7 +34,8 @@ Display Style may define:
 ## Illustrative example
 
 `samples/display-style/basic-viewer.yaml` shows a possible configuration shape.
-It is an illustrative draft and is not currently loaded by the creator launcher
+It is an illustrative draft only. LCT does not currently load style YAML from
+external content projects, and the sample is not loaded by the creator launcher
 or emitted by the LCM compiler.
 
 ```yaml
@@ -67,9 +71,20 @@ project explicitly adopts one in a future RFC.
 
 ## Speaker presentation
 
-The optional `speakers` map in `ViewerStyle` is keyed by Core JSON `speakerId`.
-Each entry may override `backgroundColor`, `accentColor`, and `nameColor`.
-Omitted fields retain the deterministic palette values assigned from the
-speaker's position in `document.metadata.speakers`. Unknown or missing speakers
-use the neutral presentation. These colors are Viewer-only presentation and
-must not be added to Core JSON.
+The optional `ViewerStyle.speakers` map is a generic presentation override
+mechanism keyed by Core JSON `speakerId`. Each entry may override
+`backgroundColor`, `accentColor`, and `nameColor`. Omitted fields retain the
+deterministic palette values assigned from the speaker's position in
+`document.metadata.speakers`. Unknown or missing speakers use the neutral
+presentation. These colors are Viewer-only presentation and must not be added
+to Core JSON.
+
+Resolution starts with the neutral presentation for an unknown or missing
+speaker, or the metadata-ordered fallback palette for a known speaker. A
+matching `ViewerStyle.speakers[speakerId]` entry is then applied field by field
+as the highest-precedence presentation override.
+
+The application defaults intentionally provide no speaker-specific overrides.
+Editing `app/styles` inside the LCT repository is not a supported creator
+customization workflow. Runtime loading of a creator-owned style file from an
+external content project has not been implemented yet.
