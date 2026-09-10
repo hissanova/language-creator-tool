@@ -36,6 +36,8 @@ import {
   isEditablePlaybackShortcutTarget,
   resolvePlaybackKeyboardCommand,
 } from "./playbackKeyboardShortcuts";
+import { normalizeMediaSrc } from "../media/normalizeMediaSrc";
+import { conversationSampleChinese1 } from "../../../samples/core-json/generated/conversation-hyq_2026-04-16_xindeyanjing_EDITED-BY-SIMON";
 
 const firstRange: LinePlaybackRange = {
   type: "line",
@@ -88,6 +90,47 @@ function targetMatching(editableSelector: string): EventTarget {
   };
   return target as unknown as EventTarget;
 }
+
+test("media sources use only generic public-path normalization", () => {
+  const unchangedSources = [
+    "/media/example.mp3",
+    "/open-content/resources/example.mp3",
+    "https://example.org/example.mp3",
+    "blob:https://example.org/resource-id",
+    "data:audio/mpeg;base64,AAAA",
+  ];
+
+  assert.equal(normalizeMediaSrc("/public/media/example.mp3"), "/media/example.mp3");
+  assert.equal(normalizeMediaSrc("@/public/media/example.mp3"), "/media/example.mp3");
+  for (const src of unchangedSources) {
+    assert.equal(normalizeMediaSrc(src), src);
+  }
+});
+
+test("historical and similarly-prefixed paths receive no content-specific redirect", () => {
+  const historicalPath =
+    "@/public/sample-media/conversation-hyq_2026-04-16_xindeyanjing_EDITED-BY-SIMON";
+  const similarPath = `${historicalPath}-archive/example.mp3`;
+
+  assert.equal(
+    normalizeMediaSrc(historicalPath),
+    "/sample-media/conversation-hyq_2026-04-16_xindeyanjing_EDITED-BY-SIMON",
+  );
+  assert.equal(
+    normalizeMediaSrc(similarPath),
+    "/sample-media/conversation-hyq_2026-04-16_xindeyanjing_EDITED-BY-SIMON-archive/example.mp3",
+  );
+});
+
+test("the generated HYQ sample keeps and uses its canonical media source", () => {
+  const audio = conversationSampleChinese1.resources?.find(
+    (resource): resource is MediaResource =>
+      resource.type === "media" && resource.mediaType === "audio",
+  );
+
+  assert.equal(audio?.src, "/media/audio/hyq_2026-04-16_xindeyanjing.mp3");
+  assert.equal(audio && normalizeMediaSrc(audio.src), audio?.src);
+});
 
 test("playback keyboard shortcuts resolve Space and Arrow mappings", () => {
   assert.deepEqual(resolvePlaybackKeyboardCommand(keyboardEvent().event), { type: "toggle" });

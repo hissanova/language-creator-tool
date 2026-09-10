@@ -21,6 +21,7 @@ import { usePlaybackKeyboardShortcuts } from "./playback/playbackKeyboardShortcu
 import { isLineCurrentlyPlaying } from "./playback/playbackDisplay";
 import { PlayIcon } from "./playback/PlaybackIcons";
 import { getAlignmentRef } from "./script-line/coreQueries";
+import { normalizeMediaSrc } from "./media/normalizeMediaSrc";
 
 type Props = {
   document: Document;
@@ -50,22 +51,6 @@ function withNone(options: SelectOption[] | undefined): SelectOption[] {
 function formatTime(value: number | undefined) {
   if (value == null) return "";
   return `${value}s`;
-}
-
-function normalizeMediaSrc(src: string) {
-  if (src.startsWith("/public/")) {
-    return src.slice("/public".length);
-  }
-
-  if (src.startsWith("@/public/sample-media/conversation-hyq_2026-04-16_xindeyanjing_EDITED-BY-SIMON")) {
-    return "/media/audio/hyq_2026-04-16_xindeyanjing.mp3";
-  }
-
-  if (src.startsWith("@/public/")) {
-    return `/${src.slice("@/public/".length)}`;
-  }
-
-  return src;
 }
 
 function firstCaption(caption: Record<string, FormedText> | FormedText[] | undefined) {
