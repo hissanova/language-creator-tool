@@ -9,7 +9,15 @@ import {
   SPEAKER_LINE_FALLBACK_PALETTE,
   resolveSpeakerLinePresentation,
 } from "../../styles/speakerLinePresentation";
-import { NEUTRAL_SCRIPT_LINE_PRESENTATION } from "../../styles/scriptLinePresentation";
+import {
+  DEFAULT_LINE_HIGHLIGHT_EXPERIMENT,
+  NEUTRAL_SCRIPT_LINE_PRESENTATION,
+  SCRIPT_LINE_RAIL_WIDTH,
+  parseLineHighlightExperiment,
+  resolveScriptLinePresentation,
+  type LineHighlightExperiment,
+  type LineRailPosition,
+} from "../../styles/scriptLinePresentation";
 import { ScriptLine } from "../ScriptLine";
 import { ConversationScriptLine } from "./ConversationScriptLine";
 import { DeveloperScriptLine } from "./DeveloperScriptLine";
@@ -197,8 +205,7 @@ test("ScriptLine applies presentation only to the outer frame and speaker label"
   const outerFrame = frameTag(html);
   assert.doesNotMatch(outerFrame, /data-speaker-id/);
   assert.match(outerFrame, /background-color:#eff6ff/);
-  assert.match(outerFrame, /border-left-color:#2563eb/);
-  assert.match(outerFrame, /border-left-width:3px/);
+  assert.doesNotMatch(outerFrame, /border-left-color|border-left-width/);
   assert.doesNotMatch(outerFrame, /(?:^|;)color:/);
   assert.match(html, /<span[^>]*style="color:#1e40af"[^>]*>Speaker A:/);
   assert.match(html, /<span>Body text<\/span>/);
@@ -230,6 +237,242 @@ test("Conversation and Developer compositions use the same speaker frame present
   assert.equal(frameStyle(conversationHtml), frameStyle(developerHtml));
   assert.match(conversationHtml, /style="color:#1e40af"/);
   assert.match(developerHtml, /style="color:#1e40af"/);
+});
+
+test("line-highlight query parsing accepts known axes and safely defaults unknown values", () => {
+  assert.deepEqual(parseLineHighlightExperiment({}), {
+    railPosition: "left",
+    backgroundEmphasis: "off",
+    elevation: "off",
+  });
+  assert.deepEqual(parseLineHighlightExperiment({
+    activeLineRail: "both",
+    activeLineBackground: "on",
+    activeLineElevation: "on",
+  }), {
+    railPosition: "both",
+    backgroundEmphasis: "on",
+    elevation: "on",
+  });
+  assert.deepEqual(parseLineHighlightExperiment({
+    activeLineRail: "diagonal",
+    activeLineBackground: "sometimes",
+    activeLineElevation: "high",
+  }), DEFAULT_LINE_HIGHLIGHT_EXPERIMENT);
+});
+
+function experiment(
+  overrides: Partial<LineHighlightExperiment> = {},
+): LineHighlightExperiment {
+  return { ...DEFAULT_LINE_HIGHLIGHT_EXPERIMENT, ...overrides };
+}
+
+test("inactive and active rails share geometry and neutral outline but use different fills", () => {
+  const speakerPresentation = resolve("speaker-a");
+  const inactive = resolveScriptLinePresentation(speakerPresentation, false);
+  const active = resolveScriptLinePresentation(speakerPresentation, true);
+
+  assert.equal(inactive.frameClassName, active.frameClassName);
+  assert.equal(inactive.frameStyle?.paddingLeft, active.frameStyle?.paddingLeft);
+  assert.equal(inactive.frameStyle?.["--script-line-rail-width"], SCRIPT_LINE_RAIL_WIDTH);
+  assert.equal(active.frameStyle?.["--script-line-rail-width"], SCRIPT_LINE_RAIL_WIDTH);
+  assert.equal(
+    inactive.frameStyle?.["--script-line-rail-outline"],
+    active.frameStyle?.["--script-line-rail-outline"],
+  );
+  assert.match(
+    String(inactive.frameStyle?.["--script-line-rail-outline"]),
+    /var\(--foreground\).*var\(--background\)/,
+  );
+  assert.equal(
+    inactive.frameStyle?.["--script-line-rail-fill"],
+    speakerPresentation.backgroundColor,
+  );
+  assert.equal(
+    active.frameStyle?.["--script-line-rail-fill"],
+    speakerPresentation.labelColor,
+  );
+  assert.equal(inactive.backgroundColor, speakerPresentation.backgroundColor);
+  assert.equal(active.backgroundColor, speakerPresentation.backgroundColor);
+});
+
+test("rail positions resolve mirrored primitives and none resolves no rail", () => {
+  const speakerPresentation = resolve("speaker-a");
+  const globalsSource = readFileSync("app/globals.css", "utf8");
+
+  for (const railPosition of ["left", "both", "right"] as LineRailPosition[]) {
+    const resolved = resolveScriptLinePresentation(
+      speakerPresentation,
+      false,
+      experiment({ railPosition }),
+    );
+    assert.equal(resolved.frameClassName, `script-line-rail-${railPosition}`);
+  }
+
+  const none = resolveScriptLinePresentation(
+    speakerPresentation,
+    false,
+    experiment({ railPosition: "none" }),
+  );
+  assert.equal(none, speakerPresentation);
+  assert.match(
+    globalsSource,
+    /script-line-rail-left::before[\s\S]*border-radius: var\(--script-line-radius\) 0 0 var\(--script-line-radius\)/,
+  );
+  assert.match(
+    globalsSource,
+    /script-line-rail-right::after[\s\S]*border-radius: 0 var\(--script-line-radius\) var\(--script-line-radius\) 0/,
+  );
+  assert.match(globalsSource, /script-line-rail-both::before/);
+  assert.match(globalsSource, /script-line-rail-both::after/);
+  assert.match(globalsSource, /pointer-events: none/);
+});
+
+test("background emphasis and elevation toggle independently and preserve speaker fields", () => {
+  const speakerPresentation = resolve("speaker-a");
+  const combinations: LineHighlightExperiment[] = [
+    experiment(),
+    experiment({ backgroundEmphasis: "on" }),
+    experiment({ elevation: "on" }),
+    experiment({ backgroundEmphasis: "on", elevation: "on" }),
+  ];
+
+  for (const selected of combinations) {
+    const resolved = resolveScriptLinePresentation(speakerPresentation, true, selected);
+    assert.equal(resolved.accentColor, speakerPresentation.accentColor);
+    assert.equal(resolved.labelColor, speakerPresentation.labelColor);
+    assert.equal(resolved.labelClassName, speakerPresentation.labelClassName);
+    assert.equal(resolved.labelStyle, speakerPresentation.labelStyle);
+    assert.equal(
+      resolved.backgroundColor.includes("color-mix"),
+      selected.backgroundEmphasis === "on",
+    );
+    assert.equal(
+      resolved.frameStyle?.transform === "translateY(-1px)",
+      selected.elevation === "on",
+    );
+    assert.equal(Boolean(resolved.frameStyle?.boxShadow), selected.elevation === "on");
+  }
+});
+
+test("elevation shadow uses distinct light and dark theme values", () => {
+  const globalsSource = readFileSync("app/globals.css", "utf8");
+  const elevated = resolveScriptLinePresentation(
+    resolve("speaker-a"),
+    true,
+    experiment({ elevation: "on" }),
+  );
+
+  assert.match(String(elevated.frameStyle?.boxShadow), /var\(--script-line-elevation-shadow\)/);
+  assert.match(
+    globalsSource,
+    /:root[\s\S]*--script-line-elevation-shadow:[\s\S]*0 2px 4px rgba\(15, 23, 42, 0\.24\),[\s\S]*0 8px 18px rgba\(15, 23, 42, 0\.3\)/,
+  );
+  assert.match(
+    globalsSource,
+    /html\.dark[\s\S]*--script-line-elevation-shadow:[\s\S]*0 2px 6px rgba\(0, 0, 0, 0\.8\),[\s\S]*0 0 0 1px rgba\(255, 255, 255, 0\.28\),[\s\S]*0 7px 18px rgba\(255, 255, 255, 0\.18\)/,
+  );
+  assert.notEqual(
+    globalsSource.match(/:root \{[\s\S]*?--script-line-elevation-shadow:([\s\S]*?);/)?.[1],
+    globalsSource.match(/html\.dark \{[\s\S]*?--script-line-elevation-shadow:([\s\S]*?);/)?.[1],
+  );
+});
+
+test("explicit theme classes override the system elevation recipe", () => {
+  const globalsSource = readFileSync("app/globals.css", "utf8");
+  const systemDarkIndex = globalsSource.indexOf("@media (prefers-color-scheme: dark)");
+  const explicitDarkIndex = globalsSource.indexOf("html.dark");
+  const explicitLightIndex = globalsSource.indexOf("html.light");
+
+  assert.ok(systemDarkIndex >= 0);
+  assert.ok(explicitDarkIndex > systemDarkIndex);
+  assert.ok(explicitLightIndex > explicitDarkIndex);
+});
+
+test("Conversation and Developer modes resolve the same rail primitives", () => {
+  for (const railPosition of ["none", "left", "both", "right"] as LineRailPosition[]) {
+    const currentProps = {
+      ...sharedCompositionProps,
+      isCurrentPlaybackLine: true,
+      lineHighlightExperiment: experiment({
+        railPosition,
+        backgroundEmphasis: "on",
+        elevation: "on",
+      }),
+    };
+    const conversationHtml = renderToStaticMarkup(
+      <ConversationScriptLine {...currentProps} />,
+    );
+    const developerHtml = renderToStaticMarkup(
+      <DeveloperScriptLine {...currentProps} />,
+    );
+
+    assert.equal(frameStyle(conversationHtml), frameStyle(developerHtml));
+    for (const html of [conversationHtml, developerHtml]) {
+      const frame = frameTag(html);
+      assert.match(frame, /background-color:color-mix\(in srgb, #eff6ff 84%, #2563eb 16%\)/);
+      assert.match(frame, /aria-current="true"/);
+      assert.doesNotMatch(frame, /(?:^|;)outline(?:-|:)/);
+    }
+  }
+});
+
+test("current-line semantics and visual state remain independent from Play/Pause", () => {
+  const currentPresentation = resolveScriptLinePresentation(
+    resolve("speaker-a"),
+    true,
+    experiment({ elevation: "on" }),
+  );
+  const pausedCurrentHtml = renderToStaticMarkup(
+    <ScriptLine
+      speaker={speakers[0]}
+      linePresentation={currentPresentation}
+      style={viewerStyle}
+      layoutVariant="grid"
+      textContent="Current"
+      hasPlaybackTiming
+      playbackRange={{
+        type: "line",
+        lineId: "line-1",
+        mediaResourceId: "audio-1",
+        mediaSource: "/one.mp3",
+        start: 10,
+        end: 15,
+      }}
+      isCurrentPlaybackLine
+      isLinePlaying={false}
+    />,
+  );
+  const nonCurrentHtml = renderToStaticMarkup(
+    <ScriptLine
+      linePresentation={resolveScriptLinePresentation(resolve("speaker-b"), false)}
+      style={viewerStyle}
+      layoutVariant="grid"
+      textContent="Other"
+    />,
+  );
+
+  assert.match(frameTag(pausedCurrentHtml), /aria-current="true"/);
+  assert.match(pausedCurrentHtml, /data-playback-icon="play"/);
+  assert.doesNotMatch(pausedCurrentHtml, /data-playback-icon="pause"/);
+  assert.doesNotMatch(nonCurrentHtml, /aria-current/);
+  assert.match(nonCurrentHtml, /--script-line-rail-fill:#ecfdf5/);
+  assert.match(frameTag(pausedCurrentHtml), /--script-line-rail-fill:#1e40af/);
+  assert.match(nonCurrentHtml, /background-color:#ecfdf5/);
+  assert.doesNotMatch(nonCurrentHtml, /box-shadow|transform/);
+  assert.doesNotMatch(`${pausedCurrentHtml}${nonCurrentHtml}`, /aria-live/);
+});
+
+test("line-highlight resolution has no content-specific branching", () => {
+  const resolverSource = readFileSync(
+    "app/styles/scriptLinePresentation.ts",
+    "utf8",
+  );
+
+  assert.doesNotMatch(
+    resolverSource,
+    /speakerId|languageId|textNode|documentType|Simon|Lan|Kanaa/,
+  );
 });
 
 test("annotation slots remain inside a stable full-width outer frame", () => {

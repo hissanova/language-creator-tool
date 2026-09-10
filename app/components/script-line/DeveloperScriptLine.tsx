@@ -7,6 +7,7 @@ import type { SelectorAnnotation } from "./coreQueries";
 import { AnnotationPanel } from "./AnnotationPanel";
 import { developerAnnotationPanelConfig } from "../../config/annotationPanelPresets";
 import { resolveSpeakerLinePresentation } from "../../styles/speakerLinePresentation";
+import { resolveScriptLinePresentation } from "../../styles/scriptLinePresentation";
 
 type Props = {
   textLine: TextLine;
@@ -61,17 +62,23 @@ export function DeveloperScriptLine(props: ScriptLineCompositionProps) {
     hasPlaybackTiming,
     isLoopSelected,
     isLinePlaying,
+    isCurrentPlaybackLine = false,
+    lineHighlightExperiment,
     loopEnabled,
     onPause,
     onPlayLine,
     onToggleLineLoop,
   } = props;
   const model = buildScriptLineModel(props);
-  const linePresentation = resolveSpeakerLinePresentation({
-    speakerId: model.speakerId,
-    speakers: props.speakers,
-    overrides: style.speakers,
-  });
+  const linePresentation = resolveScriptLinePresentation(
+    resolveSpeakerLinePresentation({
+      speakerId: model.speakerId,
+      speakers: props.speakers,
+      overrides: style.speakers,
+    }),
+    isCurrentPlaybackLine,
+    lineHighlightExperiment,
+  );
   const showAnnotationPanel =
     developerAnnotationPanelConfig.dropdown.enabled &&
     hasDeveloperAnnotationDetails({
@@ -87,6 +94,7 @@ export function DeveloperScriptLine(props: ScriptLineCompositionProps) {
       hasPlaybackTiming={hasPlaybackTiming}
       isLoopSelected={isLoopSelected}
       isLinePlaying={isLinePlaying}
+      isCurrentPlaybackLine={isCurrentPlaybackLine}
       loopEnabled={loopEnabled}
       onPause={onPause}
       onPlayLine={onPlayLine}

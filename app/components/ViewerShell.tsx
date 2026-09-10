@@ -18,10 +18,14 @@ import { resolveLinePlaybackRange } from "./playback/linePlayback";
 import type { LinePlaybackRange } from "./playback/playbackState";
 import { usePlaybackController } from "./playback/usePlaybackController";
 import { usePlaybackKeyboardShortcuts } from "./playback/playbackKeyboardShortcuts";
-import { isLineCurrentlyPlaying } from "./playback/playbackDisplay";
+import {
+  isLineCurrentlyPlaying,
+  resolveCurrentPlaybackLineId,
+} from "./playback/playbackDisplay";
 import { PlayIcon } from "./playback/PlaybackIcons";
 import { getAlignmentRef } from "./script-line/coreQueries";
 import { normalizeMediaSrc } from "./media/normalizeMediaSrc";
+import type { LineHighlightExperiment } from "../styles/scriptLinePresentation";
 
 type Props = {
   document: Document;
@@ -30,6 +34,7 @@ type Props = {
 
 type ViewerShellProps = Props & {
   LineComponent: ScriptLineComponent;
+  lineHighlightExperiment: LineHighlightExperiment;
   showMetadata?: boolean;
   showViewerControls?: boolean;
 };
@@ -177,6 +182,7 @@ export function ViewerShell({
   document,
   style = defaultStyle,
   LineComponent,
+  lineHighlightExperiment,
   showMetadata = false,
   showViewerControls = false,
 }: ViewerShellProps) {
@@ -206,10 +212,18 @@ export function ViewerShell({
 
   const speakers = useMemo(() => document.metadata.speakers ?? [], [document]);
 
-  const renderBlock = (block: SectionBlock) => {
-    switch (block.type) {
-      case "text": {
-        const playbackRange = resolveLinePlaybackRange(
+  const playbackRanges = useMemo(() => {
+    const ranges = new Map<string, LinePlaybackRange>();
+
+    const collectSectionRanges = (section: Section) => {
+      for (const block of section.blocks) {
+        if (block.type === "section") {
+          collectSectionRanges(block.section);
+          continue;
+        }
+        if (block.type !== "text") continue;
+
+        const range = resolveLinePlaybackRange(
           block.text,
           document.resources ?? [],
           normalizeMediaSrc,
@@ -218,6 +232,23 @@ export function ViewerShell({
             duration: playback.state.duration,
           },
         );
+        if (range) ranges.set(block.text.id, range);
+      }
+    };
+
+    document.sections.forEach(collectSectionRanges);
+    return ranges;
+  }, [document, playback.state.duration, playback.state.mediaSource]);
+
+  const currentPlaybackLineId = resolveCurrentPlaybackLineId(
+    playback.state,
+    [...playbackRanges.values()],
+  );
+
+  const renderBlock = (block: SectionBlock) => {
+    switch (block.type) {
+      case "text": {
+        const playbackRange = playbackRanges.get(block.text.id) ?? null;
         const hasPlaybackTiming = Boolean(getAlignmentRef(block.text.textLineRefs));
         return (
           <LineComponent
@@ -234,6 +265,8 @@ export function ViewerShell({
             hasPlaybackTiming={hasPlaybackTiming}
             isLoopSelected={playback.state.selectedLoopRange?.lineId === block.text.id}
             isLinePlaying={isLineCurrentlyPlaying(playback.state, playbackRange)}
+            isCurrentPlaybackLine={currentPlaybackLineId === block.text.id}
+            lineHighlightExperiment={lineHighlightExperiment}
             loopEnabled={playback.state.loopEnabled}
             onPause={playback.actions.pause}
             onPlayLine={playback.actions.playLine}

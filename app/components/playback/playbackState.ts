@@ -23,6 +23,7 @@ export type PlaybackState = {
   selectedLoopRange: LinePlaybackRange | null;
   activeLine: LinePlaybackRange | null;
   loopRangeEngaged: boolean;
+  playbackEnded: boolean;
 };
 
 export const initialPlaybackState: PlaybackState = {
@@ -37,6 +38,7 @@ export const initialPlaybackState: PlaybackState = {
   selectedLoopRange: null,
   activeLine: null,
   loopRangeEngaged: false,
+  playbackEnded: false,
 };
 
 export type PlaybackAction =
@@ -94,20 +96,26 @@ export function playbackReducer(
         playing: action.playing ?? state.playing,
         activeLine: sourceChanged ? null : state.activeLine,
         loopRangeEngaged: sourceChanged ? false : state.loopRangeEngaged,
+        playbackEnded: false,
       };
     }
     case "setPlaying":
-      return { ...state, playing: action.playing };
+      return {
+        ...state,
+        playing: action.playing,
+        playbackEnded: action.playing ? false : state.playbackEnded,
+      };
     case "setDuration":
       return { ...state, duration: action.duration };
     case "setCurrentTime":
-      return { ...state, currentTime: action.currentTime };
+      return { ...state, currentTime: action.currentTime, playbackEnded: false };
     case "lineBoundaryReached":
       return {
         ...state,
         currentTime: action.currentTime,
         playing: false,
         activeLine: null,
+        playbackEnded: false,
       };
     case "playLine":
       return {
@@ -119,6 +127,7 @@ export function playbackReducer(
           state.mediaSource === action.range.mediaSource ? state.duration : null,
         playing: true,
         activeLine: action.range,
+        playbackEnded: false,
         loopRangeEngaged: Boolean(
           state.loopEnabled &&
             state.selectedLoopRange?.lineId === action.range.lineId,
@@ -196,6 +205,7 @@ export function playbackReducer(
             ? false
             : state.loopEnabled,
         loopRangeEngaged: Boolean(state.loopEnabled && insideSelectedRange),
+        playbackEnded: false,
       };
     }
     case "skip": {
@@ -210,7 +220,12 @@ export function playbackReducer(
     case "setPlaybackRate":
       return { ...state, playbackRate: action.playbackRate };
     case "mediaEnded":
-      return { ...state, playing: false, activeLine: null };
+      return {
+        ...state,
+        playing: false,
+        activeLine: null,
+        playbackEnded: true,
+      };
   }
 }
 

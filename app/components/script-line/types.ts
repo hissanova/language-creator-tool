@@ -3,6 +3,7 @@ import type { Language, Resource, Speaker } from "../../types/core/document";
 import type { TextLine } from "../../types/core/textLine";
 import type { ViewerStyle } from "../../types/viewerStyle";
 import type { LinePlaybackRange } from "../playback/playbackState";
+import type { LineHighlightExperiment } from "../../styles/scriptLinePresentation";
 
 export type ScriptLineCompositionProps = {
   textNode: TextLine;
@@ -17,6 +18,8 @@ export type ScriptLineCompositionProps = {
   hasPlaybackTiming?: boolean;
   isLoopSelected?: boolean;
   isLinePlaying?: boolean;
+  isCurrentPlaybackLine?: boolean;
+  lineHighlightExperiment?: LineHighlightExperiment;
   loopEnabled?: boolean;
   onPause?: () => void;
   onPlayLine?: (range: LinePlaybackRange) => void;

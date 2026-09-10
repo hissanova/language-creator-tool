@@ -102,11 +102,6 @@ export function usePlaybackController(
     const element = mediaElementRef.current;
     const sourceChanged = currentState.mediaSource !== mediaSource;
 
-    if (sourceChanged) {
-      element?.pause();
-      pendingPlaybackRef.current = { time, play: true, end: range?.end };
-    }
-
     if (range) {
       dispatchAndSync({ type: "playLine", range });
     } else {
@@ -117,6 +112,11 @@ export function usePlaybackController(
         currentTime: time,
         playing: true,
       });
+    }
+
+    if (sourceChanged) {
+      element?.pause();
+      pendingPlaybackRef.current = { time, play: true, end: range?.end };
     }
 
     if (!sourceChanged && element) {

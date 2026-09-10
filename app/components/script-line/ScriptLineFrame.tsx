@@ -1,4 +1,4 @@
-import type { CSSProperties, ReactNode } from "react";
+import type { AriaAttributes, CSSProperties, ReactNode } from "react";
 
 export type ScriptLineFrameProps = {
   topSlot?: ReactNode;
@@ -6,6 +6,7 @@ export type ScriptLineFrameProps = {
   bottomSlot?: ReactNode;
   className?: string;
   style?: CSSProperties;
+  ariaCurrent?: AriaAttributes["aria-current"];
 };
 
 export function ScriptLineFrame({
@@ -14,6 +15,7 @@ export function ScriptLineFrame({
   bottomSlot,
   className,
   style,
+  ariaCurrent,
 }: ScriptLineFrameProps) {
   return (
     <div
@@ -21,6 +23,7 @@ export function ScriptLineFrame({
         .filter(Boolean)
         .join(" ")}
       style={style}
+      aria-current={ariaCurrent}
     >
       {topSlot != null ? <div className="min-w-0">{topSlot}</div> : null}
       {children}

@@ -14,6 +14,7 @@ import {
   getLoopRangeVisualStyle,
   getPlaybackProgressPercentage,
   isLineCurrentlyPlaying,
+  resolveCurrentPlaybackLineId,
 } from "./playbackDisplay";
 import {
   PLAYBACK_RATES,
@@ -234,6 +235,7 @@ test("starts paused with reset, non-persistent playback state", () => {
     selectedLoopRange: null,
     activeLine: null,
     loopRangeEngaged: false,
+    playbackEnded: false,
   });
 });
 
@@ -720,6 +722,116 @@ test("line Play becomes Pause only while shared playback is in its media range",
   assert.equal(isLineCurrentlyPlaying({ ...inRange, playing: false }, firstRange), false);
   assert.equal(isLineCurrentlyPlaying({ ...inRange, currentTime: 15 }, firstRange), false);
   assert.equal(isLineCurrentlyPlaying({ ...inRange, mediaSource: "/two.mp3" }, firstRange), false);
+});
+
+test("current playback line follows position independently of Play/Pause state", () => {
+  const playing = {
+    ...initialPlaybackState,
+    playing: true,
+    mediaResourceId: "audio-1",
+    mediaSource: "/one.mp3",
+    currentTime: 12,
+  };
+  const paused = { ...playing, playing: false };
+
+  assert.equal(resolveCurrentPlaybackLineId(playing, [firstRange, secondRange]), "line-1");
+  assert.equal(
+    resolveCurrentPlaybackLineId(paused, [firstRange, secondRange]),
+    "line-1",
+  );
+  assert.equal(
+    resolveCurrentPlaybackLineId({ ...playing, currentTime: 22 }, [firstRange, secondRange]),
+    "line-2",
+  );
+});
+
+test("line playback switches source, start position, and current line atomically", () => {
+  const lineAState = playbackReducer(initialPlaybackState, {
+    type: "playLine",
+    range: firstRange,
+  });
+  const lineBRange = {
+    ...secondRange,
+    mediaResourceId: "audio-2",
+    mediaSource: "/two.mp3",
+  };
+  const lineBState = playbackReducer(lineAState, {
+    type: "playLine",
+    range: lineBRange,
+  });
+
+  assert.equal(lineBState.mediaResourceId, lineBRange.mediaResourceId);
+  assert.equal(lineBState.mediaSource, lineBRange.mediaSource);
+  assert.equal(lineBState.currentTime, lineBRange.start);
+  assert.equal(resolveCurrentPlaybackLineId(lineBState, [firstRange, lineBRange]), "line-2");
+  assert.notEqual(resolveCurrentPlaybackLineId(lineBState, [firstRange, lineBRange]), "line-1");
+});
+
+test("current playback line requires matching selected media and valid alignment", () => {
+  const state = {
+    ...initialPlaybackState,
+    mediaResourceId: "audio-1",
+    mediaSource: "/one.mp3",
+    currentTime: 12,
+  };
+
+  assert.equal(resolveCurrentPlaybackLineId(state, [null, undefined]), null);
+  assert.equal(resolveCurrentPlaybackLineId({ ...state, mediaSource: null }, [firstRange]), null);
+  assert.equal(resolveCurrentPlaybackLineId({ ...state, mediaSource: "/two.mp3" }, [firstRange]), null);
+  assert.equal(resolveCurrentPlaybackLineId({ ...state, mediaResourceId: "audio-2" }, [firstRange]), null);
+});
+
+test("current playback line uses start-inclusive and end-exclusive boundaries", () => {
+  const adjacentRange = { ...firstRange, lineId: "line-adjacent", start: 15, end: 20 };
+  const state = {
+    ...initialPlaybackState,
+    mediaResourceId: "audio-1",
+    mediaSource: "/one.mp3",
+  };
+
+  assert.equal(
+    resolveCurrentPlaybackLineId({ ...state, currentTime: 10 }, [firstRange, adjacentRange]),
+    "line-1",
+  );
+  assert.equal(
+    resolveCurrentPlaybackLineId({ ...state, currentTime: 15 }, [firstRange, adjacentRange]),
+    "line-adjacent",
+  );
+  assert.equal(
+    resolveCurrentPlaybackLineId({ ...state, currentTime: 20 }, [firstRange, adjacentRange]),
+    null,
+  );
+});
+
+test("current playback resolution returns at most one line and ignores Loop selection", () => {
+  const overlappingRange = { ...firstRange, lineId: "line-overlap", start: 11, end: 14 };
+  const state = {
+    ...initialPlaybackState,
+    mediaResourceId: "audio-1",
+    mediaSource: "/one.mp3",
+    currentTime: 12,
+    loopEnabled: true,
+    selectedLoopRange: secondRange,
+  };
+
+  assert.equal(
+    resolveCurrentPlaybackLineId(state, [firstRange, overlappingRange, secondRange]),
+    "line-1",
+  );
+});
+
+test("playback end clears the current line and replay restores position matching", () => {
+  const inLine = {
+    ...initialPlaybackState,
+    mediaResourceId: "audio-1",
+    mediaSource: "/one.mp3",
+    currentTime: 12,
+  };
+  const ended = playbackReducer(inLine, { type: "mediaEnded" });
+  const replayed = playbackReducer(ended, { type: "setPlaying", playing: true });
+
+  assert.equal(resolveCurrentPlaybackLineId(ended, [firstRange]), null);
+  assert.equal(resolveCurrentPlaybackLineId(replayed, [firstRange]), "line-1");
 });
 
 test("engaged Loop keeps only its selected line active at and beyond the end boundary", () => {

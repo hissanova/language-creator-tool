@@ -1,3 +1,9 @@
+import type { CSSProperties } from "react";
+
+export type ScriptLineFrameStyle = CSSProperties & {
+  [property: `--${string}`]: string | number | undefined;
+};
+
 export type TagTextDisplayStyle = {
   label?: string;
   className?: string;
@@ -29,6 +35,8 @@ export type ScriptLinePresentation = {
   labelColor: string;
   labelClassName?: string;
   labelStyle?: SpeakerDisplayStyle["style"];
+  frameClassName?: string;
+  frameStyle?: ScriptLineFrameStyle;
 };
 
 export type ViewerStyle = {
