@@ -1,17 +1,11 @@
 "use client";
 
-import { Suspense, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState } from "react";
 import type { Document } from "../types/core/document";
 import type { ViewerStyle } from "../types/viewerStyle";
 import { ConversationViewer } from "./ConversationViewer";
 import { DeveloperViewer } from "./DeveloperViewer";
 import { TextViewer } from "./TextViewer";
-import {
-  DEFAULT_LINE_HIGHLIGHT_EXPERIMENT,
-  parseLineHighlightExperiment,
-  type LineHighlightExperiment,
-} from "../styles/scriptLinePresentation";
 
 type Props = {
   document: Document;
@@ -33,11 +27,7 @@ function getViewerOptions(): ViewerOption[] {
   ];
 }
 
-function ViewerSwitcherContent({
-  document,
-  style,
-  lineHighlightExperiment,
-}: Props & { lineHighlightExperiment: LineHighlightExperiment }) {
+export function ViewerSwitcher({ document, style }: Props) {
   const viewerOptions = getViewerOptions();
   const [viewerId, setViewerId] = useState<ViewerId>(viewerOptions[0].id);
 
@@ -63,51 +53,12 @@ function ViewerSwitcherContent({
       </div>
 
       {selectedViewer.id === "developer" ? (
-        <DeveloperViewer
-          document={document}
-          style={style}
-          lineHighlightExperiment={lineHighlightExperiment}
-        />
+        <DeveloperViewer document={document} style={style} />
       ) : selectedViewer.id === "text" ? (
         <TextViewer document={document} />
       ) : (
-        <ConversationViewer
-          document={document}
-          style={style}
-          lineHighlightExperiment={lineHighlightExperiment}
-        />
+        <ConversationViewer document={document} style={style} />
       )}
     </>
-  );
-}
-
-function ViewerSwitcherWithSearchParams(props: Props) {
-  const searchParams = useSearchParams();
-  const lineHighlightExperiment = parseLineHighlightExperiment({
-    activeLineRail: searchParams.get("activeLineRail"),
-    activeLineBackground: searchParams.get("activeLineBackground"),
-    activeLineElevation: searchParams.get("activeLineElevation"),
-  });
-
-  return (
-    <ViewerSwitcherContent
-      {...props}
-      lineHighlightExperiment={lineHighlightExperiment}
-    />
-  );
-}
-
-export function ViewerSwitcher(props: Props) {
-  return (
-    <Suspense
-      fallback={(
-        <ViewerSwitcherContent
-          {...props}
-          lineHighlightExperiment={DEFAULT_LINE_HIGHLIGHT_EXPERIMENT}
-        />
-      )}
-    >
-      <ViewerSwitcherWithSearchParams {...props} />
-    </Suspense>
   );
 }

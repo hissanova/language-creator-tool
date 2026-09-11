@@ -214,7 +214,6 @@ export function ConversationScriptLine(props: ScriptLineCompositionProps) {
     isLoopSelected,
     isLinePlaying,
     isCurrentPlaybackLine = false,
-    lineHighlightExperiment,
     loopEnabled,
     onPause,
     onPlayLine,
@@ -228,7 +227,6 @@ export function ConversationScriptLine(props: ScriptLineCompositionProps) {
       overrides: style.speakers,
     }),
     isCurrentPlaybackLine,
-    lineHighlightExperiment,
   );
   const annotatedTextSegments = resolveAnnotatedTextSegments(
     model.displayTextValue,

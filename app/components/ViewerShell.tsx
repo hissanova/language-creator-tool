@@ -25,7 +25,6 @@ import {
 import { PlayIcon } from "./playback/PlaybackIcons";
 import { getAlignmentRef } from "./script-line/coreQueries";
 import { normalizeMediaSrc } from "./media/normalizeMediaSrc";
-import type { LineHighlightExperiment } from "../styles/scriptLinePresentation";
 
 type Props = {
   document: Document;
@@ -34,7 +33,6 @@ type Props = {
 
 type ViewerShellProps = Props & {
   LineComponent: ScriptLineComponent;
-  lineHighlightExperiment: LineHighlightExperiment;
   showMetadata?: boolean;
   showViewerControls?: boolean;
 };
@@ -182,7 +180,6 @@ export function ViewerShell({
   document,
   style = defaultStyle,
   LineComponent,
-  lineHighlightExperiment,
   showMetadata = false,
   showViewerControls = false,
 }: ViewerShellProps) {
@@ -266,7 +263,6 @@ export function ViewerShell({
             isLoopSelected={playback.state.selectedLoopRange?.lineId === block.text.id}
             isLinePlaying={isLineCurrentlyPlaying(playback.state, playbackRange)}
             isCurrentPlaybackLine={currentPlaybackLineId === block.text.id}
-            lineHighlightExperiment={lineHighlightExperiment}
             loopEnabled={playback.state.loopEnabled}
             onPause={playback.actions.pause}
             onPlayLine={playback.actions.playLine}

@@ -21,8 +21,8 @@
     --foreground: #ededed;
     --script-line-elevation-shadow:
       0 2px 6px rgba(0, 0, 0, 0.8),
-      0 0 0 1px rgba(255, 255, 255, 0.28),
-      0 7px 18px rgba(255, 255, 255, 0.18);
+      0 0 0 1px rgba(255, 255, 255, 0.3),
+      0 5px 10px 5px rgba(255, 255, 255, 0.6);
   }
 }
 
@@ -31,9 +31,9 @@ html.dark {
   --background: #0a0a0a;
   --foreground: #ededed;
   --script-line-elevation-shadow:
-      0 2px 6px rgba(0, 0, 0, 0.8), 
-      0 0 0 1px rgba(255, 255, 255, 0.3), 
-      0px 5px 10px 5px rgba(255, 255, 255, 0.6);
+    0 2px 6px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(255, 255, 255, 0.3),
+    0 5px 10px 5px rgba(255, 255, 255, 0.6);
 }
 
 html.light {
@@ -50,10 +50,7 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.script-line-rail-left::before,
-.script-line-rail-both::before,
-.script-line-rail-right::after,
-.script-line-rail-both::after {
+.script-line-rail-left::before {
   position: absolute;
   top: -1px;
   bottom: -1px;
@@ -65,16 +62,9 @@ body {
   pointer-events: none;
 }
 
-.script-line-rail-left::before,
-.script-line-rail-both::before {
+.script-line-rail-left::before {
   left: -1px;
   border-radius: var(--script-line-radius) 0 0 var(--script-line-radius);
-}
-
-.script-line-rail-right::after,
-.script-line-rail-both::after {
-  right: -1px;
-  border-radius: 0 var(--script-line-radius) var(--script-line-radius) 0;
 }
 
 /* The range remains the seek interaction layer while the track is drawn in JSX. */
