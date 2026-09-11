@@ -54,17 +54,14 @@ body {
   position: absolute;
   top: -1px;
   bottom: -1px;
+  left: -1px;
   width: var(--script-line-rail-width);
   border: 1px solid var(--script-line-rail-outline);
+  border-radius: var(--script-line-radius) 0 0 var(--script-line-radius);
   background: var(--script-line-rail-fill);
   box-sizing: border-box;
   content: "";
   pointer-events: none;
-}
-
-.script-line-rail-left::before {
-  left: -1px;
-  border-radius: var(--script-line-radius) 0 0 var(--script-line-radius);
 }
 
 /* The range remains the seek interaction layer while the track is drawn in JSX. */

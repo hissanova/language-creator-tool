@@ -233,7 +233,7 @@ test("starts paused with reset, non-persistent playback state", () => {
     continuous: false,
     loopEnabled: false,
     selectedLoopRange: null,
-    activeLine: null,
+    linePlaybackRange: null,
     loopRangeEngaged: false,
     playbackEnded: false,
   });
@@ -258,7 +258,7 @@ test("line play restarts at the line start", () => {
   );
   assert.equal(state.currentTime, 10);
   assert.equal(state.playing, true);
-  assert.equal(state.activeLine?.lineId, "line-1");
+  assert.equal(state.linePlaybackRange?.lineId, "line-1");
 });
 
 test("continuous OFF stops at line end while ON continues", () => {
@@ -272,12 +272,12 @@ test("reaching a line boundary releases it so global Play can continue from that
   const linePlaying = playbackReducer(initialPlaybackState, { type: "playLine", range: firstRange });
   const stopped = playbackReducer(linePlaying, { type: "lineBoundaryReached", currentTime: 15 });
   const resumed = playbackReducer(stopped, { type: "setPlaying", playing: true });
-  assert.equal(stopped.activeLine, null);
+  assert.equal(stopped.linePlaybackRange, null);
   assert.equal(stopped.currentTime, 15);
   assert.equal(getTimeUpdateDecision(resumed, 15).type, "continue");
 });
 
-test("continuous changes immediately affect an active line boundary", () => {
+test("continuous changes immediately affect a line playback range boundary", () => {
   const linePlaying = playbackReducer(initialPlaybackState, { type: "playLine", range: firstRange });
   const on = playbackReducer(linePlaying, { type: "setContinuous", continuous: true });
   const off = playbackReducer(on, { type: "setContinuous", continuous: false });
@@ -312,7 +312,7 @@ test("selecting an out-of-range line Loop keeps current playback and media untou
     mediaSource: "/one.mp3",
     playing: true,
     currentTime: 5,
-    activeLine: currentLine,
+    linePlaybackRange: currentLine,
   };
   const selected = playbackReducer(playing, { type: "toggleLineLoop", range: firstRange });
   assert.equal(selected.selectedLoopRange, firstRange);
@@ -320,7 +320,7 @@ test("selecting an out-of-range line Loop keeps current playback and media untou
   assert.equal(selected.playing, true);
   assert.equal(selected.currentTime, 5);
   assert.equal(selected.mediaSource, "/one.mp3");
-  assert.equal(selected.activeLine, currentLine);
+  assert.equal(selected.linePlaybackRange, currentLine);
   assert.equal(selected.loopRangeEngaged, false);
 });
 
@@ -337,7 +337,7 @@ test("selecting a Loop while already inside engages without pausing or seeking",
   assert.equal(selected.currentTime, 12);
   assert.equal(selected.loopEnabled, true);
   assert.equal(selected.loopRangeEngaged, true);
-  assert.equal(selected.activeLine, firstRange);
+  assert.equal(selected.linePlaybackRange, firstRange);
 });
 
 test("selecting a Loop on another media does not stop or switch current playback", () => {
@@ -415,7 +415,7 @@ test("a waiting Loop naturally engages on entering its range without pausing", (
   const engaged = playbackReducer(waiting, { type: "setLoopRangeEngaged", engaged: true });
   assert.equal(engaged.playing, true);
   assert.equal(engaged.loopRangeEngaged, true);
-  assert.equal(engaged.activeLine, firstRange);
+  assert.equal(engaged.linePlaybackRange, firstRange);
 });
 
 test("natural playback crossing a short Loop range still engages before boundary handling", () => {
@@ -551,7 +551,7 @@ test("seeking inside retains Loop while seeking outside disables Loop but retain
   assert.equal(outside.selectedLoopRange, firstRange);
 });
 
-test("switching media resets the old source timing and active line", () => {
+test("switching media resets the old source timing and line playback range", () => {
   const linePlaying = playbackReducer(initialPlaybackState, { type: "playLine", range: firstRange });
   const switched = playbackReducer(linePlaying, {
     type: "setSource",
@@ -562,7 +562,7 @@ test("switching media resets the old source timing and active line", () => {
   assert.equal(switched.mediaSource, "/two.mp3");
   assert.equal(switched.currentTime, 0);
   assert.equal(switched.duration, null);
-  assert.equal(switched.activeLine, null);
+  assert.equal(switched.linePlaybackRange, null);
 });
 
 test("media end stops normally and preserves full-source Loop for the controller to restart", () => {

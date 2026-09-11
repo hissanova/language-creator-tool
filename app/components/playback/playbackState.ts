@@ -21,7 +21,11 @@ export type PlaybackState = {
   continuous: boolean;
   loopEnabled: boolean;
   selectedLoopRange: LinePlaybackRange | null;
-  activeLine: LinePlaybackRange | null;
+  /**
+   * Range started from a line or section playback control.
+   * Used for playback boundary behavior, not current-line presentation.
+   */
+  linePlaybackRange: LinePlaybackRange | null;
   loopRangeEngaged: boolean;
   playbackEnded: boolean;
 };
@@ -36,7 +40,7 @@ export const initialPlaybackState: PlaybackState = {
   continuous: false,
   loopEnabled: false,
   selectedLoopRange: null,
-  activeLine: null,
+  linePlaybackRange: null,
   loopRangeEngaged: false,
   playbackEnded: false,
 };
@@ -94,7 +98,7 @@ export function playbackReducer(
         currentTime: action.currentTime ?? (sourceChanged ? 0 : state.currentTime),
         duration: sourceChanged ? null : state.duration,
         playing: action.playing ?? state.playing,
-        activeLine: sourceChanged ? null : state.activeLine,
+        linePlaybackRange: sourceChanged ? null : state.linePlaybackRange,
         loopRangeEngaged: sourceChanged ? false : state.loopRangeEngaged,
         playbackEnded: false,
       };
@@ -114,7 +118,7 @@ export function playbackReducer(
         ...state,
         currentTime: action.currentTime,
         playing: false,
-        activeLine: null,
+        linePlaybackRange: null,
         playbackEnded: false,
       };
     case "playLine":
@@ -126,7 +130,7 @@ export function playbackReducer(
         duration:
           state.mediaSource === action.range.mediaSource ? state.duration : null,
         playing: true,
-        activeLine: action.range,
+        linePlaybackRange: action.range,
         playbackEnded: false,
         loopRangeEngaged: Boolean(
           state.loopEnabled &&
@@ -148,7 +152,8 @@ export function playbackReducer(
         ...state,
         loopEnabled,
         loopRangeEngaged,
-        activeLine: loopRangeEngaged && selected ? selected : state.activeLine,
+        linePlaybackRange:
+          loopRangeEngaged && selected ? selected : state.linePlaybackRange,
       };
     }
     case "toggleLineLoop": {
@@ -171,17 +176,18 @@ export function playbackReducer(
         loopEnabled: true,
         selectedLoopRange: action.range,
         loopRangeEngaged,
-        activeLine: loopRangeEngaged ? action.range : state.activeLine,
+        linePlaybackRange:
+          loopRangeEngaged ? action.range : state.linePlaybackRange,
       };
     }
     case "setLoopRangeEngaged":
       return {
         ...state,
         loopRangeEngaged: action.engaged,
-        activeLine:
+        linePlaybackRange:
           action.engaged && state.selectedLoopRange
             ? state.selectedLoopRange
-            : state.activeLine,
+            : state.linePlaybackRange,
       };
     case "clearLoopRange":
       return {
@@ -223,7 +229,7 @@ export function playbackReducer(
       return {
         ...state,
         playing: false,
-        activeLine: null,
+        linePlaybackRange: null,
         playbackEnded: true,
       };
   }
@@ -280,13 +286,13 @@ export function getTimeUpdateDecision(
   }
 
   if (
-    state.activeLine &&
-    state.activeLine.mediaSource === state.mediaSource &&
+    state.linePlaybackRange &&
+    state.linePlaybackRange.mediaSource === state.mediaSource &&
     !state.continuous &&
     !(state.loopEnabled && !selected) &&
-    currentTime >= state.activeLine.end
+    currentTime >= state.linePlaybackRange.end
   ) {
-    return { type: "pause", time: state.activeLine.end };
+    return { type: "pause", time: state.linePlaybackRange.end };
   }
 
   return { type: "continue" };
