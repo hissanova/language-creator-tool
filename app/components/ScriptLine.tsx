@@ -15,6 +15,7 @@ type Props = {
   hasPlaybackTiming?: boolean;
   isLoopSelected?: boolean;
   isLinePlaying?: boolean;
+  isCurrentPlaybackLine?: boolean;
   loopEnabled?: boolean;
   onPause?: () => void;
   onPlayLine?: (range: LinePlaybackRange) => void;
@@ -38,6 +39,7 @@ export function ScriptLine({
   hasPlaybackTiming = false,
   isLoopSelected = false,
   isLinePlaying = false,
+  isCurrentPlaybackLine = false,
   loopEnabled = false,
   onPause,
   onPlayLine,
@@ -134,13 +136,14 @@ export function ScriptLine({
 
   return (
     <ScriptLineFrame
-      className={speakerStyle.container}
+      className={[speakerStyle.container, linePresentation.frameClassName]
+        .filter(Boolean)
+        .join(" ")}
       style={{
         backgroundColor: linePresentation.backgroundColor,
-        borderLeftColor: linePresentation.accentColor,
-        borderLeftStyle: "solid",
-        borderLeftWidth: 3,
+        ...linePresentation.frameStyle,
       }}
+      ariaCurrent={isCurrentPlaybackLine ? "true" : undefined}
       topSlot={topSlot}
       bottomSlot={bottomSlot}
     >

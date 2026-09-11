@@ -17,6 +17,7 @@ export type ScriptLineCompositionProps = {
   hasPlaybackTiming?: boolean;
   isLoopSelected?: boolean;
   isLinePlaying?: boolean;
+  isCurrentPlaybackLine?: boolean;
   loopEnabled?: boolean;
   onPause?: () => void;
   onPlayLine?: (range: LinePlaybackRange) => void;

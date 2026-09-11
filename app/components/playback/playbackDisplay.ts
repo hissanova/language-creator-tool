@@ -95,3 +95,26 @@ export function isLineCurrentlyPlaying(
       state.currentTime < range.end,
   );
 }
+
+export function resolveCurrentPlaybackLineId(
+  state: Pick<
+    PlaybackState,
+    | "mediaResourceId"
+    | "mediaSource"
+    | "currentTime"
+    | "playbackEnded"
+  >,
+  ranges: readonly (LinePlaybackRange | null | undefined)[],
+) {
+  if (!state.mediaResourceId || !state.mediaSource || state.playbackEnded) {
+    return null;
+  }
+
+  return ranges.find((range) => Boolean(
+    range &&
+      range.mediaResourceId === state.mediaResourceId &&
+      range.mediaSource === state.mediaSource &&
+      state.currentTime >= range.start &&
+      state.currentTime < range.end,
+  ))?.lineId ?? null;
+}

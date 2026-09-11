@@ -1,5 +1,4 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
 import test from "node:test";
 import { renderToStaticMarkup } from "react-dom/server";
 import type { Speaker } from "../../types/core/document";
@@ -197,8 +196,7 @@ test("ScriptLine applies presentation only to the outer frame and speaker label"
   const outerFrame = frameTag(html);
   assert.doesNotMatch(outerFrame, /data-speaker-id/);
   assert.match(outerFrame, /background-color:#eff6ff/);
-  assert.match(outerFrame, /border-left-color:#2563eb/);
-  assert.match(outerFrame, /border-left-width:3px/);
+  assert.doesNotMatch(outerFrame, /border-left-color|border-left-width/);
   assert.doesNotMatch(outerFrame, /(?:^|;)color:/);
   assert.match(html, /<span[^>]*style="color:#1e40af"[^>]*>Speaker A:/);
   assert.match(html, /<span>Body text<\/span>/);
@@ -230,40 +228,4 @@ test("Conversation and Developer compositions use the same speaker frame present
   assert.equal(frameStyle(conversationHtml), frameStyle(developerHtml));
   assert.match(conversationHtml, /style="color:#1e40af"/);
   assert.match(developerHtml, /style="color:#1e40af"/);
-});
-
-test("annotation slots remain inside a stable full-width outer frame", () => {
-  const presentation = resolve("speaker-a");
-  const withoutPanel = renderToStaticMarkup(
-    <ScriptLine
-      linePresentation={presentation}
-      style={viewerStyle}
-      layoutVariant="grid"
-      textContent="Body text"
-    />,
-  );
-  const withPanel = renderToStaticMarkup(
-    <ScriptLine
-      linePresentation={presentation}
-      style={viewerStyle}
-      layoutVariant="grid"
-      textContent="Body text"
-      bottomSlot={<div data-test-panel>Panel</div>}
-    />,
-  );
-  assert.match(frameTag(withoutPanel), /w-full/);
-  assert.match(frameTag(withPanel), /w-full/);
-  assert.equal(frameStyle(withoutPanel), frameStyle(withPanel));
-  assert.match(withPanel, /data-test-panel="true"/);
-});
-
-test("shared Viewer and frame layers contain no speaker presentation resolution API", () => {
-  const viewerShellSource = readFileSync("app/components/ViewerShell.tsx", "utf8");
-  const frameSource = readFileSync(
-    "app/components/script-line/ScriptLineFrame.tsx",
-    "utf8",
-  );
-
-  assert.doesNotMatch(viewerShellSource, /getSpeakerRef|resolveSpeakerLinePresentation/);
-  assert.doesNotMatch(frameSource, /speakerId|data-speaker-id/);
 });

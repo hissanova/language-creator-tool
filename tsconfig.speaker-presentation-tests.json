@@ -9,6 +9,7 @@
     "rootDir": "."
   },
   "include": [
-    "app/components/script-line/speakerPresentation.test.tsx"
+    "app/components/script-line/speakerPresentation.test.tsx",
+    "app/components/script-line/scriptLinePresentation.test.tsx"
   ]
 }

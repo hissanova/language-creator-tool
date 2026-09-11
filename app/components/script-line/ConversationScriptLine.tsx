@@ -18,6 +18,7 @@ import {
 import { resolveAnnotatedTextSegments } from "./resolveAnnotatedTextSegments";
 import type { ScriptLineCompositionProps } from "./types";
 import { resolveSpeakerLinePresentation } from "../../styles/speakerLinePresentation";
+import { resolveScriptLinePresentation } from "../../styles/scriptLinePresentation";
 
 function mergeTagTextDisplayStyles(tags: string[], style: ViewerStyle) {
   const configuredStyles = tags
@@ -212,17 +213,21 @@ export function ConversationScriptLine(props: ScriptLineCompositionProps) {
     hasPlaybackTiming,
     isLoopSelected,
     isLinePlaying,
+    isCurrentPlaybackLine = false,
     loopEnabled,
     onPause,
     onPlayLine,
     onToggleLineLoop,
   } = props;
   const model = buildScriptLineModel(props);
-  const linePresentation = resolveSpeakerLinePresentation({
-    speakerId: model.speakerId,
-    speakers: props.speakers,
-    overrides: style.speakers,
-  });
+  const linePresentation = resolveScriptLinePresentation(
+    resolveSpeakerLinePresentation({
+      speakerId: model.speakerId,
+      speakers: props.speakers,
+      overrides: style.speakers,
+    }),
+    isCurrentPlaybackLine,
+  );
   const annotatedTextSegments = resolveAnnotatedTextSegments(
     model.displayTextValue,
     model.annotations,
@@ -281,6 +286,7 @@ export function ConversationScriptLine(props: ScriptLineCompositionProps) {
       hasPlaybackTiming={hasPlaybackTiming}
       isLoopSelected={isLoopSelected}
       isLinePlaying={isLinePlaying}
+      isCurrentPlaybackLine={isCurrentPlaybackLine}
       loopEnabled={loopEnabled}
       onPause={onPause}
       onPlayLine={onPlayLine}

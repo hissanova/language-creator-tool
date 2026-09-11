@@ -3,6 +3,9 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --script-line-elevation-shadow:
+    0 2px 4px rgba(15, 23, 42, 0.24),
+    0 8px 18px rgba(15, 23, 42, 0.3);
 }
 
 @theme inline {
@@ -16,6 +19,10 @@
   :root {
     --background: #0a0a0a;
     --foreground: #ededed;
+    --script-line-elevation-shadow:
+      0 2px 6px rgba(0, 0, 0, 0.8),
+      0 0 0 1px rgba(255, 255, 255, 0.3),
+      0 5px 10px 5px rgba(255, 255, 255, 0.6);
   }
 }
 
@@ -23,17 +30,38 @@
 html.dark {
   --background: #0a0a0a;
   --foreground: #ededed;
+  --script-line-elevation-shadow:
+    0 2px 6px rgba(0, 0, 0, 0.8),
+    0 0 0 1px rgba(255, 255, 255, 0.3),
+    0 5px 10px 5px rgba(255, 255, 255, 0.6);
 }
 
 html.light {
   --background: #ffffff;
   --foreground: #171717;
+  --script-line-elevation-shadow:
+    0 2px 4px rgba(15, 23, 42, 0.24),
+    0 8px 18px rgba(15, 23, 42, 0.3);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.script-line-rail-left::before {
+  position: absolute;
+  top: -1px;
+  bottom: -1px;
+  left: -1px;
+  width: var(--script-line-rail-width);
+  border: 1px solid var(--script-line-rail-outline);
+  border-radius: var(--script-line-radius) 0 0 var(--script-line-radius);
+  background: var(--script-line-rail-fill);
+  box-sizing: border-box;
+  content: "";
+  pointer-events: none;
 }
 
 /* The range remains the seek interaction layer while the track is drawn in JSX. */
