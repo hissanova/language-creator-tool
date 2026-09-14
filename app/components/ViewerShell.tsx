@@ -14,6 +14,7 @@ import type { ViewerStyle } from "../types/viewerStyle";
 import type { ScriptLineComponent } from "./script-line/types";
 import { viewerStyle as defaultStyle } from "../styles/viewerStyle";
 import { PlaybackBar } from "./playback/PlaybackBar";
+import { releasePlaybackButtonFocusOnPointerUp } from "./playback/playbackButtonFocus";
 import { resolveLinePlaybackRange } from "./playback/linePlayback";
 import type { LinePlaybackRange } from "./playback/playbackState";
 import { usePlaybackController } from "./playback/usePlaybackController";
@@ -287,6 +288,7 @@ export function ViewerShell({
         <div className="flex items-center gap-3">
           {audioResources[0] && section.time?.end != null && (
             <button
+              type="button"
               onClick={() => playback.actions.playLine({
                 type: "line",
                 lineId: section.id,
@@ -295,6 +297,7 @@ export function ViewerShell({
                 start: section.time!.start,
                 end: section.time!.end!,
               } satisfies LinePlaybackRange)}
+              onPointerUp={releasePlaybackButtonFocusOnPointerUp}
               className={style.layout.playButton}
               aria-label="Play section"
               title="Play section"

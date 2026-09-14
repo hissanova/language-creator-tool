@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import test from "node:test";
 import { renderToStaticMarkup } from "react-dom/server";
 import type { MediaResource } from "../../types/core/document";
@@ -32,6 +33,7 @@ import {
 import type { PlaybackController } from "./usePlaybackController";
 import { dispatchLineLoopSelection } from "./usePlaybackController";
 import { activateLinePlaybackControl } from "./linePlaybackControl";
+import { releasePlaybackButtonFocusOnPointerUp } from "./playbackButtonFocus";
 import {
   handlePlaybackKeyboardShortcut,
   isEditablePlaybackShortcutTarget,
@@ -91,6 +93,57 @@ function targetMatching(editableSelector: string): EventTarget {
   };
   return target as unknown as EventTarget;
 }
+
+test("pointer activation releases focus from a Playback button", () => {
+  let blurCount = 0;
+
+  releasePlaybackButtonFocusOnPointerUp({
+    currentTarget: {
+      blur: () => { blurCount += 1; },
+    } as HTMLButtonElement,
+  });
+
+  assert.equal(blurCount, 1);
+});
+
+test("keyboard activation retains Playback button focus", () => {
+  let focused = true;
+  let activationCount = 0;
+  const activateFromKeyboard = () => { activationCount += 1; };
+
+  // Native Space/Enter activation dispatches click without dispatching pointerup.
+  activateFromKeyboard();
+
+  assert.equal(activationCount, 1);
+  assert.equal(focused, true);
+
+  releasePlaybackButtonFocusOnPointerUp({
+    currentTarget: {
+      blur: () => { focused = false; },
+    } as HTMLButtonElement,
+  });
+  assert.equal(focused, false);
+});
+
+test("all Playback buttons share pointer focus release while seek retains focus", () => {
+  const playbackBarSource = readFileSync(
+    "app/components/playback/PlaybackBar.tsx",
+    "utf8",
+  );
+  const scriptLineSource = readFileSync("app/components/ScriptLine.tsx", "utf8");
+  const viewerShellSource = readFileSync("app/components/ViewerShell.tsx", "utf8");
+  const handlerProp = /onPointerUp=\{releasePlaybackButtonFocusOnPointerUp\}/g;
+
+  // SkipButton represents all four Skip controls. The other five occurrences
+  // cover global Play/Pause, Continuous, Loop, speed, and clear-loop controls.
+  assert.equal(playbackBarSource.match(handlerProp)?.length, 6);
+  assert.equal(scriptLineSource.match(handlerProp)?.length, 2);
+  assert.equal(viewerShellSource.match(handlerProp)?.length, 1);
+
+  const seekInput = playbackBarSource.match(/<input\s+[\s\S]*?type="range"[\s\S]*?\/>/)?.[0];
+  assert.ok(seekInput);
+  assert.doesNotMatch(seekInput, /onPointerUp/);
+});
 
 test("media sources use only generic public-path normalization", () => {
   const unchangedSources = [
