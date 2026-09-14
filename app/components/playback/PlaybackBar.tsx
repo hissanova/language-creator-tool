@@ -7,6 +7,7 @@ import {
   getPlaybackProgressPercentage,
 } from "./playbackDisplay";
 import { loopButtonClass, toggleButtonClass } from "./playbackButtonStyles";
+import { releasePlaybackButtonFocusOnPointerUp } from "./playbackButtonFocus";
 import { LoopIcon, PauseIcon, PlayIcon, SkipIcon } from "./PlaybackIcons";
 
 function SkipButton({
@@ -29,6 +30,7 @@ function SkipButton({
       aria-label={label}
       title={label}
       onClick={() => onSkip(seconds)}
+      onPointerUp={releasePlaybackButtonFocusOnPointerUp}
       className="inline-flex min-w-12 items-center justify-center gap-0.5 rounded-full border px-2 py-2 text-xs font-semibold text-gray-800 hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
     >
       <SkipIcon direction={direction} className="h-4 w-4" />
@@ -87,6 +89,7 @@ export function PlaybackBar({ controller }: { controller: PlaybackController }) 
           <button
             type="button"
             onClick={state.playing ? actions.pause : actions.play}
+            onPointerUp={releasePlaybackButtonFocusOnPointerUp}
             className="inline-flex min-h-12 min-w-16 items-center justify-center rounded-full border-2 border-blue-700 bg-blue-50 px-5 py-2 text-blue-800 hover:bg-blue-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
             aria-label={playLabel}
             title={playLabel}
@@ -107,6 +110,7 @@ export function PlaybackBar({ controller }: { controller: PlaybackController }) 
               data-playback-toggle="continuous"
               data-state={state.continuous ? "on" : "off"}
               onClick={() => actions.setContinuous(!state.continuous)}
+              onPointerUp={releasePlaybackButtonFocusOnPointerUp}
               className={toggleButtonClass(state.continuous)}
             >
               Continuous
@@ -119,6 +123,7 @@ export function PlaybackBar({ controller }: { controller: PlaybackController }) 
               data-playback-toggle="loop"
               data-state={state.loopEnabled ? "on" : "off"}
               onClick={actions.toggleLoop}
+              onPointerUp={releasePlaybackButtonFocusOnPointerUp}
               className={loopButtonClass({ pressed: state.loopEnabled })}
             >
               <LoopIcon />
@@ -135,6 +140,7 @@ export function PlaybackBar({ controller }: { controller: PlaybackController }) 
                   aria-pressed={selectedRate}
                   aria-label={`Set playback speed to ${rate}×`}
                   onClick={() => actions.setPlaybackRate(rate as PlaybackRate)}
+                  onPointerUp={releasePlaybackButtonFocusOnPointerUp}
                   className={[
                     "rounded border px-2 py-1 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700",
                     selectedRate
@@ -246,6 +252,7 @@ export function PlaybackBar({ controller }: { controller: PlaybackController }) 
               aria-label="Clear loop range"
               title="Clear loop range"
               onClick={actions.clearLoopRange}
+              onPointerUp={releasePlaybackButtonFocusOnPointerUp}
               className="rounded border px-2 py-1 hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
             >
               ×

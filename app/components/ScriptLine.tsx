@@ -4,6 +4,7 @@ import type { ScriptLinePresentation, ViewerStyle } from "../types/viewerStyle";
 import type { LinePlaybackRange } from "./playback/playbackState";
 import { LoopIcon, PauseIcon, PlayIcon } from "./playback/PlaybackIcons";
 import { loopButtonClass } from "./playback/playbackButtonStyles";
+import { releasePlaybackButtonFocusOnPointerUp } from "./playback/playbackButtonFocus";
 import { activateLinePlaybackControl } from "./playback/linePlaybackControl";
 import { ScriptLineFrame } from "./script-line/ScriptLineFrame";
 import { ScriptLineRow } from "./script-line/ScriptLineRow";
@@ -75,6 +76,7 @@ export function ScriptLine({
           pause: onPause,
           playLine: onPlayLine,
         })}
+        onPointerUp={releasePlaybackButtonFocusOnPointerUp}
         className={`${style.layout.playButton} focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 disabled:cursor-not-allowed disabled:opacity-40`}
         aria-label={linePlaybackLabel}
         title={playbackRange ? linePlaybackLabel : "Line timing is invalid or its audio cannot be resolved"}
@@ -87,6 +89,7 @@ export function ScriptLine({
         aria-pressed={isLoopSelected && loopEnabled}
         data-loop-selected={isLoopSelected ? (loopEnabled ? "active" : "inactive") : undefined}
         onClick={() => playbackRange && onToggleLineLoop?.(playbackRange)}
+        onPointerUp={releasePlaybackButtonFocusOnPointerUp}
         className={loopButtonClass({
           pressed: isLoopSelected && loopEnabled,
           selected: isLoopSelected,
