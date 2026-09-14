@@ -39,7 +39,13 @@ function SkipButton({
   );
 }
 
-export function PlaybackBar({ controller }: { controller: PlaybackController }) {
+export function PlaybackBar({
+  controller,
+  onSeekIntent,
+}: {
+  controller: PlaybackController;
+  onSeekIntent?: () => void;
+}) {
   const { state, actions, mediaProps } = controller;
   const duration = state.duration != null &&
     Number.isFinite(state.duration) &&
@@ -222,7 +228,10 @@ export function PlaybackBar({ controller }: { controller: PlaybackController }) 
             step={0.001}
             value={seekValue}
             disabled={!state.mediaSource || !hasDuration}
-            onChange={(event) => actions.seek(Number(event.target.value))}
+            onChange={(event) => {
+              actions.seek(Number(event.target.value));
+              onSeekIntent?.();
+            }}
             className="playback-seek-input absolute inset-0 z-30 h-8 w-full cursor-pointer rounded-full bg-transparent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 disabled:cursor-not-allowed"
           />
         </div>
