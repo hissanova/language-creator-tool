@@ -26,6 +26,8 @@ import {
 import { PlayIcon } from "./playback/PlaybackIcons";
 import { getAlignmentRef } from "./script-line/coreQueries";
 import { normalizeMediaSrc } from "./media/normalizeMediaSrc";
+import { AutoFollowControls } from "./auto-follow/AutoFollowControls";
+import { useActiveLineAutoFollow } from "./auto-follow/useActiveLineAutoFollow";
 
 type Props = {
   document: Document;
@@ -242,6 +244,23 @@ export function ViewerShell({
     playback.state,
     [...playbackRanges.values()],
   );
+  const {
+    enabled: autoFollowEnabled,
+    setEnabled: setAutoFollowEnabled,
+    mode: autoFollowMode,
+    setMode: setAutoFollowMode,
+    suspended: autoFollowSuspended,
+    resumeFollow,
+    handleSeekIntent,
+    registerStickyControls,
+    registerLineElement,
+  } = useActiveLineAutoFollow({
+    documentToken: document,
+    sourceToken: playback.state.mediaSource,
+    currentLineId: currentPlaybackLineId,
+    playbackPosition: playback.state.currentTime,
+    playing: playback.state.playing,
+  });
 
   const renderBlock = (block: SectionBlock) => {
     switch (block.type) {
@@ -249,26 +268,27 @@ export function ViewerShell({
         const playbackRange = playbackRanges.get(block.text.id) ?? null;
         const hasPlaybackTiming = Boolean(getAlignmentRef(block.text.textLineRefs));
         return (
-          <LineComponent
-            key={block.text.id}
-            textNode={block.text}
-            speakers={speakers}
-            resources={document.resources}
-            defaultLanguageId={document.metadata.defaultLanguageId}
-            languages={document.metadata.languages}
-            formId={formId}
-            translationLanguageId={translationLanguageId}
-            style={style}
-            playbackRange={playbackRange}
-            hasPlaybackTiming={hasPlaybackTiming}
-            isLoopSelected={playback.state.selectedLoopRange?.lineId === block.text.id}
-            isLinePlaying={isLineCurrentlyPlaying(playback.state, playbackRange)}
-            isCurrentPlaybackLine={currentPlaybackLineId === block.text.id}
-            loopEnabled={playback.state.loopEnabled}
-            onPause={playback.actions.pause}
-            onPlayLine={playback.actions.playLine}
-            onToggleLineLoop={playback.actions.toggleLineLoop}
-          />
+          <div key={block.text.id} ref={registerLineElement(block.text.id)}>
+            <LineComponent
+              textNode={block.text}
+              speakers={speakers}
+              resources={document.resources}
+              defaultLanguageId={document.metadata.defaultLanguageId}
+              languages={document.metadata.languages}
+              formId={formId}
+              translationLanguageId={translationLanguageId}
+              style={style}
+              playbackRange={playbackRange}
+              hasPlaybackTiming={hasPlaybackTiming}
+              isLoopSelected={playback.state.selectedLoopRange?.lineId === block.text.id}
+              isLinePlaying={isLineCurrentlyPlaying(playback.state, playbackRange)}
+              isCurrentPlaybackLine={currentPlaybackLineId === block.text.id}
+              loopEnabled={playback.state.loopEnabled}
+              onPause={playback.actions.pause}
+              onPlayLine={playback.actions.playLine}
+              onToggleLineLoop={playback.actions.toggleLineLoop}
+            />
+          </div>
         );
       }
       case "note":
@@ -331,8 +351,19 @@ export function ViewerShell({
       {showMetadata && <MetadataDetails document={document} />}
 
       {audioResources.length > 0 && (
-        <div className={style.layout.mediaBar}>
-          <PlaybackBar controller={playback} />
+        <div ref={registerStickyControls} className={style.layout.mediaBar}>
+          <PlaybackBar
+            controller={playback}
+            onSeekIntent={handleSeekIntent}
+          />
+          <AutoFollowControls
+            enabled={autoFollowEnabled}
+            mode={autoFollowMode}
+            suspended={autoFollowSuspended}
+            onEnabledChange={setAutoFollowEnabled}
+            onModeChange={setAutoFollowMode}
+            onResume={resumeFollow}
+          />
         </div>
       )}
 

@@ -41,6 +41,24 @@ import {
 } from "./playbackKeyboardShortcuts";
 import { normalizeMediaSrc } from "../media/normalizeMediaSrc";
 import { conversationSampleChinese1 } from "../../../samples/core-json/generated/conversation-hyq_2026-04-16_xindeyanjing_EDITED-BY-SIMON";
+import { AutoFollowControls } from "../auto-follow/AutoFollowControls";
+import {
+  AUTO_FOLLOW_DEFAULT_ENABLED,
+  AUTO_FOLLOW_DEFAULT_MODE,
+  getAutoFollowSafeRegion,
+  getAutoFollowScrollBehavior,
+  getCenteredScrollTarget,
+  getUsableViewport,
+  isLineWithinRegion,
+  isManualAutoFollowKey,
+  resolveAutoFollowScrollTarget,
+  resolveManualScrollSuspension,
+  shouldEvaluateAutoFollow,
+  shouldIgnoreProgrammaticScroll,
+  shouldRunAutoFollow,
+  type AutoFollowSnapshot,
+  type AutoFollowMode,
+} from "../auto-follow/autoFollow";
 
 const firstRange: LinePlaybackRange = {
   type: "line",
@@ -143,6 +161,391 @@ test("all Playback buttons share pointer focus release while seek retains focus"
   const seekInput = playbackBarSource.match(/<input\s+[\s\S]*?type="range"[\s\S]*?\/>/)?.[0];
   assert.ok(seekInput);
   assert.doesNotMatch(seekInput, /onPointerUp/);
+});
+
+const autoFollowDocument = {};
+
+function autoFollowSnapshot(
+  overrides: Partial<AutoFollowSnapshot> = {},
+): AutoFollowSnapshot {
+  return {
+    documentToken: autoFollowDocument,
+    sourceToken: "/one.mp3",
+    enabled: true,
+    playing: true,
+    currentLineId: "line-1",
+    playbackPosition: 10,
+    mode: "unpinned",
+    followRequest: 0,
+    ...overrides,
+  };
+}
+
+function renderAutoFollowControls(
+  mode: AutoFollowMode,
+  suspended = false,
+  enabled = true,
+) {
+  return renderToStaticMarkup(
+    <AutoFollowControls
+      enabled={enabled}
+      mode={mode}
+      suspended={suspended}
+      onEnabledChange={() => undefined}
+      onModeChange={() => undefined}
+      onResume={() => undefined}
+    />,
+  );
+}
+
+test("auto-follow defaults to On and Unpinned and exposes both preferences", () => {
+  assert.equal(AUTO_FOLLOW_DEFAULT_ENABLED, true);
+  assert.equal(AUTO_FOLLOW_DEFAULT_MODE, "unpinned");
+  const unpinned = renderAutoFollowControls("unpinned");
+  const pinned = renderAutoFollowControls("pinned");
+  assert.match(unpinned, /aria-label="Auto-follow"/);
+  assert.match(unpinned, /aria-pressed="true"[^>]*>On<\/button>/);
+  assert.match(unpinned, /aria-label="Auto-follow scroll mode"/);
+  assert.match(unpinned, /aria-pressed="true"[^>]*>Unpinned<\/button>/);
+  assert.match(pinned, /aria-pressed="true"[^>]*>Pinned<\/button>/);
+});
+
+test("auto-follow can be switched On and Off independently of mode", () => {
+  const on = renderAutoFollowControls("unpinned", false, true);
+  const off = renderAutoFollowControls("unpinned", false, false);
+  assert.match(on, /aria-pressed="true"[^>]*>On<\/button>/);
+  assert.match(off, /aria-pressed="true"[^>]*>Off<\/button>/);
+});
+
+test("Off prevents every source of programmatic follow evaluation", () => {
+  const previous = autoFollowSnapshot({ enabled: false });
+  for (const next of [
+    autoFollowSnapshot({ enabled: false, currentLineId: "line-2" }),
+    autoFollowSnapshot({ enabled: false, followRequest: 1 }),
+    autoFollowSnapshot({ enabled: false, mode: "pinned" }),
+    autoFollowSnapshot({ enabled: false, playbackPosition: 0 }),
+    autoFollowSnapshot({ enabled: false, sourceToken: "/two.mp3" }),
+  ]) {
+    assert.equal(shouldEvaluateAutoFollow(previous, next), false);
+  }
+});
+
+test("Off preserves current-line highlight derivation", () => {
+  const viewerShellSource = readFileSync("app/components/ViewerShell.tsx", "utf8");
+  assert.match(
+    viewerShellSource,
+    /isCurrentPlaybackLine=\{currentPlaybackLineId === block\.text\.id\}/,
+  );
+  assert.doesNotMatch(
+    viewerShellSource,
+    /isCurrentPlaybackLine=\{autoFollowEnabled/,
+  );
+});
+
+test("Off hides Resume follow and disables but preserves the selected mode", () => {
+  const offPinned = renderAutoFollowControls("pinned", true, false);
+  assert.doesNotMatch(offPinned, /Resume follow/);
+  assert.match(offPinned, /aria-pressed="true" disabled=""[^>]*>Pinned<\/button>/);
+  assert.match(offPinned, /disabled=""[^>]*>Unpinned<\/button>/);
+});
+
+test("turning On during playback immediately evaluates the selected mode", () => {
+  assert.equal(shouldEvaluateAutoFollow(
+    autoFollowSnapshot({ enabled: false }),
+    autoFollowSnapshot({ enabled: true }),
+  ), true);
+});
+
+test("turning On while paused waits for playback", () => {
+  assert.equal(shouldEvaluateAutoFollow(
+    autoFollowSnapshot({ enabled: false, playing: false }),
+    autoFollowSnapshot({ enabled: true, playing: false }),
+  ), false);
+});
+
+test("usable viewport starts below the measured sticky controls", () => {
+  assert.deepEqual(getUsableViewport(1_000, { top: 0, bottom: 200 }), {
+    top: 200,
+    bottom: 1_000,
+  });
+  assert.deepEqual(getUsableViewport(1_000, { top: 100, bottom: 260 }), {
+    top: 260,
+    bottom: 1_000,
+  });
+  assert.deepEqual(getUsableViewport(1_000, { top: -300, bottom: -100 }), {
+    top: 0,
+    bottom: 1_000,
+  });
+});
+
+test("Unpinned safe region is the central 50% of the usable viewport", () => {
+  assert.deepEqual(getAutoFollowSafeRegion({ top: 200, bottom: 1_000 }), {
+    top: 400,
+    bottom: 800,
+  });
+  assert.equal(isLineWithinRegion({ top: 400, bottom: 800 }, { top: 400, bottom: 800 }), true);
+  assert.equal(isLineWithinRegion({ top: 399, bottom: 800 }, { top: 400, bottom: 800 }), false);
+  assert.equal(isLineWithinRegion({ top: 400, bottom: 801 }, { top: 400, bottom: 800 }), false);
+});
+
+test("Unpinned does not scroll a line inside the safe region", () => {
+  assert.equal(resolveAutoFollowScrollTarget({
+    mode: "unpinned",
+    lineRect: { top: 500, bottom: 600 },
+    usableViewport: { top: 200, bottom: 1_000 },
+    currentScrollY: 100,
+  }), null);
+});
+
+test("Unpinned centers a line outside the safe region", () => {
+  assert.equal(resolveAutoFollowScrollTarget({
+    mode: "unpinned",
+    lineRect: { top: 800, bottom: 900 },
+    usableViewport: { top: 200, bottom: 1_000 },
+    currentScrollY: 100,
+  }), 350);
+});
+
+test("Pinned always produces a usable-viewport-centered target", () => {
+  assert.equal(resolveAutoFollowScrollTarget({
+    mode: "pinned",
+    lineRect: { top: 500, bottom: 600 },
+    usableViewport: { top: 200, bottom: 1_000 },
+    currentScrollY: 100,
+  }), 50);
+  assert.equal(getCenteredScrollTarget(
+    { top: -200, bottom: -100 },
+    { top: 200, bottom: 1_000 },
+    0,
+  ), 0);
+});
+
+test("a current-line change requests one auto-follow evaluation", () => {
+  assert.equal(shouldEvaluateAutoFollow(
+    autoFollowSnapshot(),
+    autoFollowSnapshot({ currentLineId: "line-2" }),
+  ), true);
+});
+
+test("same-line time updates do not repeat auto-follow", () => {
+  const snapshot = autoFollowSnapshot();
+  assert.equal(shouldEvaluateAutoFollow(
+    snapshot,
+    { ...snapshot, playbackPosition: 10.5 },
+  ), false);
+});
+
+test("a same-line Loop rewind reevaluates auto-follow once", () => {
+  assert.equal(shouldEvaluateAutoFollow(
+    autoFollowSnapshot({ playbackPosition: 15 }),
+    autoFollowSnapshot({ playbackPosition: 10 }),
+  ), true);
+});
+
+test("paused playback never evaluates auto-follow, including seek requests", () => {
+  assert.equal(shouldEvaluateAutoFollow(
+    autoFollowSnapshot({ playing: false }),
+    autoFollowSnapshot({ playing: false, followRequest: 1 }),
+  ), false);
+});
+
+test("resuming playback evaluates the current line", () => {
+  assert.equal(shouldEvaluateAutoFollow(
+    autoFollowSnapshot({ playing: false }),
+    autoFollowSnapshot(),
+  ), true);
+});
+
+test("an explicit playing seek evaluates even when the current line is unchanged", () => {
+  assert.equal(shouldEvaluateAutoFollow(
+    autoFollowSnapshot(),
+    autoFollowSnapshot({ followRequest: 1 }),
+  ), true);
+});
+
+test("changing to Pinned while playing reevaluates the current line", () => {
+  assert.equal(shouldEvaluateAutoFollow(
+    autoFollowSnapshot(),
+    autoFollowSnapshot({ mode: "pinned" }),
+  ), true);
+});
+
+test("changing mode while manually suspended does not resume following", () => {
+  assert.equal(shouldRunAutoFollow({
+    shouldEvaluate: true,
+    suspended: true,
+    playbackStarted: false,
+  }), false);
+  assert.equal(shouldRunAutoFollow({
+    shouldEvaluate: true,
+    suspended: true,
+    playbackStarted: true,
+  }), true);
+});
+
+test("wheel, touch, and non-interactive scroll keys suspend auto-follow", () => {
+  const hookSource = readFileSync(
+    "app/components/auto-follow/useActiveLineAutoFollow.ts",
+    "utf8",
+  );
+  assert.match(hookSource, /addEventListener\("wheel", suspendForManualIntent/);
+  assert.match(hookSource, /addEventListener\("touchmove", suspendForManualIntent/);
+  assert.equal(isManualAutoFollowKey({
+    key: "PageDown",
+    defaultPrevented: false,
+    altKey: false,
+    ctrlKey: false,
+    metaKey: false,
+    target: null,
+  }), true);
+});
+
+test("interactive Arrow keys and playback Space are not manual-scroll suspension", () => {
+  const baseKey = {
+    defaultPrevented: false,
+    altKey: false,
+    ctrlKey: false,
+    metaKey: false,
+    target: null,
+  };
+  assert.equal(isManualAutoFollowKey({ ...baseKey, key: " " }), false);
+  assert.equal(isManualAutoFollowKey({
+    ...baseKey,
+    key: "ArrowDown",
+    target: targetMatching("button"),
+  }), false);
+  assert.equal(isManualAutoFollowKey({ ...baseKey, key: "ArrowDown", defaultPrevented: true }), false);
+});
+
+test("programmatic scroll events are ignored only for the bounded scroll window", () => {
+  const programmaticScroll = { targetY: 500, expiresAt: 2_000 };
+  assert.equal(shouldIgnoreProgrammaticScroll(programmaticScroll, 1_999), true);
+  assert.equal(shouldIgnoreProgrammaticScroll(programmaticScroll, 2_001), false);
+  assert.equal(shouldIgnoreProgrammaticScroll(null, 1_000), false);
+});
+
+test("scrollbar movement suspends and returning from outside the safe region resumes", () => {
+  assert.deepEqual(resolveManualScrollSuspension({
+    suspended: false,
+    outsideSafeRegion: false,
+    lineWithinSafeRegion: false,
+  }), { suspended: true, outsideSafeRegion: true, shouldResume: false });
+  assert.deepEqual(resolveManualScrollSuspension({
+    suspended: true,
+    outsideSafeRegion: true,
+    lineWithinSafeRegion: true,
+  }), { suspended: false, outsideSafeRegion: false, shouldResume: true });
+});
+
+test("manual movement that remains safe stays suspended until the line leaves and returns", () => {
+  assert.deepEqual(resolveManualScrollSuspension({
+    suspended: false,
+    outsideSafeRegion: false,
+    lineWithinSafeRegion: true,
+  }), { suspended: true, outsideSafeRegion: false, shouldResume: false });
+  assert.deepEqual(resolveManualScrollSuspension({
+    suspended: true,
+    outsideSafeRegion: false,
+    lineWithinSafeRegion: true,
+  }), { suspended: true, outsideSafeRegion: false, shouldResume: false });
+});
+
+test("manual suspension remains runtime state and does not turn the preference Off", () => {
+  const hookSource = readFileSync(
+    "app/components/auto-follow/useActiveLineAutoFollow.ts",
+    "utf8",
+  );
+  const manualEffect = hookSource.slice(hookSource.indexOf("const suspendForManualIntent"));
+  assert.match(manualEffect, /setSuspended\(true\)/);
+  assert.doesNotMatch(manualEffect, /setEnabledState\(false\)/);
+});
+
+test("turning Off clears temporary suspension without changing mode", () => {
+  const hookSource = readFileSync(
+    "app/components/auto-follow/useActiveLineAutoFollow.ts",
+    "utf8",
+  );
+  const enabledSetter = hookSource.slice(
+    hookSource.indexOf("const setEnabled"),
+    hookSource.indexOf("const requestFollow"),
+  );
+  assert.match(enabledSetter, /setSuspended\(false\)/);
+  assert.doesNotMatch(enabledSetter, /setMode/);
+});
+
+test("Resume follow is exposed only while manual suspension is active", () => {
+  assert.doesNotMatch(renderAutoFollowControls("unpinned"), /Resume follow/);
+  const suspended = renderAutoFollowControls("unpinned", true);
+  assert.match(suspended, /Auto-follow paused after manual scrolling/);
+  assert.match(suspended, /aria-label="Resume auto-follow after manual scrolling"[^>]*>Resume follow<\/button>/);
+});
+
+test("Resume follow immediately requests reevaluation without changing line identity", () => {
+  assert.equal(shouldEvaluateAutoFollow(
+    autoFollowSnapshot({ followRequest: 4 }),
+    autoFollowSnapshot({ followRequest: 5 }),
+  ), true);
+});
+
+test("reduced motion selects immediate scrolling", () => {
+  assert.equal(getAutoFollowScrollBehavior(true), "auto");
+  assert.equal(getAutoFollowScrollBehavior(false), "smooth");
+});
+
+test("missing current-line geometry safely produces no scroll target", () => {
+  assert.equal(resolveAutoFollowScrollTarget({
+    mode: "pinned",
+    lineRect: null,
+    usableViewport: { top: 200, bottom: 1_000 },
+    currentScrollY: 100,
+  }), null);
+});
+
+test("document changes reevaluate with a fresh line registry", () => {
+  assert.equal(shouldEvaluateAutoFollow(
+    autoFollowSnapshot(),
+    autoFollowSnapshot({ documentToken: {} }),
+  ), true);
+  const hookSource = readFileSync(
+    "app/components/auto-follow/useActiveLineAutoFollow.ts",
+    "utf8",
+  );
+  assert.match(hookSource, /return createLineElementRegistry\(\);/);
+  assert.match(hookSource, /\[documentToken, sourceToken\]/);
+});
+
+test("Conversation and Developer viewers share ViewerShell auto-follow", () => {
+  const conversationSource = readFileSync("app/components/ConversationViewer.tsx", "utf8");
+  const developerSource = readFileSync("app/components/DeveloperViewer.tsx", "utf8");
+  const viewerShellSource = readFileSync("app/components/ViewerShell.tsx", "utf8");
+  assert.match(conversationSource, /<ViewerShell/);
+  assert.match(developerSource, /<ViewerShell/);
+  assert.match(viewerShellSource, /useActiveLineAutoFollow/);
+});
+
+test("auto-follow preferences remain local to the Viewer session", () => {
+  const autoFollowSource = [
+    readFileSync("app/components/auto-follow/autoFollow.ts", "utf8"),
+    readFileSync("app/components/auto-follow/useActiveLineAutoFollow.ts", "utf8"),
+    readFileSync("app/components/auto-follow/AutoFollowControls.tsx", "utf8"),
+  ].join("\n");
+  assert.doesNotMatch(autoFollowSource, /localStorage|URLSearchParams|searchParams/);
+});
+
+test("auto-follow scrolls without moving keyboard focus and keeps #52 handlers", () => {
+  const hookSource = readFileSync(
+    "app/components/auto-follow/useActiveLineAutoFollow.ts",
+    "utf8",
+  );
+  const controlsSource = readFileSync(
+    "app/components/auto-follow/AutoFollowControls.tsx",
+    "utf8",
+  );
+  assert.doesNotMatch(hookSource, /\.focus\(|activeElement/);
+  assert.equal(
+    controlsSource.match(/onPointerUp=\{releasePlaybackButtonFocusOnPointerUp\}/g)?.length,
+    3,
+  );
 });
 
 test("media sources use only generic public-path normalization", () => {
