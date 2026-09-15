@@ -122,7 +122,7 @@ export function useActiveLineAutoFollow({
     return { lineRect, usableViewport };
   }, [registry]);
 
-  const followCurrentLine = useCallback((playbackStarted: boolean) => {
+  const followCurrentLine = useCallback(() => {
     const geometry = getCurrentGeometry();
     if (!geometry) return;
 
@@ -131,7 +131,6 @@ export function useActiveLineAutoFollow({
       lineRect: geometry.lineRect,
       usableViewport: geometry.usableViewport,
       currentScrollY: window.scrollY,
-      playbackStarted,
     });
     if (targetY == null) return;
 
@@ -176,7 +175,7 @@ export function useActiveLineAutoFollow({
       suspended: suspendedRef.current,
       playbackStarted,
     })) return;
-    followCurrentLine(playbackStarted);
+    followCurrentLine();
   }, [
     currentLineId,
     documentToken,

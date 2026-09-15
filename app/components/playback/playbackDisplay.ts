@@ -63,24 +63,6 @@ export function getPlaybackRangeVisualStyle(
   };
 }
 
-export function isLineCurrentlyPlaying(
-  state: Pick<
-    PlaybackState,
-    | "playing"
-    | "mediaSource"
-    | "currentTime"
-  >,
-  range: LinePlaybackRange | null | undefined,
-) {
-  if (!state.playing || !range) return false;
-
-  return Boolean(
-    range.mediaSource === state.mediaSource &&
-      state.currentTime >= range.start &&
-      state.currentTime < range.end,
-  );
-}
-
 export function resolveCurrentPlaybackLineId(
   state: Pick<
     PlaybackState,

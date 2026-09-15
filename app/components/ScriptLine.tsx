@@ -5,7 +5,6 @@ import type { LinePlaybackRange } from "./playback/playbackState";
 import { LockIcon, PlayIcon } from "./playback/PlaybackIcons";
 import { linePlaybackButtonClass } from "./playback/playbackButtonStyles";
 import { releasePlaybackButtonFocusOnPointerUp } from "./playback/playbackButtonFocus";
-import { activateLinePlaybackControl } from "./playback/linePlaybackControl";
 import { ScriptLineFrame } from "./script-line/ScriptLineFrame";
 import { ScriptLineRow } from "./script-line/ScriptLineRow";
 
@@ -63,7 +62,7 @@ export function ScriptLine({
       <button
         type="button"
         disabled={!playbackRange}
-        onClick={() => activateLinePlaybackControl({ range: playbackRange, playLine: onPlayLine })}
+        onClick={() => playbackRange && onPlayLine?.(playbackRange)}
         onPointerUp={releasePlaybackButtonFocusOnPointerUp}
         className={linePlaybackButtonClass({ disabled: !playbackRange })}
         aria-label="Play from this line"

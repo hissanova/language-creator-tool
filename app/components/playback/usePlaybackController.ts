@@ -29,13 +29,6 @@ const PLAYBACK_RATE_STORAGE_KEY = "lct.viewer.playbackRate";
 
 export type PlaybackController = ReturnType<typeof usePlaybackController>;
 
-export function dispatchLineLockSelection(
-  range: LinePlaybackRange,
-  dispatchAction: (action: PlaybackAction) => void,
-) {
-  dispatchAction({ type: "toggleLineLock", range });
-}
-
 export function usePlaybackController(
   audioResources: MediaResource[],
   normalizeSource: (source: string) => string,
@@ -43,6 +36,13 @@ export function usePlaybackController(
   const [state, dispatch] = useReducer(playbackReducer, initialPlaybackState);
   const mediaElementRef = useRef<HTMLMediaElement | null>(null);
   const stateRef = useRef(state);
+  /**
+   * Lock only selects a range; rangeEngaged says that range currently owns the
+   * playback boundary. Source changes stay pending until metadata permits the
+   * requested seek, so pre-seek time/pause events cannot replace logical state.
+   * Global Loop applies to the locked range when present, otherwise the source.
+   * Auto-follow observes this state and never controls playback.
+   */
   const pendingPlaybackRef = useRef<PendingPlayback | null>(null);
 
   const dispatchAndSync = useCallback((action: PlaybackAction) => {
@@ -55,11 +55,11 @@ export function usePlaybackController(
   }, [state]);
 
   useEffect(() => {
-    dispatch({
+    dispatchAndSync({
       type: "hydratePreferences",
       playbackRate: parseStoredPlaybackRate(localStorage.getItem(PLAYBACK_RATE_STORAGE_KEY)),
     });
-  }, []);
+  }, [dispatchAndSync]);
 
   useEffect(() => {
     const element = mediaElementRef.current;
@@ -100,7 +100,7 @@ export function usePlaybackController(
     if (sourceChanged) {
       beginPendingSourceTransition({
         pendingPlaybackRef,
-        pending: { time, play: true },
+        pending: { time },
         commitSourceChange: () => dispatchAndSync({
           type: "setSource",
           mediaResourceId,
@@ -133,7 +133,7 @@ export function usePlaybackController(
     if (sourceChanged) {
       beginPendingSourceTransition({
         pendingPlaybackRef,
-        pending: { time: range.start, play: true, end: range.end },
+        pending: { time: range.start, end: range.end },
         commitSourceChange: () => dispatchAndSync({ type: "playLine", range }),
         pauseElement: element ? () => element.pause() : undefined,
       });
@@ -201,13 +201,13 @@ export function usePlaybackController(
     dispatchAndSync({ type: "toggleLoop" });
   }, [dispatchAndSync]);
   const toggleLineLock = useCallback((range: LinePlaybackRange) => {
-    dispatchLineLockSelection(range, dispatchAndSync);
+    dispatchAndSync({ type: "toggleLineLock", range });
   }, [dispatchAndSync]);
 
   const setPlaybackRate = useCallback((playbackRate: PlaybackRate) => {
     localStorage.setItem(PLAYBACK_RATE_STORAGE_KEY, String(playbackRate));
-    dispatch({ type: "setPlaybackRate", playbackRate });
-  }, []);
+    dispatchAndSync({ type: "setPlaybackRate", playbackRate });
+  }, [dispatchAndSync]);
 
   const attachMediaElement = useCallback((element: HTMLMediaElement | null) => {
     if (!element && mediaElementRef.current) mediaElementRef.current.pause();
@@ -218,7 +218,7 @@ export function usePlaybackController(
     const element = mediaElementRef.current;
     if (!element) return;
     const duration = Number.isFinite(element.duration) ? element.duration : null;
-    dispatch({
+    dispatchAndSync({
       type: "setDuration",
       duration,
     });

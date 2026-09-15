@@ -8,7 +8,6 @@ import {
 
 export type PendingPlayback = {
   time: number;
-  play: boolean;
   end?: number;
 };
 
@@ -54,7 +53,7 @@ export function applyPendingPlayback({
   dispatchAndSync({ type: "setCurrentTime", currentTime: pending.time });
   element.playbackRate = playbackRate;
   pendingPlaybackRef.current = null;
-  if (pending.play) safelyPlay(element);
+  safelyPlay(element);
 }
 
 export function handlePlaybackTimeUpdate({

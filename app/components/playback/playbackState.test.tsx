@@ -2,16 +2,21 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import test from "node:test";
 import { renderToStaticMarkup } from "react-dom/server";
+import { conversationSampleChinese1 } from "../../../samples/core-json/generated/conversation-hyq_2026-04-16_xindeyanjing_EDITED-BY-SIMON";
 import { ScriptLine } from "../ScriptLine";
+import { AutoFollowControls } from "../auto-follow/AutoFollowControls";
+import { normalizeMediaSrc } from "../media/normalizeMediaSrc";
 import { NEUTRAL_SCRIPT_LINE_PRESENTATION } from "../../styles/scriptLinePresentation";
 import { viewerStyle } from "../../styles/viewerStyle";
+import type { MediaResource } from "../../types/core/document";
+import type { TextLine } from "../../types/core/textLine";
 import { PlaybackBar } from "./PlaybackBar";
+import { resolveLinePlaybackRange } from "./linePlayback";
 import {
   formatPlaybackTime,
   getPlaybackProgressPercentage,
   getPlaybackRangePercentages,
   getPlaybackRangeVisualStyle,
-  isLineCurrentlyPlaying,
   resolveCurrentPlaybackLineId,
 } from "./playbackDisplay";
 import {
@@ -27,7 +32,6 @@ import {
   type PlaybackState,
 } from "./playbackState";
 import type { PlaybackController } from "./usePlaybackController";
-import { dispatchLineLockSelection } from "./usePlaybackController";
 import {
   applyPendingPlayback,
   beginPendingSourceTransition,
@@ -36,7 +40,6 @@ import {
   type MutablePlaybackRef,
   type PendingPlayback,
 } from "./playbackMediaTransition";
-import { activateLinePlaybackControl } from "./linePlaybackControl";
 import { releasePlaybackButtonFocusOnPointerUp } from "./playbackButtonFocus";
 import {
   handlePlaybackKeyboardShortcut,
@@ -44,8 +47,20 @@ import {
   resolvePlaybackKeyboardCommand,
 } from "./playbackKeyboardShortcuts";
 import {
+  AUTO_FOLLOW_DEFAULT_ENABLED,
+  AUTO_FOLLOW_DEFAULT_MODE,
+  getAutoFollowSafeRegion,
+  getAutoFollowScrollBehavior,
+  getCenteredScrollTarget,
+  getUsableViewport,
+  isLineWithinRegion,
+  isManualAutoFollowKey,
   resolveAutoFollowScrollTarget,
+  resolveManualScrollSuspension,
   shouldEvaluateAutoFollow,
+  shouldIgnoreProgrammaticScroll,
+  shouldRunAutoFollow,
+  type AutoFollowMode,
   type AutoFollowSnapshot,
 } from "../auto-follow/autoFollow";
 
@@ -95,6 +110,41 @@ function targetMatching(editableSelector: string): EventTarget {
   return target as unknown as EventTarget;
 }
 
+const autoFollowDocument = {};
+
+function autoFollowSnapshot(
+  overrides: Partial<AutoFollowSnapshot> = {},
+): AutoFollowSnapshot {
+  return {
+    documentToken: autoFollowDocument,
+    sourceToken: "/one.mp3",
+    enabled: true,
+    playing: true,
+    currentLineId: "line-1",
+    playbackPosition: 10,
+    mode: "unpinned",
+    followRequest: 0,
+    ...overrides,
+  };
+}
+
+function renderAutoFollowControls(
+  mode: AutoFollowMode,
+  suspended = false,
+  enabled = true,
+) {
+  return renderToStaticMarkup(
+    <AutoFollowControls
+      enabled={enabled}
+      mode={mode}
+      suspended={suspended}
+      onEnabledChange={noop}
+      onModeChange={noop}
+      onResume={noop}
+    />,
+  );
+}
+
 function renderPlaybackBar(state: PlaybackState) {
   const controller = {
     state,
@@ -121,6 +171,135 @@ function renderPlaybackBar(state: PlaybackState) {
   } as unknown as PlaybackController;
   return renderToStaticMarkup(<PlaybackBar controller={controller} />);
 }
+
+test("auto-follow controls preserve On, Off, Unpinned, Pinned, and Resume states", () => {
+  assert.equal(AUTO_FOLLOW_DEFAULT_ENABLED, true);
+  assert.equal(AUTO_FOLLOW_DEFAULT_MODE, "unpinned");
+  const unpinned = renderAutoFollowControls("unpinned");
+  const pinned = renderAutoFollowControls("pinned");
+  const offPinned = renderAutoFollowControls("pinned", true, false);
+  const suspended = renderAutoFollowControls("unpinned", true);
+  assert.match(unpinned, /aria-pressed="true"[^>]*>On<\/button>/);
+  assert.match(unpinned, /aria-pressed="true"[^>]*>Unpinned<\/button>/);
+  assert.match(pinned, /aria-pressed="true"[^>]*>Pinned<\/button>/);
+  assert.match(offPinned, /aria-pressed="true"[^>]*>Off<\/button>/);
+  assert.doesNotMatch(offPinned, /Resume follow/);
+  assert.match(suspended, /Resume follow<\/button>/);
+});
+
+test("auto-follow geometry retains the established safe-region and pinned policies", () => {
+  const usableViewport = getUsableViewport(1_000, { top: 0, bottom: 200 });
+  assert.deepEqual(usableViewport, { top: 200, bottom: 1_000 });
+  assert.deepEqual(getAutoFollowSafeRegion(usableViewport), { top: 400, bottom: 800 });
+  assert.equal(isLineWithinRegion({ top: 400, bottom: 800 }, { top: 400, bottom: 800 }), true);
+  assert.equal(resolveAutoFollowScrollTarget({
+    mode: "unpinned",
+    lineRect: { top: 500, bottom: 600 },
+    usableViewport,
+    currentScrollY: 100,
+  }), null);
+  assert.equal(resolveAutoFollowScrollTarget({
+    mode: "unpinned",
+    lineRect: { top: 800, bottom: 900 },
+    usableViewport,
+    currentScrollY: 100,
+  }), 350);
+  assert.equal(resolveAutoFollowScrollTarget({
+    mode: "pinned",
+    lineRect: { top: 500, bottom: 600 },
+    usableViewport,
+    currentScrollY: 100,
+  }), 50);
+  assert.equal(getCenteredScrollTarget(
+    { top: -200, bottom: -100 },
+    usableViewport,
+    0,
+  ), 0);
+  assert.equal(resolveAutoFollowScrollTarget({
+    mode: "pinned",
+    lineRect: null,
+    usableViewport,
+    currentScrollY: 100,
+  }), null);
+});
+
+test("auto-follow evaluation remains a read-only response to playback snapshots", () => {
+  assert.equal(shouldEvaluateAutoFollow(
+    autoFollowSnapshot(),
+    autoFollowSnapshot({ currentLineId: "line-2" }),
+  ), true);
+  assert.equal(shouldEvaluateAutoFollow(
+    autoFollowSnapshot(),
+    autoFollowSnapshot({ playbackPosition: 10.5 }),
+  ), false);
+  assert.equal(shouldEvaluateAutoFollow(
+    autoFollowSnapshot({ playbackPosition: 15 }),
+    autoFollowSnapshot({ playbackPosition: 10 }),
+  ), true);
+  assert.equal(shouldEvaluateAutoFollow(
+    autoFollowSnapshot({ playing: false }),
+    autoFollowSnapshot(),
+  ), true);
+  assert.equal(shouldEvaluateAutoFollow(
+    autoFollowSnapshot(),
+    autoFollowSnapshot({ followRequest: 1 }),
+  ), true);
+  assert.equal(shouldEvaluateAutoFollow(
+    autoFollowSnapshot(),
+    autoFollowSnapshot({ mode: "pinned" }),
+  ), true);
+  for (const next of [
+    autoFollowSnapshot({ enabled: false, currentLineId: "line-2" }),
+    autoFollowSnapshot({ enabled: false, followRequest: 1 }),
+    autoFollowSnapshot({ enabled: false, mode: "pinned" }),
+  ]) {
+    assert.equal(shouldEvaluateAutoFollow(autoFollowSnapshot({ enabled: false }), next), false);
+  }
+});
+
+test("auto-follow suspension distinguishes manual and programmatic movement", () => {
+  assert.equal(shouldRunAutoFollow({
+    shouldEvaluate: true,
+    suspended: true,
+    playbackStarted: false,
+  }), false);
+  assert.equal(shouldRunAutoFollow({
+    shouldEvaluate: true,
+    suspended: true,
+    playbackStarted: true,
+  }), true);
+  assert.deepEqual(resolveManualScrollSuspension({
+    suspended: false,
+    outsideSafeRegion: false,
+    lineWithinSafeRegion: false,
+  }), { suspended: true, outsideSafeRegion: true, shouldResume: false });
+  assert.deepEqual(resolveManualScrollSuspension({
+    suspended: true,
+    outsideSafeRegion: true,
+    lineWithinSafeRegion: true,
+  }), { suspended: false, outsideSafeRegion: false, shouldResume: true });
+  assert.equal(shouldIgnoreProgrammaticScroll({ targetY: 500, expiresAt: 2_000 }, 1_999), true);
+  assert.equal(shouldIgnoreProgrammaticScroll({ targetY: 500, expiresAt: 2_000 }, 2_001), false);
+  assert.equal(getAutoFollowScrollBehavior(true), "auto");
+  assert.equal(getAutoFollowScrollBehavior(false), "smooth");
+});
+
+test("manual-scroll keys exclude playback Space and interactive Arrow keys", () => {
+  const base = {
+    defaultPrevented: false,
+    altKey: false,
+    ctrlKey: false,
+    metaKey: false,
+    target: null,
+  };
+  assert.equal(isManualAutoFollowKey({ ...base, key: "PageDown" }), true);
+  assert.equal(isManualAutoFollowKey({ ...base, key: " " }), false);
+  assert.equal(isManualAutoFollowKey({
+    ...base,
+    key: "ArrowDown",
+    target: targetMatching("button"),
+  }), false);
+});
 
 test("initial state keeps selection, Loop, and engagement independent", () => {
   assert.deepEqual(initialPlaybackState, {
@@ -164,12 +343,6 @@ test("locking the range containing the current position engages without moving p
   assert.equal(selected.playing, true);
   assert.equal(selected.loopEnabled, true);
   assert.equal(selected.rangeEngaged, true);
-});
-
-test("the Lock dispatcher emits only a selection action", () => {
-  const actions: Parameters<typeof playbackReducer>[1][] = [];
-  dispatchLineLockSelection(firstRange, (action) => actions.push(action));
-  assert.deepEqual(actions, [{ type: "toggleLineLock", range: firstRange }]);
 });
 
 test("Play on the selected line restarts it and engages the range", () => {
@@ -251,52 +424,7 @@ test("global Play resumes a manual pause inside an engaged range", () => {
   })), null);
 });
 
-test("initial Space playback exposes only the locked line as the first follow target", () => {
-  const initialLine = { ...firstRange, lineId: "initial-line", start: 0, end: 5 };
-  const locked = playbackReducer(initialPlaybackState, {
-    type: "toggleLineLock",
-    range: secondRange,
-  });
-  const started = playbackReducer(locked, { type: "playLine", range: secondRange });
-
-  assert.equal(started.currentTime, secondRange.start);
-  assert.equal(started.rangeEngaged, true);
-  assert.equal(resolveCurrentPlaybackLineId(started, [initialLine, secondRange]), "line-2");
-
-  const previous: AutoFollowSnapshot = {
-    documentToken: "document",
-    sourceToken: null,
-    enabled: true,
-    playing: false,
-    currentLineId: null,
-    playbackPosition: 0,
-    mode: "unpinned",
-    followRequest: 0,
-  };
-  for (const mode of ["unpinned", "pinned"] as const) {
-    const next: AutoFollowSnapshot = {
-      ...previous,
-      sourceToken: started.mediaSource,
-      playing: started.playing,
-      currentLineId: resolveCurrentPlaybackLineId(started, [initialLine, secondRange]),
-      playbackPosition: started.currentTime,
-      mode,
-    };
-    assert.equal(next.currentLineId, "line-2");
-    assert.equal(shouldEvaluateAutoFollow(previous, next), true);
-  }
-
-  assert.equal(shouldEvaluateAutoFollow(previous, {
-    ...previous,
-    enabled: false,
-    sourceToken: started.mediaSource,
-    playing: true,
-    currentLineId: "line-2",
-    playbackPosition: started.currentTime,
-  }), false);
-});
-
-test("initial locked-line source transition rejects pre-metadata media events", () => {
+test("initial locked-line Space playback rejects pre-metadata media events", () => {
   const initialLine = { ...firstRange, lineId: "initial-line", start: 0, end: 5 };
   const stateRef: MutablePlaybackRef<PlaybackState> = {
     current: playbackReducer(initialPlaybackState, {
@@ -344,22 +472,37 @@ test("initial locked-line source transition rejects pre-metadata media events", 
     },
   } as unknown as HTMLMediaElement;
 
-  const selectedLineRange = getSelectedRangeToStart(stateRef.current);
-  assert.ok(selectedLineRange);
-  assert.equal(selectedLineRange, secondRange);
-  beginPendingSourceTransition({
-    pendingPlaybackRef,
-    pending: {
-      time: selectedLineRange.start,
-      play: true,
-      end: selectedLineRange.end,
-    },
-    commitSourceChange: () => {
-      assert.equal(pendingPlaybackRef.current?.time, secondRange.start);
-      dispatchAndSync({ type: "playLine", range: selectedLineRange });
-    },
-    pauseElement: () => mediaElement.pause(),
-  });
+  const globalPlay = () => {
+    const selectedLineRange = getSelectedRangeToStart(stateRef.current);
+    assert.ok(selectedLineRange);
+    assert.equal(selectedLineRange, secondRange);
+    beginPendingSourceTransition({
+      pendingPlaybackRef,
+      pending: {
+        time: selectedLineRange.start,
+        end: selectedLineRange.end,
+      },
+      commitSourceChange: () => {
+        assert.equal(pendingPlaybackRef.current?.time, secondRange.start);
+        dispatchAndSync({ type: "playLine", range: selectedLineRange });
+      },
+      pauseElement: () => mediaElement.pause(),
+    });
+  };
+  let prevented = false;
+  assert.equal(handlePlaybackKeyboardShortcut({
+    key: " ", shiftKey: false, ctrlKey: false, metaKey: false, altKey: false,
+    repeat: false, defaultPrevented: false, target: null,
+    preventDefault: () => { prevented = true; },
+  }, {
+    playing: false,
+    canToggle: true,
+    canSkip: true,
+    play: globalPlay,
+    pause: noop,
+    skip: noop,
+  }), true);
+  assert.equal(prevented, true);
 
   assert.equal(sourcePauseCount, 1);
   assert.equal(stateRef.current.playing, true);
@@ -378,6 +521,46 @@ test("initial locked-line source transition rejects pre-metadata media events", 
     resolveCurrentPlaybackLineId(stateRef.current, [initialLine, secondRange]),
     "line-2",
   );
+
+  const previous: AutoFollowSnapshot = {
+    documentToken: "document",
+    sourceToken: null,
+    enabled: true,
+    playing: false,
+    currentLineId: null,
+    playbackPosition: 0,
+    mode: "unpinned",
+    followRequest: 0,
+  };
+  for (const mode of ["unpinned", "pinned"] as const) {
+    const next: AutoFollowSnapshot = {
+      ...previous,
+      sourceToken: stateRef.current.mediaSource,
+      playing: stateRef.current.playing,
+      currentLineId: resolveCurrentPlaybackLineId(
+        stateRef.current,
+        [initialLine, secondRange],
+      ),
+      playbackPosition: stateRef.current.currentTime,
+      mode,
+    };
+    assert.equal(next.currentLineId, "line-2");
+    assert.equal(shouldEvaluateAutoFollow(previous, next), true);
+  }
+  const offShouldEvaluate = shouldEvaluateAutoFollow(previous, {
+    ...previous,
+    enabled: false,
+    sourceToken: stateRef.current.mediaSource,
+    playing: true,
+    currentLineId: "line-2",
+    playbackPosition: stateRef.current.currentTime,
+  });
+  assert.equal(offShouldEvaluate, false);
+  assert.equal(shouldRunAutoFollow({
+    shouldEvaluate: offShouldEvaluate,
+    suspended: false,
+    playbackStarted: true,
+  }), false);
 
   applyPendingPlayback({
     element: mediaElement,
@@ -407,61 +590,6 @@ test("initial locked-line source transition rejects pre-metadata media events", 
 
   mediaElement.pause();
   assert.equal(stateRef.current.playing, false);
-});
-
-test("playback-start follow preserves a selected line visible below sticky controls", () => {
-  const usableViewport = { top: 220, bottom: 900 };
-  const selectedLineRect = { top: 240, bottom: 290 };
-
-  assert.equal(resolveAutoFollowScrollTarget({
-    mode: "unpinned",
-    lineRect: selectedLineRect,
-    usableViewport,
-    currentScrollY: 150,
-    playbackStarted: true,
-  }), null);
-
-  assert.equal(resolveAutoFollowScrollTarget({
-    mode: "unpinned",
-    lineRect: selectedLineRect,
-    usableViewport,
-    currentScrollY: 150,
-    playbackStarted: false,
-  }), 0);
-
-  assert.equal(resolveAutoFollowScrollTarget({
-    mode: "pinned",
-    lineRect: selectedLineRect,
-    usableViewport,
-    currentScrollY: 150,
-    playbackStarted: true,
-  }), 0);
-
-  assert.notEqual(resolveAutoFollowScrollTarget({
-    mode: "unpinned",
-    lineRect: { top: 950, bottom: 1_000 },
-    usableViewport,
-    currentScrollY: 150,
-    playbackStarted: true,
-  }), null);
-
-  assert.equal(resolveAutoFollowScrollTarget({
-    mode: "unpinned",
-    lineRect: { top: 190, bottom: 240 },
-    usableViewport,
-    currentScrollY: 150,
-    playbackStarted: true,
-  }), 0);
-});
-
-test("auto-follow hook passes playback-start context before requesting scroll", () => {
-  const source = readFileSync(
-    "app/components/auto-follow/useActiveLineAutoFollow.ts",
-    "utf8",
-  );
-  assert.match(source, /resolveAutoFollowScrollTarget\(\{[\s\S]*?playbackStarted,[\s\S]*?\}\)/);
-  assert.match(source, /followCurrentLine\(playbackStarted\)/);
-  assert.match(source, /if \(targetY == null\) return;[\s\S]*?window\.scrollTo\(/);
 });
 
 test("engaged selected range loops from its beginning when global Loop is on", () => {
@@ -494,6 +622,8 @@ test("locking and unlocking while Loop is on changes scope without transport cha
   const restored = playbackReducer(rangeLoop, { type: "toggleLineLock", range: firstRange });
   assert.equal(restored.loopEnabled, true);
   assert.equal(restored.selectedLineRange, null);
+  assert.equal(restored.rangeEngaged, false);
+  assert.deepEqual(getTimeUpdateDecision(restored, firstRange.end), { type: "continue" });
 });
 
 test("seek and skip engage inside and disengage outside without clearing the Lock", () => {
@@ -616,12 +746,6 @@ test("invalid timed lines disable both controls", () => {
   assert.equal((html.match(/<button[^>]*disabled=""/g) ?? []).length, 2);
 });
 
-test("line Play always delegates a fresh start", () => {
-  let started: LinePlaybackRange | null = null;
-  activateLinePlaybackControl({ range: firstRange, playLine: (range) => { started = range; } });
-  assert.equal(started, firstRange);
-});
-
 test("pointer focus release and native keyboard activation remain on both controls", () => {
   let blurCount = 0;
   releasePlaybackButtonFocusOnPointerUp({
@@ -731,11 +855,70 @@ test("current-line highlighting and auto-follow remain independent of Lock selec
     currentTime: 12,
     selectedLineRange: secondRange,
   });
-  assert.equal(isLineCurrentlyPlaying(playing, firstRange), true);
   assert.equal(resolveCurrentPlaybackLineId(playing, [firstRange, secondRange]), "line-1");
   const viewer = readFileSync("app/components/ViewerShell.tsx", "utf8");
   assert.match(viewer, /useActiveLineAutoFollow/);
   assert.match(viewer, /isCurrentPlaybackLine=\{currentPlaybackLineId === block\.text\.id\}/);
+});
+
+test("media source normalization remains generic and preserves canonical sample paths", () => {
+  assert.equal(normalizeMediaSrc("/public/media/example.mp3"), "/media/example.mp3");
+  assert.equal(normalizeMediaSrc("@/public/media/example.mp3"), "/media/example.mp3");
+  for (const src of [
+    "/media/example.mp3",
+    "/open-content/resources/example.mp3",
+    "https://example.org/example.mp3",
+    "blob:https://example.org/resource-id",
+    "data:audio/mpeg;base64,AAAA",
+  ]) {
+    assert.equal(normalizeMediaSrc(src), src);
+  }
+  const audio = conversationSampleChinese1.resources?.find(
+    (resource): resource is MediaResource =>
+      resource.type === "media" && resource.mediaType === "audio",
+  );
+  assert.equal(audio?.src, "/media/audio/hyq_2026-04-16_xindeyanjing.mp3");
+  assert.equal(audio && normalizeMediaSrc(audio.src), audio?.src);
+});
+
+test("line playback ranges require resolvable media and valid bounded timestamps", () => {
+  const audio: MediaResource = {
+    id: "audio-1",
+    type: "media",
+    mediaType: "audio",
+    src: "/one.mp3",
+  };
+  const textLine = (
+    interval?: { start: number; end?: number },
+    resourceId = "audio-1",
+  ): TextLine => ({
+    id: "line-1",
+    content: { text: "hello", languageId: "en", formId: "surface" },
+    textLineRefs: interval ? [{
+      id: "alignment-1",
+      body: { type: "alignment", mediaRef: { resourceId }, interval },
+    }] : undefined,
+  });
+
+  assert.deepEqual(resolveLinePlaybackRange(textLine({ start: 1, end: 2 }), [audio], String), {
+    type: "line",
+    lineId: "line-1",
+    mediaResourceId: "audio-1",
+    mediaSource: "/one.mp3",
+    start: 1,
+    end: 2,
+  });
+  assert.equal(resolveLinePlaybackRange(textLine(), [audio], String), null);
+  assert.equal(resolveLinePlaybackRange(textLine({ start: -1, end: 2 }), [audio], String), null);
+  assert.equal(resolveLinePlaybackRange(textLine({ start: 2, end: 2 }), [audio], String), null);
+  assert.equal(resolveLinePlaybackRange(textLine({ start: 2 }), [audio], String), null);
+  assert.equal(resolveLinePlaybackRange(textLine({ start: 1, end: 2 }, "missing"), [audio], String), null);
+  assert.equal(resolveLinePlaybackRange(
+    textLine({ start: 1, end: 12 }),
+    [audio],
+    String,
+    { mediaSource: "/one.mp3", duration: 10 },
+  ), null);
 });
 
 test("time, geometry, skip, and playback-rate helpers retain safe behavior", () => {

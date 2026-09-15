@@ -128,22 +128,13 @@ export function resolveAutoFollowScrollTarget({
   lineRect,
   usableViewport,
   currentScrollY,
-  playbackStarted,
 }: {
   mode: AutoFollowMode;
   lineRect: VerticalRegion | null;
   usableViewport: VerticalRegion;
   currentScrollY: number;
-  playbackStarted: boolean;
 }): number | null {
   if (lineRect == null) return null;
-  if (
-    mode === "unpinned" &&
-    playbackStarted &&
-    isLineWithinRegion(lineRect, usableViewport)
-  ) {
-    return null;
-  }
   if (
     mode === "unpinned" &&
     isLineWithinRegion(lineRect, getAutoFollowSafeRegion(usableViewport))
