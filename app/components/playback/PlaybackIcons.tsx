@@ -50,20 +50,25 @@ export function LoopIcon(props: IconProps) {
   );
 }
 
-export function SkipIcon({ direction, ...props }: IconProps & { direction: "backward" | "forward" }) {
+export function SkipIcon({
+  direction,
+  chevronCount = 2,
+  ...props
+}: IconProps & {
+  direction: "backward" | "forward";
+  chevronCount?: 1 | 2;
+}) {
+  const paths = direction === "backward"
+    ? chevronCount === 1
+      ? ["M15 7l-5 5 5 5"]
+      : ["M11 7l-5 5 5 5", "M18 7l-5 5 5 5"]
+    : chevronCount === 1
+      ? ["M9 7l5 5-5 5"]
+      : ["M6 7l5 5-5 5", "M13 7l5 5-5 5"];
+
   return (
     <IconFrame data-playback-icon={`skip-${direction}`} {...props}>
-      {direction === "backward" ? (
-        <>
-          <path d="M11 7l-5 5 5 5" />
-          <path d="M18 7l-5 5 5 5" />
-        </>
-      ) : (
-        <>
-          <path d="M6 7l5 5-5 5" />
-          <path d="M13 7l5 5-5 5" />
-        </>
-      )}
+      {paths.map((path) => <path key={path} d={path} />)}
     </IconFrame>
   );
 }
