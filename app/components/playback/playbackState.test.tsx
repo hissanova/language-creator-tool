@@ -320,6 +320,31 @@ test("Pinned always produces a usable-viewport-centered target", () => {
   ), 0);
 });
 
+test("auto-follow uses the compact panel's measured height without a fixed offset", () => {
+  const lineRect = { top: 500, bottom: 600 };
+  const compactViewport = getUsableViewport(1_000, { top: 0, bottom: 180 });
+  const tallerViewport = getUsableViewport(1_000, { top: 0, bottom: 260 });
+
+  assert.equal(resolveAutoFollowScrollTarget({
+    mode: "unpinned",
+    lineRect,
+    usableViewport: compactViewport,
+    currentScrollY: 100,
+  }), null);
+  assert.equal(resolveAutoFollowScrollTarget({
+    mode: "pinned",
+    lineRect,
+    usableViewport: compactViewport,
+    currentScrollY: 100,
+  }), 60);
+  assert.equal(resolveAutoFollowScrollTarget({
+    mode: "pinned",
+    lineRect,
+    usableViewport: tallerViewport,
+    currentScrollY: 100,
+  }), 20);
+});
+
 test("a current-line change requests one auto-follow evaluation", () => {
   assert.equal(shouldEvaluateAutoFollow(
     autoFollowSnapshot(),
@@ -1468,8 +1493,46 @@ test("playback bar exposes accessible controls and active Loop range", () => {
   assert.match(html, /data-loop-range="active"[^>]*data-loop-scope="selection"[^>]*data-loop-start="10"[^>]*data-loop-end="15"/);
   assert.match(html, /data-loop-range="active"[^>]*class="[^"]*pointer-events-none[^"]*z-20/);
   assert.match(html, /aria-label="Seek"[^>]*class="[^"]*playback-seek-input[^"]*z-30[^"]*focus-visible:outline/);
-  assert.match(html, /line-1 — 0:10\.000–0:15\.000/);
+  assert.match(html, /data-playback-time="current"[^>]*>0:12\.000/);
+  assert.match(html, /data-loop-selection="active"[^>]*aria-label="Loop range from 0:10\.000 to 0:15\.000"[^>]*>Loop 0:10\.000–0:15\.000/);
+  assert.match(html, /data-playback-time="duration"[^>]*>0:30\.000/);
   assert.match(html, /<button type="button" aria-label="Skip forward 2 seconds"/);
+});
+
+test("playback bar omits absent Loop status without reserving a placeholder row", () => {
+  const html = renderPlaybackBarForTest({
+    ...initialPlaybackState,
+    mediaResourceId: "audio-1",
+    mediaSource: "/one.mp3",
+    duration: 30,
+    currentTime: 12.345,
+  });
+
+  assert.doesNotMatch(html, /No loop range selected|Whole audio/);
+  assert.doesNotMatch(html, /data-loop-selection=|aria-label="Clear loop range"/);
+  assert.match(html, /data-playback-time="current"[^>]*>0:12\.345/);
+  assert.match(html, /data-playback-time="duration"[^>]*>0:30\.000/);
+});
+
+test("selected Loop summary follows current time and precedes total duration", () => {
+  const html = renderPlaybackBarForTest({
+    ...initialPlaybackState,
+    mediaResourceId: "audio-1",
+    mediaSource: "/one.mp3",
+    duration: 40,
+    currentTime: 30.782,
+    loopEnabled: true,
+    selectedLoopRange: {
+      ...firstRange,
+      start: 25,
+      end: 40,
+    },
+  });
+
+  assert.match(
+    html,
+    /data-playback-time="current"[^>]*>0:30\.782[\s\S]*aria-hidden="true">·<\/span>[\s\S]*>Loop 0:25\.000–0:40\.000<\/span>[\s\S]*data-playback-time="duration"[^>]*>0:40\.000/,
+  );
 });
 
 test("playback bar renders a short Loop selection with semantic boundaries and visual minimum", () => {
@@ -1644,7 +1707,7 @@ test("global controls keep Continuous text fixed and expose state through semant
   assert.match(offHtml, /focus-visible:outline/);
   assert.match(offHtml, /aria-pressed="true" aria-label="Set playback speed to 1×"/);
   const controlsLayout = offHtml.match(
-    /<div class="([^"]*)" data-playback-controls-layout="left-flow">/,
+    /<div class="([^"]*)" data-playback-controls-layout="transport-stack">/,
   );
   assert.ok(controlsLayout);
   assert.match(controlsLayout[1], /flex/);
@@ -1653,7 +1716,7 @@ test("global controls keep Continuous text fixed and expose state through semant
   assert.doesNotMatch(controlsLayout[1], /grid-cols|justify-between/);
   assert.match(
     offHtml,
-    /data-playback-cluster="transport"[\s\S]*data-playback-cluster="state"/,
+    /data-playback-cluster="transport"[\s\S]*data-playback-cluster="speed"[\s\S]*data-playback-cluster="state"/,
   );
   assert.match(offHtml, /aria-label="Seek"[^>]*class="[^"]*w-full/);
 });
@@ -1690,17 +1753,37 @@ test("global controls render four Skip buttons and disable them without selected
       onEnded: noop,
     },
   } as unknown as PlaybackController} />);
-  for (const label of [
-    "Skip backward 10 seconds",
-    "Skip backward 2 seconds",
-    "Skip forward 2 seconds",
-    "Skip forward 10 seconds",
-  ]) {
-    assert.match(html, new RegExp(`<button[^>]*disabled=""[^>]*aria-label="${label}"`));
+  for (const [seconds, label, visibleAmount] of [
+    [-10, "Skip backward 10 seconds", "10s"],
+    [-2, "Skip backward 2 seconds", "2s"],
+    [2, "Skip forward 2 seconds", "2s"],
+    [10, "Skip forward 10 seconds", "10s"],
+  ] as const) {
+    assert.match(
+      html,
+      new RegExp(`<button[^>]*disabled=""[^>]*aria-label="${label}"[^>]*data-skip-seconds="${seconds}"[^>]*>[\\s\\S]*?data-playback-icon="skip-(?:backward|forward)"[\\s\\S]*?>${visibleAmount}</span>`),
+    );
   }
   for (const rate of PLAYBACK_RATES) {
     assert.match(html, new RegExp(`>${rate}×</button>`));
   }
+});
+
+test("transport, speed, and state controls follow their visual and focus order", () => {
+  const html = renderPlaybackBarForTest(initialPlaybackState);
+  const labels = [...html.matchAll(/<button[^>]*aria-label="([^"]+)"/g)]
+    .map((match) => match[1]);
+
+  assert.deepEqual(labels, [
+    "Skip backward 10 seconds",
+    "Skip backward 2 seconds",
+    "Play media",
+    "Skip forward 2 seconds",
+    "Skip forward 10 seconds",
+    ...PLAYBACK_RATES.map((rate) => `Set playback speed to ${rate}×`),
+    "Enable continuous playback",
+    "Enable loop",
+  ]);
 });
 
 test("global and row Loop controls share the same SVG icon without visible Loop state text", () => {
