@@ -210,6 +210,12 @@ test("auto-follow defaults to On and Unpinned and exposes both preferences", () 
   assert.match(pinned, /aria-pressed="true"[^>]*>Pinned<\/button>/);
 });
 
+test("auto-follow feature labels keep explicit contrast on the white playback panel", () => {
+  const html = renderAutoFollowControls("unpinned");
+  assert.match(html, /<span class="font-medium text-gray-800">Auto-follow:<\/span>/);
+  assert.match(html, /<span class="ml-2 font-medium text-gray-800">Scroll mode:<\/span>/);
+});
+
 test("auto-follow can be switched On and Off independently of mode", () => {
   const on = renderAutoFollowControls("unpinned", false, true);
   const off = renderAutoFollowControls("unpinned", false, false);
@@ -1753,16 +1759,21 @@ test("global controls render four Skip buttons and disable them without selected
       onEnded: noop,
     },
   } as unknown as PlaybackController} />);
-  for (const [seconds, label, visibleAmount] of [
-    [-10, "Skip backward 10 seconds", "10s"],
-    [-2, "Skip backward 2 seconds", "2s"],
-    [2, "Skip forward 2 seconds", "2s"],
-    [10, "Skip forward 10 seconds", "10s"],
+  for (const [seconds, label, visibleAmount, chevronCount] of [
+    [-10, "Skip backward 10 seconds", "10s", 2],
+    [-2, "Skip backward 2 seconds", "2s", 1],
+    [2, "Skip forward 2 seconds", "2s", 1],
+    [10, "Skip forward 10 seconds", "10s", 2],
   ] as const) {
     assert.match(
       html,
       new RegExp(`<button[^>]*disabled=""[^>]*aria-label="${label}"[^>]*data-skip-seconds="${seconds}"[^>]*>[\\s\\S]*?data-playback-icon="skip-(?:backward|forward)"[\\s\\S]*?>${visibleAmount}</span>`),
     );
+    const buttonMarkup = html.match(
+      new RegExp(`<button[^>]*data-skip-seconds="${seconds}"[^>]*>[\\s\\S]*?</button>`),
+    )?.[0];
+    assert.ok(buttonMarkup);
+    assert.equal((buttonMarkup.match(/<path\\b/g) ?? []).length, chevronCount);
   }
   for (const rate of PLAYBACK_RATES) {
     assert.match(html, new RegExp(`>${rate}×</button>`));
