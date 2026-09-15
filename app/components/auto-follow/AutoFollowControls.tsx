@@ -18,7 +18,7 @@ export function AutoFollowControls({
 }) {
   return (
     <div className="mt-3 flex flex-wrap items-center gap-2 border-t pt-3 text-sm">
-      <span className="font-medium">Auto-follow:</span>
+      <span className="font-medium text-gray-800">Auto-follow:</span>
       <div className="inline-flex gap-1" role="group" aria-label="Auto-follow">
         {([true, false] as const).map((option) => {
           const selected = enabled === option;
@@ -42,7 +42,7 @@ export function AutoFollowControls({
           );
         })}
       </div>
-      <span className="ml-2 font-medium">Scroll mode:</span>
+      <span className="ml-2 font-medium text-gray-800">Scroll mode:</span>
       <div className="inline-flex gap-1" role="group" aria-label="Auto-follow scroll mode">
         {(["unpinned", "pinned"] as const).map((option) => {
           const selected = mode === option;

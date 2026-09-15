@@ -34,7 +34,11 @@ function SkipButton({
       onPointerUp={releasePlaybackButtonFocusOnPointerUp}
       className="inline-flex min-h-11 min-w-11 flex-col items-center justify-center gap-0.5 rounded-full border px-1 py-1 text-gray-800 hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
     >
-      <SkipIcon direction={direction} className="h-4 w-4" />
+      <SkipIcon
+        direction={direction}
+        chevronCount={magnitude === 2 ? 1 : 2}
+        className="h-4 w-4"
+      />
       <span className="text-[0.625rem] font-semibold leading-none">{magnitude}s</span>
     </button>
   );
