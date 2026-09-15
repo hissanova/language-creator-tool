@@ -2,8 +2,8 @@ import type { CSSProperties, ReactNode } from "react";
 import type { Speaker } from "../types/core/document";
 import type { ScriptLinePresentation, ViewerStyle } from "../types/viewerStyle";
 import type { LinePlaybackRange } from "./playback/playbackState";
-import { LoopIcon, PauseIcon, PlayIcon } from "./playback/PlaybackIcons";
-import { loopButtonClass } from "./playback/playbackButtonStyles";
+import { LockIcon, PlayIcon } from "./playback/PlaybackIcons";
+import { linePlaybackButtonClass } from "./playback/playbackButtonStyles";
 import { releasePlaybackButtonFocusOnPointerUp } from "./playback/playbackButtonFocus";
 import { activateLinePlaybackControl } from "./playback/linePlaybackControl";
 import { ScriptLineFrame } from "./script-line/ScriptLineFrame";
@@ -14,13 +14,10 @@ type Props = {
   linePresentation: ScriptLinePresentation;
   playbackRange?: LinePlaybackRange | null;
   hasPlaybackTiming?: boolean;
-  isLoopSelected?: boolean;
-  isLinePlaying?: boolean;
+  isRangeLocked?: boolean;
   isCurrentPlaybackLine?: boolean;
-  loopEnabled?: boolean;
-  onPause?: () => void;
   onPlayLine?: (range: LinePlaybackRange) => void;
-  onToggleLineLoop?: (range: LinePlaybackRange) => void;
+  onToggleLineLock?: (range: LinePlaybackRange) => void;
   style: ViewerStyle;
   layoutVariant: "inline" | "grid";
   textContent: ReactNode;
@@ -38,13 +35,10 @@ export function ScriptLine({
   linePresentation,
   playbackRange,
   hasPlaybackTiming = false,
-  isLoopSelected = false,
-  isLinePlaying = false,
+  isRangeLocked = false,
   isCurrentPlaybackLine = false,
-  loopEnabled = false,
-  onPause,
   onPlayLine,
-  onToggleLineLoop,
+  onToggleLineLock,
   style,
   layoutVariant,
   textContent,
@@ -62,43 +56,39 @@ export function ScriptLine({
     color: linePresentation.labelColor,
   };
   const isGridLayout = layoutVariant === "grid";
-  const linePlaybackLabel = isLinePlaying ? "Pause this line" : "Play this line";
-  const lineLoopLabel = isLoopSelected ? "Clear loop range" : "Loop this line";
+  const disabledTitle = "Line timing is invalid or its audio cannot be resolved";
 
   const playControl = hasPlaybackTiming ? (
-    <div className={isGridLayout ? "flex gap-1" : "mr-2 inline-flex gap-1 align-middle"}>
+    <div className={isGridLayout ? "-mr-0.5 flex gap-1" : "mr-1.5 inline-flex gap-1 align-middle"}>
       <button
         type="button"
         disabled={!playbackRange}
-        onClick={() => activateLinePlaybackControl({
-          isLinePlaying,
-          range: playbackRange,
-          pause: onPause,
-          playLine: onPlayLine,
-        })}
+        onClick={() => activateLinePlaybackControl({ range: playbackRange, playLine: onPlayLine })}
         onPointerUp={releasePlaybackButtonFocusOnPointerUp}
-        className={`${style.layout.playButton} focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 disabled:cursor-not-allowed disabled:opacity-40`}
-        aria-label={linePlaybackLabel}
-        title={playbackRange ? linePlaybackLabel : "Line timing is invalid or its audio cannot be resolved"}
+        className={linePlaybackButtonClass({ disabled: !playbackRange })}
+        aria-label="Play from this line"
+        title={playbackRange ? "Play from this line" : disabledTitle}
       >
-        {isLinePlaying ? <PauseIcon className="h-4 w-4" /> : <PlayIcon className="h-4 w-4" />}
+        <PlayIcon className="h-4 w-4" />
       </button>
       <button
         type="button"
         disabled={!playbackRange}
-        aria-pressed={isLoopSelected && loopEnabled}
-        data-loop-selected={isLoopSelected ? (loopEnabled ? "active" : "inactive") : undefined}
-        onClick={() => playbackRange && onToggleLineLoop?.(playbackRange)}
+        aria-pressed={isRangeLocked}
+        data-line-control="lock"
+        data-state={isRangeLocked ? "on" : "off"}
+        onClick={() => playbackRange && onToggleLineLock?.(playbackRange)}
         onPointerUp={releasePlaybackButtonFocusOnPointerUp}
-        className={loopButtonClass({
-          pressed: isLoopSelected && loopEnabled,
-          selected: isLoopSelected,
+        className={linePlaybackButtonClass({
+          pressed: isRangeLocked,
           disabled: !playbackRange,
         })}
-        aria-label={lineLoopLabel}
-        title={playbackRange ? lineLoopLabel : "Line timing is invalid or its audio cannot be resolved"}
+        aria-label={isRangeLocked ? "Unlock playback range" : "Lock playback range to this line"}
+        title={playbackRange
+          ? isRangeLocked ? "Unlock playback range" : "Lock playback range to this line"
+          : disabledTitle}
       >
-        <LoopIcon className="h-4 w-4" />
+        <LockIcon locked={isRangeLocked} className="h-4 w-4" />
       </button>
     </div>
   ) : null;

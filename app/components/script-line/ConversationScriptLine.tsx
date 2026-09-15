@@ -211,13 +211,10 @@ export function ConversationScriptLine(props: ScriptLineCompositionProps) {
     style,
     playbackRange,
     hasPlaybackTiming,
-    isLoopSelected,
-    isLinePlaying,
+    isRangeLocked,
     isCurrentPlaybackLine = false,
-    loopEnabled,
-    onPause,
     onPlayLine,
-    onToggleLineLoop,
+    onToggleLineLock,
   } = props;
   const model = buildScriptLineModel(props);
   const linePresentation = resolveScriptLinePresentation(
@@ -284,13 +281,10 @@ export function ConversationScriptLine(props: ScriptLineCompositionProps) {
       linePresentation={linePresentation}
       playbackRange={playbackRange}
       hasPlaybackTiming={hasPlaybackTiming}
-      isLoopSelected={isLoopSelected}
-      isLinePlaying={isLinePlaying}
+      isRangeLocked={isRangeLocked}
       isCurrentPlaybackLine={isCurrentPlaybackLine}
-      loopEnabled={loopEnabled}
-      onPause={onPause}
       onPlayLine={onPlayLine}
-      onToggleLineLoop={onToggleLineLoop}
+      onToggleLineLock={onToggleLineLock}
       style={style}
       layoutVariant="grid"
       languageLabel={model.lineLanguageLabel}

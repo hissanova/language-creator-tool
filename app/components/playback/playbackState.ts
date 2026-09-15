@@ -18,15 +18,10 @@ export type PlaybackState = {
   currentTime: number;
   duration: number | null;
   playbackRate: PlaybackRate;
-  continuous: boolean;
+  selectedLineRange: LinePlaybackRange | null;
   loopEnabled: boolean;
-  selectedLoopRange: LinePlaybackRange | null;
-  /**
-   * Range started from a line or section playback control.
-   * Used for playback boundary behavior, not current-line presentation.
-   */
-  linePlaybackRange: LinePlaybackRange | null;
-  loopRangeEngaged: boolean;
+  /** Whether the selected range currently governs playback boundaries. */
+  rangeEngaged: boolean;
   playbackEnded: boolean;
 };
 
@@ -37,27 +32,23 @@ export const initialPlaybackState: PlaybackState = {
   currentTime: 0,
   duration: null,
   playbackRate: 1,
-  continuous: false,
+  selectedLineRange: null,
   loopEnabled: false,
-  selectedLoopRange: null,
-  linePlaybackRange: null,
-  loopRangeEngaged: false,
+  rangeEngaged: false,
   playbackEnded: false,
 };
 
 export type PlaybackAction =
-  | { type: "hydratePreferences"; continuous: boolean; playbackRate: PlaybackRate }
+  | { type: "hydratePreferences"; playbackRate: PlaybackRate }
   | { type: "setSource"; mediaResourceId: string; mediaSource: string; currentTime?: number; playing?: boolean }
   | { type: "setPlaying"; playing: boolean }
   | { type: "setDuration"; duration: number | null }
   | { type: "setCurrentTime"; currentTime: number }
-  | { type: "lineBoundaryReached"; currentTime: number }
+  | { type: "selectedRangeBoundaryReached"; currentTime: number }
   | { type: "playLine"; range: LinePlaybackRange }
-  | { type: "setContinuous"; continuous: boolean }
   | { type: "toggleLoop" }
-  | { type: "toggleLineLoop"; range: LinePlaybackRange }
-  | { type: "setLoopRangeEngaged"; engaged: boolean }
-  | { type: "clearLoopRange" }
+  | { type: "toggleLineLock"; range: LinePlaybackRange }
+  | { type: "setRangeEngaged"; engaged: boolean }
   | { type: "seek"; currentTime: number }
   | { type: "skip"; seconds: number }
   | { type: "setPlaybackRate"; playbackRate: PlaybackRate }
@@ -67,28 +58,31 @@ export function isTimeInRange(time: number, range: LinePlaybackRange) {
   return time >= range.start && time < range.end;
 }
 
+export function isSameLineRange(
+  left: LinePlaybackRange | null | undefined,
+  right: LinePlaybackRange | null | undefined,
+) {
+  return Boolean(
+    left && right &&
+      left.lineId === right.lineId &&
+      left.mediaResourceId === right.mediaResourceId &&
+      left.mediaSource === right.mediaSource,
+  );
+}
+
 export function hasPlaybackEnteredRange(
   previousTime: number,
   currentTime: number,
   range: LinePlaybackRange,
 ) {
-  return (
-    isTimeInRange(currentTime, range) ||
-    (previousTime < range.start && currentTime >= range.start)
-  );
+  return isTimeInRange(currentTime, range) ||
+    (previousTime < range.start && currentTime >= range.start);
 }
 
-export function playbackReducer(
-  state: PlaybackState,
-  action: PlaybackAction,
-): PlaybackState {
+export function playbackReducer(state: PlaybackState, action: PlaybackAction): PlaybackState {
   switch (action.type) {
     case "hydratePreferences":
-      return {
-        ...state,
-        continuous: action.continuous,
-        playbackRate: action.playbackRate,
-      };
+      return { ...state, playbackRate: action.playbackRate };
     case "setSource": {
       const sourceChanged = state.mediaSource !== action.mediaSource;
       return {
@@ -98,8 +92,7 @@ export function playbackReducer(
         currentTime: action.currentTime ?? (sourceChanged ? 0 : state.currentTime),
         duration: sourceChanged ? null : state.duration,
         playing: action.playing ?? state.playing,
-        linePlaybackRange: sourceChanged ? null : state.linePlaybackRange,
-        loopRangeEngaged: sourceChanged ? false : state.loopRangeEngaged,
+        rangeEngaged: sourceChanged ? false : state.rangeEngaged,
         playbackEnded: false,
       };
     }
@@ -113,12 +106,11 @@ export function playbackReducer(
       return { ...state, duration: action.duration };
     case "setCurrentTime":
       return { ...state, currentTime: action.currentTime, playbackEnded: false };
-    case "lineBoundaryReached":
+    case "selectedRangeBoundaryReached":
       return {
         ...state,
         currentTime: action.currentTime,
         playing: false,
-        linePlaybackRange: null,
         playbackEnded: false,
       };
     case "playLine":
@@ -127,101 +119,54 @@ export function playbackReducer(
         mediaResourceId: action.range.mediaResourceId,
         mediaSource: action.range.mediaSource,
         currentTime: action.range.start,
-        duration:
-          state.mediaSource === action.range.mediaSource ? state.duration : null,
+        duration: state.mediaSource === action.range.mediaSource ? state.duration : null,
         playing: true,
-        linePlaybackRange: action.range,
+        rangeEngaged: Boolean(
+          state.selectedLineRange &&
+            state.selectedLineRange.mediaSource === action.range.mediaSource &&
+            isTimeInRange(action.range.start, state.selectedLineRange),
+        ),
         playbackEnded: false,
-        loopRangeEngaged: Boolean(
-          state.loopEnabled &&
-            state.selectedLoopRange?.lineId === action.range.lineId,
+      };
+    case "toggleLoop":
+      return { ...state, loopEnabled: !state.loopEnabled };
+    case "toggleLineLock": {
+      if (isSameLineRange(state.selectedLineRange, action.range)) {
+        return { ...state, selectedLineRange: null, rangeEngaged: false };
+      }
+      return {
+        ...state,
+        selectedLineRange: action.range,
+        rangeEngaged: Boolean(
+          state.mediaSource === action.range.mediaSource &&
+            isTimeInRange(state.currentTime, action.range),
         ),
       };
-    case "setContinuous":
-      return { ...state, continuous: action.continuous };
-    case "toggleLoop": {
-      const loopEnabled = !state.loopEnabled;
-      const selected = state.selectedLoopRange;
-      const loopRangeEngaged = Boolean(
-        loopEnabled &&
-          selected &&
-          selected.mediaSource === state.mediaSource &&
-          isTimeInRange(state.currentTime, selected),
-      );
-      return {
-        ...state,
-        loopEnabled,
-        loopRangeEngaged,
-        linePlaybackRange:
-          loopRangeEngaged && selected ? selected : state.linePlaybackRange,
-      };
     }
-    case "toggleLineLoop": {
-      const isSelected = state.selectedLoopRange?.lineId === action.range.lineId;
-      if (isSelected) {
-        return {
-          ...state,
-          loopEnabled: false,
-          selectedLoopRange: null,
-          loopRangeEngaged: false,
-        };
-      }
-
-      const loopRangeEngaged = Boolean(
-        state.mediaSource === action.range.mediaSource &&
-          isTimeInRange(state.currentTime, action.range),
-      );
+    case "setRangeEngaged":
       return {
         ...state,
-        loopEnabled: true,
-        selectedLoopRange: action.range,
-        loopRangeEngaged,
-        linePlaybackRange:
-          loopRangeEngaged ? action.range : state.linePlaybackRange,
-      };
-    }
-    case "setLoopRangeEngaged":
-      return {
-        ...state,
-        loopRangeEngaged: action.engaged,
-        linePlaybackRange:
-          action.engaged && state.selectedLoopRange
-            ? state.selectedLoopRange
-            : state.linePlaybackRange,
-      };
-    case "clearLoopRange":
-      return {
-        ...state,
-        loopEnabled: false,
-        selectedLoopRange: null,
-        loopRangeEngaged: false,
+        rangeEngaged: Boolean(action.engaged && state.selectedLineRange),
       };
     case "seek": {
-      const selected = state.selectedLoopRange;
-      const insideSelectedRange = Boolean(
-        selected &&
-          selected.mediaSource === state.mediaSource &&
-          isTimeInRange(action.currentTime, selected),
+      const rangeEngaged = Boolean(
+        state.selectedLineRange &&
+          state.selectedLineRange.mediaSource === state.mediaSource &&
+          isTimeInRange(action.currentTime, state.selectedLineRange),
       );
       return {
         ...state,
         currentTime: action.currentTime,
-        loopEnabled:
-          state.loopEnabled && selected && !insideSelectedRange
-            ? false
-            : state.loopEnabled,
-        loopRangeEngaged: Boolean(state.loopEnabled && insideSelectedRange),
+        rangeEngaged,
         playbackEnded: false,
       };
     }
     case "skip": {
       if (!state.mediaSource || state.duration == null) return state;
-      const currentTime = getClampedSkipTime(
-        state.currentTime,
-        action.seconds,
-        state.duration,
-      );
-      return playbackReducer(state, { type: "seek", currentTime });
+      return playbackReducer(state, {
+        type: "seek",
+        currentTime: getClampedSkipTime(state.currentTime, action.seconds, state.duration),
+      });
     }
     case "setPlaybackRate":
       return { ...state, playbackRate: action.playbackRate };
@@ -229,39 +174,25 @@ export function playbackReducer(
       return {
         ...state,
         playing: false,
-        linePlaybackRange: null,
+        rangeEngaged: false,
         playbackEnded: true,
       };
   }
 }
 
-export function getClampedSkipTime(
-  currentTime: number,
-  seconds: number,
-  duration: number,
-) {
+export function getClampedSkipTime(currentTime: number, seconds: number, duration: number) {
   return Math.max(0, Math.min(duration, currentTime + seconds));
 }
 
-export function getSelectedLoopRangeToStart(
-  state: Pick<
-    PlaybackState,
-    | "loopEnabled"
-    | "selectedLoopRange"
-    | "loopRangeEngaged"
-    | "mediaSource"
-    | "currentTime"
-  >,
+export function getSelectedRangeToStart(
+  state: Pick<PlaybackState, "selectedLineRange" | "rangeEngaged" | "mediaSource" | "currentTime">,
 ) {
-  const selected = state.selectedLoopRange;
-  if (!state.loopEnabled || !selected) return null;
-
-  const canResumeEngagedRange =
-    state.loopRangeEngaged &&
+  const selected = state.selectedLineRange;
+  if (!selected) return null;
+  const canResume = state.rangeEngaged &&
     selected.mediaSource === state.mediaSource &&
     isTimeInRange(state.currentTime, selected);
-
-  return canResumeEngagedRange ? null : selected;
+  return canResume ? null : selected;
 }
 
 export type TimeUpdateDecision =
@@ -269,42 +200,22 @@ export type TimeUpdateDecision =
   | { type: "pause"; time: number }
   | { type: "loop"; time: number };
 
-export function getTimeUpdateDecision(
-  state: PlaybackState,
-  currentTime: number,
-): TimeUpdateDecision {
-  const selected = state.selectedLoopRange;
-
+export function getTimeUpdateDecision(state: PlaybackState, currentTime: number): TimeUpdateDecision {
+  const selected = state.selectedLineRange;
   if (
-    state.loopEnabled &&
     selected &&
-    state.loopRangeEngaged &&
+    state.rangeEngaged &&
     selected.mediaSource === state.mediaSource &&
     currentTime >= selected.end
   ) {
-    return { type: "loop", time: selected.start };
+    return state.loopEnabled
+      ? { type: "loop", time: selected.start }
+      : { type: "pause", time: selected.end };
   }
-
-  if (
-    state.linePlaybackRange &&
-    state.linePlaybackRange.mediaSource === state.mediaSource &&
-    !state.continuous &&
-    !(state.loopEnabled && !selected) &&
-    currentTime >= state.linePlaybackRange.end
-  ) {
-    return { type: "pause", time: state.linePlaybackRange.end };
-  }
-
   return { type: "continue" };
 }
 
 export function parseStoredPlaybackRate(value: string | null): PlaybackRate {
   const parsed = Number(value);
-  return PLAYBACK_RATES.includes(parsed as PlaybackRate)
-    ? (parsed as PlaybackRate)
-    : 1;
-}
-
-export function parseStoredContinuous(value: string | null) {
-  return value === "true";
+  return PLAYBACK_RATES.includes(parsed as PlaybackRate) ? (parsed as PlaybackRate) : 1;
 }

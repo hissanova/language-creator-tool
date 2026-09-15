@@ -20,7 +20,7 @@ export function formatPlaybackTime(value: number | null) {
   return `${totalMinutes}:${secondText}.${millisecondText}`;
 }
 
-export function getLoopRangePercentages(
+export function getPlaybackRangePercentages(
   range: Pick<LinePlaybackRange, "start" | "end">,
   duration: number | null,
 ) {
@@ -49,7 +49,7 @@ export function getPlaybackProgressPercentage(
   return Math.max(0, Math.min(100, (currentTime / duration) * 100));
 }
 
-export function getLoopRangeVisualStyle(
+export function getPlaybackRangeVisualStyle(
   percentages: { start: number; width: number },
   minimumWidth = 5,
 ) {
@@ -69,25 +69,10 @@ export function isLineCurrentlyPlaying(
     | "playing"
     | "mediaSource"
     | "currentTime"
-    | "loopEnabled"
-    | "selectedLoopRange"
-    | "loopRangeEngaged"
   >,
   range: LinePlaybackRange | null | undefined,
 ) {
   if (!state.playing || !range) return false;
-
-  if (
-    state.loopEnabled &&
-    state.selectedLoopRange &&
-    state.loopRangeEngaged
-  ) {
-    return Boolean(
-      state.selectedLoopRange.lineId === range.lineId &&
-        state.selectedLoopRange.mediaSource === state.mediaSource &&
-        range.mediaSource === state.mediaSource,
-    );
-  }
 
   return Boolean(
     range.mediaSource === state.mediaSource &&

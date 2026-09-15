@@ -19,10 +19,7 @@ import { resolveLinePlaybackRange } from "./playback/linePlayback";
 import type { LinePlaybackRange } from "./playback/playbackState";
 import { usePlaybackController } from "./playback/usePlaybackController";
 import { usePlaybackKeyboardShortcuts } from "./playback/playbackKeyboardShortcuts";
-import {
-  isLineCurrentlyPlaying,
-  resolveCurrentPlaybackLineId,
-} from "./playback/playbackDisplay";
+import { resolveCurrentPlaybackLineId } from "./playback/playbackDisplay";
 import { PlayIcon } from "./playback/PlaybackIcons";
 import { getAlignmentRef } from "./script-line/coreQueries";
 import { normalizeMediaSrc } from "./media/normalizeMediaSrc";
@@ -280,13 +277,13 @@ export function ViewerShell({
               style={style}
               playbackRange={playbackRange}
               hasPlaybackTiming={hasPlaybackTiming}
-              isLoopSelected={playback.state.selectedLoopRange?.lineId === block.text.id}
-              isLinePlaying={isLineCurrentlyPlaying(playback.state, playbackRange)}
+              isRangeLocked={
+                playback.state.selectedLineRange?.lineId === block.text.id &&
+                playback.state.selectedLineRange.mediaSource === playbackRange?.mediaSource
+              }
               isCurrentPlaybackLine={currentPlaybackLineId === block.text.id}
-              loopEnabled={playback.state.loopEnabled}
-              onPause={playback.actions.pause}
               onPlayLine={playback.actions.playLine}
-              onToggleLineLoop={playback.actions.toggleLineLoop}
+              onToggleLineLock={playback.actions.toggleLineLock}
             />
           </div>
         );
