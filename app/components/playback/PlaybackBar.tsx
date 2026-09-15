@@ -2,11 +2,11 @@ import type { PlaybackController } from "./usePlaybackController";
 import { PLAYBACK_RATES, type PlaybackRate } from "./playbackState";
 import {
   formatPlaybackTime,
-  getLoopRangePercentages,
-  getLoopRangeVisualStyle,
+  getPlaybackRangePercentages,
+  getPlaybackRangeVisualStyle,
   getPlaybackProgressPercentage,
 } from "./playbackDisplay";
-import { loopButtonClass, toggleButtonClass } from "./playbackButtonStyles";
+import { playbackModeButtonClass } from "./playbackButtonStyles";
 import { releasePlaybackButtonFocusOnPointerUp } from "./playbackButtonFocus";
 import { LoopIcon, PauseIcon, PlayIcon, SkipIcon } from "./PlaybackIcons";
 
@@ -58,14 +58,14 @@ export function PlaybackBar({
     ? state.duration
     : 0;
   const hasDuration = duration > 0;
-  const selected = state.selectedLoopRange;
+  const selected = state.selectedLineRange;
   const selectedMatchesSource = selected?.mediaSource === state.mediaSource;
   const percentages = selected && selectedMatchesSource
-    ? getLoopRangePercentages(selected, state.duration)
+    ? getPlaybackRangePercentages(selected, state.duration)
     : null;
   const showWholeSourceLoop = state.loopEnabled && !selected;
-  const loopVisualStyle = percentages
-    ? getLoopRangeVisualStyle(percentages)
+  const rangeVisualStyle = percentages
+    ? getPlaybackRangeVisualStyle(percentages)
     : null;
   const progressPercentage = getPlaybackProgressPercentage(
     state.currentTime,
@@ -76,10 +76,8 @@ export function PlaybackBar({
     : 0;
   const skipDisabled = !state.mediaSource || !hasDuration;
   const playLabel = state.playing ? "Pause media" : "Play media";
-  const continuousLabel = state.continuous
-    ? "Disable continuous playback"
-    : "Enable continuous playback";
-  const loopLabel = state.loopEnabled ? "Disable loop" : "Enable loop";
+  const loopScope = selected ? "selected-line" : "whole-source";
+  const loopLabel = `${state.loopEnabled ? "Disable" : "Enable"} ${loopScope} loop`;
 
   return (
     <div className="space-y-2 text-gray-950">
@@ -145,27 +143,15 @@ export function PlaybackBar({
         <div className="flex flex-wrap items-center gap-2" data-playback-cluster="state">
           <button
             type="button"
-            aria-pressed={state.continuous}
-            aria-label={continuousLabel}
-            title={continuousLabel}
-            data-playback-toggle="continuous"
-            data-state={state.continuous ? "on" : "off"}
-            onClick={() => actions.setContinuous(!state.continuous)}
-            onPointerUp={releasePlaybackButtonFocusOnPointerUp}
-            className={toggleButtonClass(state.continuous)}
-          >
-            Continuous
-          </button>
-          <button
-            type="button"
             aria-pressed={state.loopEnabled}
             aria-label={loopLabel}
             title={loopLabel}
             data-playback-toggle="loop"
+            data-loop-scope={loopScope}
             data-state={state.loopEnabled ? "on" : "off"}
             onClick={actions.toggleLoop}
             onPointerUp={releasePlaybackButtonFocusOnPointerUp}
-            className={loopButtonClass({ pressed: state.loopEnabled })}
+            className={playbackModeButtonClass({ pressed: state.loopEnabled })}
           >
             <LoopIcon />
           </button>
@@ -192,37 +178,39 @@ export function PlaybackBar({
             <>
               <div
                 aria-hidden="true"
-                data-loop-range={state.loopEnabled ? "active" : "inactive"}
-                data-loop-scope={showWholeSourceLoop ? "full-source" : "selection"}
-                data-loop-start={showWholeSourceLoop ? 0 : selected?.start}
-                data-loop-end={showWholeSourceLoop ? duration : selected?.end}
+                data-playback-boundary={showWholeSourceLoop
+                  ? "source-loop"
+                  : state.loopEnabled ? "selected-range-loop" : "selected-range"}
+                data-boundary-scope={showWholeSourceLoop ? "full-source" : "line"}
+                data-boundary-start={showWholeSourceLoop ? 0 : selected?.start}
+                data-boundary-end={showWholeSourceLoop ? duration : selected?.end}
                 className={[
                   "pointer-events-none absolute top-1/2 z-20 h-3 -translate-y-1/2 rounded-sm border-2",
-                  state.loopEnabled
-                    ? "border-emerald-800 bg-emerald-300/75"
-                    : "border-dashed border-gray-700 bg-gray-200/80",
+                  selected && !state.loopEnabled
+                    ? "border-blue-800 bg-blue-300/75 dark:border-blue-300 dark:bg-blue-700/70"
+                    : "border-emerald-800 bg-emerald-300/75 dark:border-emerald-300 dark:bg-emerald-700/70",
                 ].join(" ")}
                 style={showWholeSourceLoop
                   ? { left: "0%", width: "100%" }
-                  : loopVisualStyle ?? undefined}
+                  : rangeVisualStyle ?? undefined}
               />
               {!showWholeSourceLoop && percentages ? (
                 <>
                   <div
                     aria-hidden="true"
-                    data-loop-boundary="start"
+                    data-line-boundary="start"
                     className={[
                       "pointer-events-none absolute top-1/2 z-20 h-4 w-0.5 -translate-y-1/2",
-                      state.loopEnabled ? "bg-emerald-950" : "bg-gray-800",
+                      state.loopEnabled ? "bg-emerald-950 dark:bg-emerald-200" : "bg-blue-950 dark:bg-blue-200",
                     ].join(" ")}
                     style={{ left: `${percentages.start}%` }}
                   />
                   <div
                     aria-hidden="true"
-                    data-loop-boundary="end"
+                    data-line-boundary="end"
                     className={[
                       "pointer-events-none absolute top-1/2 z-20 h-4 w-0.5 -translate-x-full -translate-y-1/2",
-                      state.loopEnabled ? "bg-emerald-950" : "bg-gray-800",
+                      state.loopEnabled ? "bg-emerald-950 dark:bg-emerald-200" : "bg-blue-950 dark:bg-blue-200",
                     ].join(" ")}
                     style={{ left: `${percentages.start + percentages.width}%` }}
                   />
@@ -254,23 +242,13 @@ export function PlaybackBar({
               <>
                 <span aria-hidden="true">·</span>
                 <span
-                  data-loop-selection={state.loopEnabled ? "active" : "inactive"}
-                  aria-label={`Loop range from ${formatPlaybackTime(selected.start)} to ${formatPlaybackTime(selected.end)}${state.loopEnabled ? "" : ", inactive"}`}
-                  className={state.loopEnabled ? "text-emerald-800" : "text-gray-600"}
+                  data-line-selection="locked"
+                  data-loop-enabled={state.loopEnabled}
+                  aria-label={`Selected range from ${formatPlaybackTime(selected.start)} to ${formatPlaybackTime(selected.end)}`}
+                  className={state.loopEnabled ? "text-emerald-800 dark:text-emerald-200" : "text-blue-800 dark:text-blue-200"}
                 >
-                  Loop {formatPlaybackTime(selected.start)}–{formatPlaybackTime(selected.end)}
-                  {!state.loopEnabled ? " (inactive)" : ""}
+                  Selected range {formatPlaybackTime(selected.start)}–{formatPlaybackTime(selected.end)}
                 </span>
-                <button
-                  type="button"
-                  aria-label="Clear loop range"
-                  title="Clear loop range"
-                  onClick={actions.clearLoopRange}
-                  onPointerUp={releasePlaybackButtonFocusOnPointerUp}
-                  className="inline-flex min-h-7 min-w-7 items-center justify-center rounded border hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
-                >
-                  ×
-                </button>
               </>
             ) : null}
           </div>

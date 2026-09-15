@@ -8,36 +8,26 @@ import {
 } from "react";
 import type { MediaResource } from "../../types/core/document";
 import {
-  getTimeUpdateDecision,
   getClampedSkipTime,
-  getSelectedLoopRangeToStart,
-  hasPlaybackEnteredRange,
+  getSelectedRangeToStart,
   initialPlaybackState,
-  parseStoredContinuous,
   parseStoredPlaybackRate,
   playbackReducer,
   type LinePlaybackRange,
   type PlaybackAction,
   type PlaybackRate,
 } from "./playbackState";
+import {
+  applyPendingPlayback as applyPendingPlaybackToElement,
+  beginPendingSourceTransition,
+  handlePlaybackPlayingChange,
+  handlePlaybackTimeUpdate,
+  type PendingPlayback,
+} from "./playbackMediaTransition";
 
-const CONTINUOUS_STORAGE_KEY = "lct.viewer.continuous";
 const PLAYBACK_RATE_STORAGE_KEY = "lct.viewer.playbackRate";
 
-type PendingPlayback = {
-  time: number;
-  play: boolean;
-  end?: number;
-};
-
 export type PlaybackController = ReturnType<typeof usePlaybackController>;
-
-export function dispatchLineLoopSelection(
-  range: LinePlaybackRange,
-  dispatchAction: (action: PlaybackAction) => void,
-) {
-  dispatchAction({ type: "toggleLineLoop", range });
-}
 
 export function usePlaybackController(
   audioResources: MediaResource[],
@@ -46,6 +36,13 @@ export function usePlaybackController(
   const [state, dispatch] = useReducer(playbackReducer, initialPlaybackState);
   const mediaElementRef = useRef<HTMLMediaElement | null>(null);
   const stateRef = useRef(state);
+  /**
+   * Lock only selects a range; rangeEngaged says that range currently owns the
+   * playback boundary. Source changes stay pending until metadata permits the
+   * requested seek, so pre-seek time/pause events cannot replace logical state.
+   * Global Loop applies to the locked range when present, otherwise the source.
+   * Auto-follow observes this state and never controls playback.
+   */
   const pendingPlaybackRef = useRef<PendingPlayback | null>(null);
 
   const dispatchAndSync = useCallback((action: PlaybackAction) => {
@@ -58,12 +55,11 @@ export function usePlaybackController(
   }, [state]);
 
   useEffect(() => {
-    dispatch({
+    dispatchAndSync({
       type: "hydratePreferences",
-      continuous: parseStoredContinuous(localStorage.getItem(CONTINUOUS_STORAGE_KEY)),
       playbackRate: parseStoredPlaybackRate(localStorage.getItem(PLAYBACK_RATE_STORAGE_KEY)),
     });
-  }, []);
+  }, [dispatchAndSync]);
 
   useEffect(() => {
     const element = mediaElementRef.current;
@@ -77,72 +73,92 @@ export function usePlaybackController(
 
   const safelyPlay = useCallback((element: HTMLMediaElement) => {
     void element.play().catch(() => {
-      dispatch({ type: "setPlaying", playing: false });
+      dispatchAndSync({ type: "setPlaying", playing: false });
     });
-  }, []);
+  }, [dispatchAndSync]);
 
   const applyPendingPlayback = useCallback(() => {
     const element = mediaElementRef.current;
-    const pending = pendingPlaybackRef.current;
-    if (!element || !pending) return;
+    applyPendingPlaybackToElement({
+      element,
+      pendingPlaybackRef,
+      playbackRate: stateRef.current.playbackRate,
+      dispatchAndSync,
+      safelyPlay,
+    });
+  }, [dispatchAndSync, safelyPlay]);
 
-    element.currentTime = pending.time;
-    element.playbackRate = stateRef.current.playbackRate;
-    pendingPlaybackRef.current = null;
-    if (pending.play) safelyPlay(element);
-  }, [safelyPlay]);
-
-  const beginAt = useCallback((
+  const startMediaAt = useCallback((
     mediaResourceId: string,
     mediaSource: string,
     time: number,
-    range?: LinePlaybackRange,
   ) => {
     const currentState = stateRef.current;
     const element = mediaElementRef.current;
     const sourceChanged = currentState.mediaSource !== mediaSource;
 
-    if (range) {
-      dispatchAndSync({ type: "playLine", range });
-    } else {
-      dispatchAndSync({
-        type: "setSource",
-        mediaResourceId,
-        mediaSource,
-        currentTime: time,
-        playing: true,
-      });
-    }
-
     if (sourceChanged) {
-      element?.pause();
-      pendingPlaybackRef.current = { time, play: true, end: range?.end };
+      beginPendingSourceTransition({
+        pendingPlaybackRef,
+        pending: { time },
+        commitSourceChange: () => dispatchAndSync({
+          type: "setSource",
+          mediaResourceId,
+          mediaSource,
+          currentTime: time,
+          playing: true,
+        }),
+        pauseElement: element ? () => element.pause() : undefined,
+      });
+      return;
     }
 
-    if (!sourceChanged && element) {
+    dispatchAndSync({
+      type: "setSource",
+      mediaResourceId,
+      mediaSource,
+      currentTime: time,
+      playing: true,
+    });
+    if (element) {
       element.currentTime = time;
       element.playbackRate = currentState.playbackRate;
       safelyPlay(element);
     }
   }, [dispatchAndSync, safelyPlay]);
 
+  const startLine = useCallback((range: LinePlaybackRange) => {
+    const element = mediaElementRef.current;
+    const sourceChanged = stateRef.current.mediaSource !== range.mediaSource;
+    if (sourceChanged) {
+      beginPendingSourceTransition({
+        pendingPlaybackRef,
+        pending: { time: range.start, end: range.end },
+        commitSourceChange: () => dispatchAndSync({ type: "playLine", range }),
+        pauseElement: element ? () => element.pause() : undefined,
+      });
+      return;
+    }
+    dispatchAndSync({ type: "playLine", range });
+    if (element) {
+      element.currentTime = range.start;
+      element.playbackRate = stateRef.current.playbackRate;
+      safelyPlay(element);
+    }
+  }, [dispatchAndSync, safelyPlay]);
+
   const play = useCallback(() => {
     const currentState = stateRef.current;
-    const selectedLoopRange = getSelectedLoopRangeToStart(currentState);
-    if (selectedLoopRange) {
-      beginAt(
-        selectedLoopRange.mediaResourceId,
-        selectedLoopRange.mediaSource,
-        selectedLoopRange.start,
-        selectedLoopRange,
-      );
+    const selectedLineRange = getSelectedRangeToStart(currentState);
+    if (selectedLineRange) {
+      startLine(selectedLineRange);
       return;
     }
     let mediaResourceId = currentState.mediaResourceId;
     let mediaSource = currentState.mediaSource;
 
     if (!mediaSource || !mediaResourceId) {
-      const selected = currentState.selectedLoopRange;
+      const selected = currentState.selectedLineRange;
       const fallback = audioResources[0];
       mediaResourceId = selected?.mediaResourceId ?? fallback?.id ?? null;
       mediaSource = selected?.mediaSource ?? (fallback ? normalizeSource(fallback.src) : null);
@@ -153,23 +169,19 @@ export function usePlaybackController(
       currentState.duration != null &&
       currentState.currentTime >= currentState.duration;
     const time = atEnd ? 0 : currentState.currentTime;
-    beginAt(mediaResourceId, mediaSource, time);
-  }, [audioResources, beginAt, normalizeSource]);
+    startMediaAt(mediaResourceId, mediaSource, time);
+  }, [audioResources, normalizeSource, startLine, startMediaAt]);
 
   const pause = useCallback(() => {
     mediaElementRef.current?.pause();
     dispatchAndSync({ type: "setPlaying", playing: false });
   }, [dispatchAndSync]);
 
-  const playLine = useCallback((range: LinePlaybackRange) => {
-    beginAt(range.mediaResourceId, range.mediaSource, range.start, range);
-  }, [beginAt]);
-
   const seek = useCallback((time: number) => {
     const element = mediaElementRef.current;
     if (element) element.currentTime = time;
-    dispatch({ type: "seek", currentTime: time });
-  }, []);
+    dispatchAndSync({ type: "seek", currentTime: time });
+  }, [dispatchAndSync]);
 
   const skip = useCallback((seconds: number) => {
     const currentState = stateRef.current;
@@ -182,24 +194,20 @@ export function usePlaybackController(
       currentState.duration,
     );
     if (element) element.currentTime = currentTime;
-    dispatch({ type: "seek", currentTime });
-  }, []);
-
-  const setContinuous = useCallback((continuous: boolean) => {
-    localStorage.setItem(CONTINUOUS_STORAGE_KEY, String(continuous));
-    dispatch({ type: "setContinuous", continuous });
-  }, []);
-
-  const toggleLoop = useCallback(() => dispatch({ type: "toggleLoop" }), []);
-  const toggleLineLoop = useCallback((range: LinePlaybackRange) => {
-    dispatchLineLoopSelection(range, dispatchAndSync);
+    dispatchAndSync({ type: "seek", currentTime });
   }, [dispatchAndSync]);
-  const clearLoopRange = useCallback(() => dispatch({ type: "clearLoopRange" }), []);
+
+  const toggleLoop = useCallback(() => {
+    dispatchAndSync({ type: "toggleLoop" });
+  }, [dispatchAndSync]);
+  const toggleLineLock = useCallback((range: LinePlaybackRange) => {
+    dispatchAndSync({ type: "toggleLineLock", range });
+  }, [dispatchAndSync]);
 
   const setPlaybackRate = useCallback((playbackRate: PlaybackRate) => {
     localStorage.setItem(PLAYBACK_RATE_STORAGE_KEY, String(playbackRate));
-    dispatch({ type: "setPlaybackRate", playbackRate });
-  }, []);
+    dispatchAndSync({ type: "setPlaybackRate", playbackRate });
+  }, [dispatchAndSync]);
 
   const attachMediaElement = useCallback((element: HTMLMediaElement | null) => {
     if (!element && mediaElementRef.current) mediaElementRef.current.pause();
@@ -210,7 +218,7 @@ export function usePlaybackController(
     const element = mediaElementRef.current;
     if (!element) return;
     const duration = Number.isFinite(element.duration) ? element.duration : null;
-    dispatch({
+    dispatchAndSync({
       type: "setDuration",
       duration,
     });
@@ -219,64 +227,75 @@ export function usePlaybackController(
       console.warn("Playback disabled: line timestamp exceeds the media duration.");
       pendingPlaybackRef.current = null;
       element.pause();
-      dispatch({ type: "setPlaying", playing: false });
+      dispatchAndSync({ type: "setPlaying", playing: false });
       return;
     }
     applyPendingPlayback();
-  }, [applyPendingPlayback]);
+  }, [applyPendingPlayback, dispatchAndSync]);
 
   const onDurationChange = useCallback(() => {
     const element = mediaElementRef.current;
     if (!element) return;
-    dispatch({
+    dispatchAndSync({
       type: "setDuration",
       duration: Number.isFinite(element.duration) ? element.duration : null,
     });
-  }, []);
+  }, [dispatchAndSync]);
 
   const onTimeUpdate = useCallback(() => {
-    const element = mediaElementRef.current;
-    if (!element) return;
-    const currentState = stateRef.current;
-    const currentTime = element.currentTime;
-    const selected = currentState.selectedLoopRange;
+    handlePlaybackTimeUpdate({
+      element: mediaElementRef.current,
+      pendingPlaybackRef,
+      stateRef,
+      dispatchAndSync,
+    });
+  }, [dispatchAndSync]);
 
-    if (
-      currentState.loopEnabled &&
-      selected &&
-      !currentState.loopRangeEngaged &&
-      selected.mediaSource === currentState.mediaSource &&
-      hasPlaybackEnteredRange(currentState.currentTime, currentTime, selected)
-    ) {
-      dispatchAndSync({ type: "setLoopRangeEngaged", engaged: true });
-    }
+  const onPlay = useCallback(() => {
+    handlePlaybackPlayingChange({
+      playing: true,
+      pendingPlaybackRef,
+      dispatchAndSync,
+    });
+  }, [dispatchAndSync]);
 
-    const decision = getTimeUpdateDecision(stateRef.current, currentTime);
-    if (decision.type === "loop") {
-      element.currentTime = decision.time;
-      dispatchAndSync({ type: "setCurrentTime", currentTime: decision.time });
-      return;
-    }
-    if (decision.type === "pause") {
-      element.currentTime = decision.time;
-      element.pause();
-      dispatchAndSync({ type: "lineBoundaryReached", currentTime: decision.time });
-      return;
-    }
-    dispatchAndSync({ type: "setCurrentTime", currentTime });
+  const onPause = useCallback(() => {
+    handlePlaybackPlayingChange({
+      playing: false,
+      pendingPlaybackRef,
+      dispatchAndSync,
+    });
   }, [dispatchAndSync]);
 
   const onEnded = useCallback(() => {
     const currentState = stateRef.current;
     const element = mediaElementRef.current;
-    if (element && currentState.loopEnabled && !currentState.selectedLoopRange) {
-      element.currentTime = 0;
-      dispatch({ type: "setCurrentTime", currentTime: 0 });
+    const selected = currentState.selectedLineRange;
+    if (element && selected && currentState.rangeEngaged && currentState.loopEnabled) {
+      element.currentTime = selected.start;
+      dispatchAndSync({
+        type: "setCurrentTime",
+        currentTime: selected.start,
+      });
       safelyPlay(element);
       return;
     }
-    dispatch({ type: "mediaEnded" });
-  }, [safelyPlay]);
+    if (element && selected && currentState.rangeEngaged) {
+      element.currentTime = selected.end;
+      dispatchAndSync({
+        type: "selectedRangeBoundaryReached",
+        currentTime: selected.end,
+      });
+      return;
+    }
+    if (element && !selected && currentState.loopEnabled) {
+      element.currentTime = 0;
+      dispatchAndSync({ type: "setCurrentTime", currentTime: 0 });
+      safelyPlay(element);
+      return;
+    }
+    dispatchAndSync({ type: "mediaEnded" });
+  }, [dispatchAndSync, safelyPlay]);
 
   return {
     state,
@@ -285,11 +304,9 @@ export function usePlaybackController(
       pause,
       seek,
       skip,
-      playLine,
-      setContinuous,
+      playLine: startLine,
       toggleLoop,
-      toggleLineLoop,
-      clearLoopRange,
+      toggleLineLock,
       setPlaybackRate,
     },
     mediaProps: {
@@ -298,8 +315,8 @@ export function usePlaybackController(
       onLoadedMetadata,
       onDurationChange,
       onTimeUpdate,
-      onPlay: () => dispatch({ type: "setPlaying", playing: true }),
-      onPause: () => dispatch({ type: "setPlaying", playing: false }),
+      onPlay,
+      onPause,
       onEnded,
     },
   };

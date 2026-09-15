@@ -31,6 +31,17 @@ export function PlayIcon(props: IconProps) {
   );
 }
 
+export function LockIcon({ locked, ...props }: IconProps & { locked: boolean }) {
+  return (
+    <IconFrame data-playback-icon={locked ? "lock-closed" : "lock-open"} {...props}>
+      <rect x="5" y="10" width="14" height="10" rx="2" />
+      {locked
+        ? <path d="M8 10V7a4 4 0 018 0v3" />
+        : <path d="M16 10V7a4 4 0 00-7.5-2" />}
+    </IconFrame>
+  );
+}
+
 export function PauseIcon(props: IconProps) {
   return (
     <IconFrame data-playback-icon="pause" {...props}>

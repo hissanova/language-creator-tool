@@ -15,13 +15,10 @@ export type ScriptLineCompositionProps = {
   style: ViewerStyle;
   playbackRange?: LinePlaybackRange | null;
   hasPlaybackTiming?: boolean;
-  isLoopSelected?: boolean;
-  isLinePlaying?: boolean;
+  isRangeLocked?: boolean;
   isCurrentPlaybackLine?: boolean;
-  loopEnabled?: boolean;
-  onPause?: () => void;
   onPlayLine?: (range: LinePlaybackRange) => void;
-  onToggleLineLoop?: (range: LinePlaybackRange) => void;
+  onToggleLineLock?: (range: LinePlaybackRange) => void;
 };
 
 export type ScriptLineComponent = ComponentType<ScriptLineCompositionProps>;

@@ -203,7 +203,6 @@ test("current-line semantics and visual state remain independent from Play/Pause
         end: 15,
       }}
       isCurrentPlaybackLine
-      isLinePlaying={false}
     />,
   );
   const nonCurrentHtml = renderToStaticMarkup(
