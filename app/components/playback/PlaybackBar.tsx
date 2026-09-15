@@ -29,12 +29,13 @@ function SkipButton({
       disabled={disabled}
       aria-label={label}
       title={label}
+      data-skip-seconds={seconds}
       onClick={() => onSkip(seconds)}
       onPointerUp={releasePlaybackButtonFocusOnPointerUp}
-      className="inline-flex min-w-12 items-center justify-center gap-0.5 rounded-full border px-2 py-2 text-xs font-semibold text-gray-800 hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
+      className="inline-flex min-h-11 min-w-11 flex-col items-center justify-center gap-0.5 rounded-full border px-1 py-1 text-gray-800 hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 disabled:cursor-not-allowed disabled:opacity-40"
     >
       <SkipIcon direction={direction} className="h-4 w-4" />
-      <span>{magnitude}s</span>
+      <span className="text-[0.625rem] font-semibold leading-none">{magnitude}s</span>
     </button>
   );
 }
@@ -77,66 +78,42 @@ export function PlaybackBar({
   const loopLabel = state.loopEnabled ? "Disable loop" : "Enable loop";
 
   return (
-    <div className="space-y-3 text-gray-950">
+    <div className="space-y-2 text-gray-950">
       <audio {...mediaProps} preload="metadata" />
 
       <div
         className="flex flex-wrap items-start justify-start gap-3"
-        data-playback-controls-layout="left-flow"
+        data-playback-controls-layout="transport-stack"
       >
-        <div
-          className="flex max-w-full flex-wrap items-center justify-start gap-1"
-          role="group"
-          aria-label="Playback transport"
-          data-playback-cluster="transport"
-        >
-          <SkipButton seconds={-10} disabled={skipDisabled} onSkip={actions.skip} />
-          <SkipButton seconds={-2} disabled={skipDisabled} onSkip={actions.skip} />
-          <button
-            type="button"
-            onClick={state.playing ? actions.pause : actions.play}
-            onPointerUp={releasePlaybackButtonFocusOnPointerUp}
-            className="inline-flex min-h-12 min-w-16 items-center justify-center rounded-full border-2 border-blue-700 bg-blue-50 px-5 py-2 text-blue-800 hover:bg-blue-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
-            aria-label={playLabel}
-            title={playLabel}
+        <div className="flex min-w-0 max-w-full flex-col items-start gap-1.5">
+          <div
+            className="flex max-w-full flex-wrap items-center justify-start gap-0.5"
+            role="group"
+            aria-label="Playback transport"
+            data-playback-cluster="transport"
           >
-            {state.playing ? <PauseIcon /> : <PlayIcon />}
-          </button>
-          <SkipButton seconds={2} disabled={skipDisabled} onSkip={actions.skip} />
-          <SkipButton seconds={10} disabled={skipDisabled} onSkip={actions.skip} />
-        </div>
-
-        <div className="flex min-w-0 max-w-full flex-col items-start gap-2" data-playback-cluster="state">
-          <div className="flex flex-wrap items-center gap-2">
+            <SkipButton seconds={-10} disabled={skipDisabled} onSkip={actions.skip} />
+            <SkipButton seconds={-2} disabled={skipDisabled} onSkip={actions.skip} />
             <button
               type="button"
-              aria-pressed={state.continuous}
-              aria-label={continuousLabel}
-              title={continuousLabel}
-              data-playback-toggle="continuous"
-              data-state={state.continuous ? "on" : "off"}
-              onClick={() => actions.setContinuous(!state.continuous)}
+              onClick={state.playing ? actions.pause : actions.play}
               onPointerUp={releasePlaybackButtonFocusOnPointerUp}
-              className={toggleButtonClass(state.continuous)}
+              className="inline-flex min-h-11 min-w-14 items-center justify-center rounded-full border-2 border-blue-700 bg-blue-50 px-4 py-1 text-blue-800 hover:bg-blue-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
+              aria-label={playLabel}
+              title={playLabel}
             >
-              Continuous
+              {state.playing ? <PauseIcon /> : <PlayIcon />}
             </button>
-            <button
-              type="button"
-              aria-pressed={state.loopEnabled}
-              aria-label={loopLabel}
-              title={loopLabel}
-              data-playback-toggle="loop"
-              data-state={state.loopEnabled ? "on" : "off"}
-              onClick={actions.toggleLoop}
-              onPointerUp={releasePlaybackButtonFocusOnPointerUp}
-              className={loopButtonClass({ pressed: state.loopEnabled })}
-            >
-              <LoopIcon />
-            </button>
+            <SkipButton seconds={2} disabled={skipDisabled} onSkip={actions.skip} />
+            <SkipButton seconds={10} disabled={skipDisabled} onSkip={actions.skip} />
           </div>
 
-          <div className="flex flex-wrap gap-1" role="group" aria-label="Playback speed">
+          <div
+            className="flex flex-wrap gap-1"
+            role="group"
+            aria-label="Playback speed"
+            data-playback-cluster="speed"
+          >
             {PLAYBACK_RATES.map((rate) => {
               const selectedRate = state.playbackRate === rate;
               return (
@@ -159,6 +136,35 @@ export function PlaybackBar({
               );
             })}
           </div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2" data-playback-cluster="state">
+          <button
+            type="button"
+            aria-pressed={state.continuous}
+            aria-label={continuousLabel}
+            title={continuousLabel}
+            data-playback-toggle="continuous"
+            data-state={state.continuous ? "on" : "off"}
+            onClick={() => actions.setContinuous(!state.continuous)}
+            onPointerUp={releasePlaybackButtonFocusOnPointerUp}
+            className={toggleButtonClass(state.continuous)}
+          >
+            Continuous
+          </button>
+          <button
+            type="button"
+            aria-pressed={state.loopEnabled}
+            aria-label={loopLabel}
+            title={loopLabel}
+            data-playback-toggle="loop"
+            data-state={state.loopEnabled ? "on" : "off"}
+            onClick={actions.toggleLoop}
+            onPointerUp={releasePlaybackButtonFocusOnPointerUp}
+            className={loopButtonClass({ pressed: state.loopEnabled })}
+          >
+            <LoopIcon />
+          </button>
         </div>
       </div>
 
@@ -235,43 +241,39 @@ export function PlaybackBar({
             className="playback-seek-input absolute inset-0 z-30 h-8 w-full cursor-pointer rounded-full bg-transparent focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 disabled:cursor-not-allowed"
           />
         </div>
-        <div className="flex justify-between gap-3 text-sm tabular-nums text-gray-600">
-          <span>{formatPlaybackTime(state.currentTime)}</span>
-          <span>{formatPlaybackTime(state.duration)}</span>
-        </div>
-      </div>
-
-      <div className="flex min-h-7 flex-wrap items-center gap-2 text-sm">
-        {selected ? (
-          <>
-            <span
-              data-loop-selection={state.loopEnabled ? "active" : "inactive"}
-              className={[
-                "rounded border px-2 py-1",
-                state.loopEnabled
-                  ? "border-emerald-600 bg-emerald-100 text-emerald-900"
-                  : "border-dashed border-gray-400 bg-gray-100 text-gray-700",
-              ].join(" ")}
-            >
-              {selected.lineId} — {formatPlaybackTime(selected.start)}–{formatPlaybackTime(selected.end)}
-              {!state.loopEnabled ? " (inactive)" : ""}
+        <div className="flex items-start justify-between gap-3 text-sm tabular-nums text-gray-600">
+          <div className="flex min-w-0 flex-wrap items-center gap-x-1.5 gap-y-1">
+            <span data-playback-time="current">
+              {formatPlaybackTime(state.currentTime)}
             </span>
-            <button
-              type="button"
-              aria-label="Clear loop range"
-              title="Clear loop range"
-              onClick={actions.clearLoopRange}
-              onPointerUp={releasePlaybackButtonFocusOnPointerUp}
-              className="rounded border px-2 py-1 hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
-            >
-              ×
-            </button>
-          </>
-        ) : state.loopEnabled ? (
-          <span className="rounded border border-emerald-600 bg-emerald-100 px-2 py-1 text-emerald-900">Whole audio</span>
-        ) : (
-          <span className="text-gray-500">No loop range selected</span>
-        )}
+            {selected ? (
+              <>
+                <span aria-hidden="true">·</span>
+                <span
+                  data-loop-selection={state.loopEnabled ? "active" : "inactive"}
+                  aria-label={`Loop range from ${formatPlaybackTime(selected.start)} to ${formatPlaybackTime(selected.end)}${state.loopEnabled ? "" : ", inactive"}`}
+                  className={state.loopEnabled ? "text-emerald-800" : "text-gray-600"}
+                >
+                  Loop {formatPlaybackTime(selected.start)}–{formatPlaybackTime(selected.end)}
+                  {!state.loopEnabled ? " (inactive)" : ""}
+                </span>
+                <button
+                  type="button"
+                  aria-label="Clear loop range"
+                  title="Clear loop range"
+                  onClick={actions.clearLoopRange}
+                  onPointerUp={releasePlaybackButtonFocusOnPointerUp}
+                  className="inline-flex min-h-7 min-w-7 items-center justify-center rounded border hover:bg-gray-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
+                >
+                  ×
+                </button>
+              </>
+            ) : null}
+          </div>
+          <span data-playback-time="duration" className="shrink-0">
+            {formatPlaybackTime(state.duration)}
+          </span>
+        </div>
       </div>
     </div>
   );
