@@ -1773,7 +1773,7 @@ test("global controls render four Skip buttons and disable them without selected
       new RegExp(`<button[^>]*data-skip-seconds="${seconds}"[^>]*>[\\s\\S]*?</button>`),
     )?.[0];
     assert.ok(buttonMarkup);
-    assert.equal((buttonMarkup.match(/<path\\b/g) ?? []).length, chevronCount);
+    assert.equal((buttonMarkup.match(/<path/g) ?? []).length, chevronCount);
   }
   for (const rate of PLAYBACK_RATES) {
     assert.match(html, new RegExp(`>${rate}×</button>`));
