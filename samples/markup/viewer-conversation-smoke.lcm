@@ -58,5 +58,5 @@ resources:
       私は遅いよ
 
   @"にーさん"
-    -> gloss lang:ja
+    ->gloss: lang:ja
       遅い

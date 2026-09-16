@@ -74,7 +74,7 @@ Examples:
     +note:
       首里・那覇で使われる挨拶。
 
-    -> translation lang:en:
+    ->translation: lang:en
       Hello.
 ```
 
@@ -83,7 +83,7 @@ In this example:
 * `# Greeting` creates section structure.
 * `@"はいさい"` selects a span of text.
 * `+note` attaches a ref to the selected span.
-* `-> translation` creates a transform output.
+* `->translation:` creates a named transform output; `lang:en` is an attribute.
 
 ## Related Specifications
 

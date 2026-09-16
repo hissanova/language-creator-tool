@@ -73,7 +73,7 @@ function lineNumberContaining(source, text) {
 
 function checkLanguageIdValidation() {
   const validWholeLine = sourceWithLanguages({
-    annotation: "  @line\n    -> translation lang:zh-Hant:\n      譯文",
+    annotation: "  @line\n    ->translation: lang:zh-Hant\n      譯文",
   });
   const validDocument = compileLcm(validWholeLine, "declared-language.lcm");
   assert.equal(
@@ -82,31 +82,31 @@ function checkLanguageIdValidation() {
   );
 
   const invalidWholeLine = sourceWithLanguages({
-    annotation: "  @line\n    -> translation lang:zh:\n      譯文",
+    annotation: "  @line\n    ->translation: lang:zh\n      譯文",
   });
   const wholeLineError = errorFor(invalidWholeLine);
   assert.match(wholeLineError, /Unknown language ID "zh"/);
   assert.match(
     wholeLineError,
-    new RegExp(`episode\\.lcm:${lineNumberContaining(invalidWholeLine, "lang:zh:")}`),
+    new RegExp(`episode\\.lcm:${lineNumberContaining(invalidWholeLine, "lang:zh")}`),
   );
   assert.match(wholeLineError, /Declared language IDs: zh-Hant, en, ja\./);
   assert.match(wholeLineError, /Did you mean "zh-Hant"\?/);
 
   const invalidSelectedText = sourceWithLanguages({
-    annotation: '  @"source"\n    -> gloss lang:zh:\n      譯文',
+    annotation: '  @"source"\n    ->gloss: lang:zh\n      譯文',
   });
   assert.match(errorFor(invalidSelectedText), /Unknown language ID "zh"/);
 
   const invalidNestedMapping = sourceWithLanguages({
     annotation:
-      '  @"source"\n    -> gloss lang:en:\n      output\n        @"output"\n          -> gloss lang:zh:\n            譯文',
+      '  @"source"\n    ->gloss: lang:en\n      output\n        @"output"\n          ->gloss: lang:zh\n            譯文',
   });
   const nestedError = errorFor(invalidNestedMapping);
   assert.match(nestedError, /Unknown language ID "zh"/);
   assert.match(
     nestedError,
-    new RegExp(`episode\\.lcm:${lineNumberContaining(invalidNestedMapping, "lang:zh:")}`),
+    new RegExp(`episode\\.lcm:${lineNumberContaining(invalidNestedMapping, "lang:zh")}`),
   );
 
   const invalidDefault = sourceWithLanguages({
@@ -122,19 +122,98 @@ function checkLanguageIdValidation() {
 
   const ambiguous = sourceWithLanguages({
     languages: ["zh-Hant", "zh-Hans", "en"],
-    annotation: "  @line\n    -> translation lang:zh:\n      譯文",
+    annotation: "  @line\n    ->translation: lang:zh\n      譯文",
   });
   assert.doesNotMatch(errorFor(ambiguous), /Did you mean/);
 
   const withoutRegistry = sourceWithLanguages({
     languages: null,
-    annotation: "  @line\n    -> translation lang:undeclared:\n      Translation",
+    annotation: "  @line\n    ->translation: lang:undeclared\n      Translation",
   });
   assert.equal(
     textLines(compileLcm(withoutRegistry, "legacy.lcm"))[0].textLineMappings?.[0].image.content
       .languageId,
     "undeclared",
   );
+}
+
+function checkExplicitMappingHeaders() {
+  const validSource = sourceWithLanguages({
+    annotation:
+      '  @line\n    ->translation: lang:zh-Hant\n      譯文\n  @"source"\n    ->gloss: lang:en\n      Gloss',
+  });
+  const [validLine] = textLines(compileLcm(validSource, "valid-mappings.lcm"));
+  assert.deepEqual(
+    validLine.textLineMappings?.map((mapping) => ({
+      mappingType: mapping.mappingType,
+      languageId: mapping.image.content.languageId,
+      text: mappingText(mapping),
+    })),
+    [{ mappingType: "translation", languageId: "zh-Hant", text: "譯文" }],
+  );
+  const selectedMapping = validLine.selectedTextMappings?.[0].mappings[0];
+  assert.deepEqual(
+    selectedMapping && {
+      mappingType: selectedMapping.mappingType,
+      languageId: selectedMapping.image.content.languageId,
+      text: mappingText(selectedMapping),
+    },
+    { mappingType: "gloss", languageId: "en", text: "Gloss" },
+  );
+
+  const validNested = sourceWithLanguages({
+    annotation:
+      '  @"source"\n    ->translation: lang:en\n      output\n        @"output"\n          ->gloss: lang:en\n            nested gloss',
+  });
+  const [nestedLine] = textLines(compileLcm(validNested, "nested-mapping.lcm"));
+  const outerMapping = nestedLine.selectedTextMappings?.[0].mappings[0];
+  const nestedMapping = outerMapping?.image.selectedTextMappings?.[0].mappings[0];
+  assert.equal(outerMapping?.mappingType, "translation");
+  assert.equal(nestedMapping?.mappingType, "gloss");
+  assert.equal(nestedMapping && mappingText(nestedMapping), "nested gloss");
+
+  const malformedHeaders = [
+    ["->translation: lang:zh-Hant:", /trailing colon after an attribute value/],
+    ["->translation lang:zh-Hant:", /Add : immediately after the translation mapping type/],
+    ["-> translation lang:zh-Hant:", /Do not put whitespace between ->/],
+    ["->translation:: lang:zh-Hant", /Unexpected : after the mapping type separator/],
+    ["->translation:lang:zh-Hant", /Add whitespace between the mapping type separator/],
+    ["->translation:", /requires a lang:<id> attribute/],
+    ["->translation: lang:", /missing its language ID/],
+    ["->translation: form:surface", /Unsupported mapping attribute "form"/],
+    ["->translation: lang:en lang:zh-Hant", /lang attribute may appear only once/],
+    ["->correction: lang:en", /Unsupported explicit mapping type "correction"/],
+  ];
+
+  for (const [header, expectedExplanation] of malformedHeaders) {
+    const source = sourceWithLanguages({ annotation: `  @line\n    ${header}\n      output` });
+    const message = errorFor(source);
+    assert.match(message, /Invalid mapping header at episode\.lcm:\d+\./);
+    assert.match(message, expectedExplanation);
+    assert.match(message, new RegExp(header.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+    assert.match(message, /Use:\n  ->translation: lang:/);
+    assert.doesNotMatch(message, /Unknown language ID/);
+  }
+
+  const simonSource = sourceWithLanguages({
+    annotation: "  @line\n    ->translation: lang:zh-Hant:\n      譯文",
+  });
+  const simonMessage = errorFor(simonSource, "episode.lcm");
+  assert.match(
+    simonMessage,
+    new RegExp(`Invalid mapping header at episode\\.lcm:${lineNumberContaining(simonSource, "->translation:")}\\.`),
+  );
+  assert.match(simonMessage, /Found:\n  ->translation: lang:zh-Hant:/);
+  assert.match(simonMessage, /Use:\n  ->translation: lang:zh-Hant/);
+  assert.match(simonMessage, /Mapping blocks are defined by indentation/);
+
+  const anonymousSource = sourceWithLanguages({
+    annotation: "  @line\n    -> lang:en\n      Compatibility translation",
+  });
+  const [anonymousLine] = textLines(compileLcm(anonymousSource, "anonymous-compatibility.lcm"));
+  assert.equal(anonymousLine.textLineMappings?.[0].mappingType, "translation");
+  assert.equal(anonymousLine.textLineMappings?.[0].image.content.languageId, "en");
+  assert.equal(mappingText(anonymousLine.textLineMappings?.[0]), "Compatibility translation");
 }
 
 async function checkInvalidInputDoesNotWriteOutput() {
@@ -144,14 +223,14 @@ async function checkInvalidInputDoesNotWriteOutput() {
   const existingOutputPath = path.join(temporaryDirectory, "existing-output.ts");
   const originalOutput = "existing output must remain unchanged\n";
   const invalidSource = sourceWithLanguages({
-    annotation: "  @line\n    -> translation lang:zh:\n      譯文",
+    annotation: "  @line\n    ->translation: lang:zh-Hant:\n      譯文",
   });
 
   try {
     await writeFile(inputPath, invalidSource, "utf8");
     await assert.rejects(
       compileLcmFileToModule({ inputPath, outputPath: newOutputPath, exportName: "test" }),
-      /Unknown language ID "zh"/,
+      /Invalid mapping header/,
     );
     await assert.rejects(access(newOutputPath));
 
@@ -162,7 +241,7 @@ async function checkInvalidInputDoesNotWriteOutput() {
         outputPath: existingOutputPath,
         exportName: "test",
       }),
-      /Unknown language ID "zh"/,
+      /Invalid mapping header/,
     );
     assert.equal(await readFile(existingOutputPath, "utf8"), originalOutput);
   } finally {
@@ -303,9 +382,10 @@ const checks = {
   "decomposition-nested-minimum": checkNested,
 };
 
+checkExplicitMappingHeaders();
 checkLanguageIdValidation();
 await checkInvalidInputDoesNotWriteOutput();
-console.log("Checked language ID validation");
+console.log("Checked mapping headers and language ID validation");
 
 for (const fixture of lcmFixtures) {
   const document = await compileLcmToDocument(fixture.sourcePath);

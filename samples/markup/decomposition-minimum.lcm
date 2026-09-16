@@ -13,17 +13,17 @@ defaultFormId: surface
       - decomposition
       - morphology
 
-    -> translation lang:en:
+    ->translation: lang:en
       all-you-can-eat
 
     @1
-      -> gloss lang:en:
+      ->gloss: lang:en
         eat
 
     @2
-      -> gloss lang:en:
+      ->gloss: lang:en
         arrive
 
     @3
-      -> gloss lang:en:
+      ->gloss: lang:en
         full

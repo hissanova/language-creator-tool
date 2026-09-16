@@ -512,7 +512,7 @@ These compile to refs, not transforms.
 ## Translation and Correction
 
 `+translation` and `+correction` are legacy syntax. New LCM should use
-`-> translation` and `-> correction`.
+`->translation:` and `->correction:`.
 
 Old:
 
@@ -526,7 +526,7 @@ New:
 
 ```lcm
 @"日本人"
-  -> translation lang:en:
+  ->translation: lang:en
     Japanese person
 ```
 
@@ -542,7 +542,7 @@ New:
 
 ```lcm
 @"法國人"
-  -> correction:
+  ->correction:
     法文
 ```
 

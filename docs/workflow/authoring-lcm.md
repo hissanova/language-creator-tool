@@ -30,7 +30,7 @@ Compilation is necessary because a compact authoring notation such as:
 
 ```lcm
 @line
-  -> translation lang:en:
+  ->translation: lang:en
     Hello
 ```
 
@@ -68,7 +68,7 @@ oriented list is in [Compiling LCM to Core JSON fixtures](lcm-compiler.md#suppor
 | Audio resource used for line alignment | Supported | Declare the media resource in front matter |
 | Level-1 section | Supported | Use `# Section title` |
 | Timestamped speaker or plain-text line | Supported | Use the documented timestamp and line forms |
-| Whole-line translation | Supported | Use `@line` with `-> translation lang:<id>:` |
+| Whole-line translation | Supported | Use `@line` with `->translation: lang:<id>` |
 | Tag | Supported | Use `+tag:` with one or more list items |
 | Editorial note | Supported | Use `+note:` |
 | Translation or gloss for selected text | Supported with current selector limits | Use an exact quoted-text selector |
@@ -81,6 +81,49 @@ The executable reference is
 [`samples/markup/lcm-cheat-sheet.lcm`](../../samples/markup/lcm-cheat-sheet.lcm).
 It is compiled in the project check suite, so its examples must remain aligned
 with the compiler.
+
+## Explicit mapping headers
+
+The canonical shape of an explicitly named mapping is:
+
+```text
+-><mapping-type>: <key>:<value>
+  <mapping output>
+```
+
+The compiler currently supports the `translation` and `gloss` mapping types,
+and both require one `lang:<id>` attribute:
+
+```lcm
+->translation: lang:zh-Hant
+  譯文
+
+->gloss: lang:en
+  Gloss
+```
+
+There is no space between `->` and the mapping type. The colon after the
+mapping type separates it from its attributes; `lang` is an attribute key, not
+part of the mapping type. Indentation creates the output block, so the language
+ID must not have a trailing colon.
+
+Wrong:
+
+```lcm
+->translation: lang:zh-Hant:
+  譯文
+```
+
+Correct:
+
+```lcm
+->translation: lang:zh-Hant
+  譯文
+```
+
+Existing whole-line mappings written as `-> lang:<id>` remain supported as a
+compatibility path. This is not a newly designed anonymous mapping syntax; use
+the explicit form above for new content.
 
 ## Language IDs must match their declarations
 

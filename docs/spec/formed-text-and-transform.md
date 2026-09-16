@@ -56,7 +56,7 @@ Transform = FormedText -> FormedText
 Core syntax:
 
 ```lcm
--> <transformType> [lang:<languageId>] [form:<formId>]:
+-><transformType>: [lang:<languageId>] [form:<formId>]
   <outputText>
 ```
 
@@ -64,7 +64,7 @@ Example:
 
 ```lcm
 @"日本人"
-  -> translation lang:en:
+  ->translation: lang:en
     Japanese person
 ```
 
@@ -121,15 +121,14 @@ statements.
 
 ```ebnf
 TransformStatement
-  = "->" , S , (
+  = "->" , (
       NamedTransform
-      | AnonymousTransform
+      | S , AnonymousTransform
     ) ;
 
 NamedTransform
-  = TransformType ,
+  = TransformType , ":" ,
     { S , TransformArgument } ,
-    ":" ,
     [ NL , IndentedText ] ;
 
 AnonymousTransform
@@ -167,7 +166,9 @@ Notes:
 
 * Anonymous transforms must contain at least one argument.
 * Anonymous transforms cannot consist solely of output text.
-* A trailing `:` is required for named transforms.
+* A `:` immediately after the transform type is required for named transforms.
+* A trailing `:` after the final argument is invalid; indentation defines the
+  output block.
 * Output text is optional only for transform types that permit metadata-only
   changes, for example `language` or `form`.
 
@@ -192,7 +193,7 @@ Example:
 
 ```lcm
 @"went"
-  -> lemma:
+  ->lemma:
     go
 ```
 
@@ -202,7 +203,7 @@ Other examples:
 
 ```lcm
 @"法國人"
-  -> correction:
+  ->correction:
     法文
 ```
 
@@ -210,7 +211,7 @@ Meaning: explicit correction.
 
 ```lcm
 @"日本人"
-  -> translation lang:en:
+  ->translation: lang:en
     Japanese person
 ```
 
@@ -256,8 +257,8 @@ Rules:
 
 * Anonymous `->` must contain at least one argument.
 * Anonymous `->` with only text and no `lang` or `form` is invalid.
-* Use explicit `-> correction:` for correction.
-* Use explicit `-> lemma:` for lemma derivation.
+* Use explicit `->correction:` for correction.
+* Use explicit `->lemma:` for lemma derivation.
 * Use an explicit transform type when the intent is not inferable.
 
 Invalid:
@@ -272,7 +273,7 @@ Valid:
 
 ```lcm
 @"法國人"
-  -> correction:
+  ->correction:
     法文
 ```
 
