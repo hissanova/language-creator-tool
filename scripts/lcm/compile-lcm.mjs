@@ -121,15 +121,182 @@ function parseTimestamp(value, sourceName, lineNumber) {
   );
 }
 
-function mappingSpec(text, sourceName, lineNumber) {
-  const raw = text.slice(2).trim().replace(/:$/, "").trim();
-  const languageMatch = raw.match(/(?:^|\s)lang:([^\s:]+)/);
-  if (!languageMatch) {
-    throw new Error(`${sourceName}:${lineNumber}: mapping is missing lang:<id>`);
+const supportedExplicitMappingTypes = new Set(["translation", "gloss"]);
+
+function invalidMappingHeader(text, sourceName, lineNumber, explanation, example) {
+  throw new Error(
+    [
+      `Invalid mapping header at ${sourceName}:${lineNumber}.`,
+      "",
+      explanation,
+      "",
+      "Found:",
+      `  ${text}`,
+      "",
+      "Use:",
+      `  ${example}`,
+    ].join("\n"),
+  );
+}
+
+function canonicalMappingExample(mappingType = "translation", languageId = "en") {
+  const safeType = supportedExplicitMappingTypes.has(mappingType) ? mappingType : "translation";
+  const safeLanguageId = /^[^\s:]+$/.test(languageId) ? languageId : "en";
+  return `->${safeType}: lang:${safeLanguageId}`;
+}
+
+function languageIdInHeader(text) {
+  return text.match(/(?:^|\s)lang:([^\s:]+)/)?.[1] ?? "en";
+}
+
+function anonymousMappingSpec(text) {
+  const anonymousMatch = text.match(/^->\s*lang:([^\s:]+)$/);
+  if (!anonymousMatch) return undefined;
+  return { mappingType: "translation", languageId: anonymousMatch[1] };
+}
+
+function explicitMappingSpec(text, sourceName, lineNumber) {
+  if (/^->\s+/.test(text)) {
+    invalidMappingHeader(
+      text,
+      sourceName,
+      lineNumber,
+      "Do not put whitespace between -> and an explicit mapping type.",
+      canonicalMappingExample("translation", languageIdInHeader(text)),
+    );
   }
 
-  const type = raw.slice(0, languageMatch.index).trim() || "translation";
-  return { mappingType: type, languageId: languageMatch[1] };
+  const missingTypeSeparator = text.match(/^->([A-Za-z][A-Za-z0-9_-]*)\s+/);
+  if (missingTypeSeparator) {
+    invalidMappingHeader(
+      text,
+      sourceName,
+      lineNumber,
+      `Add : immediately after the ${missingTypeSeparator[1]} mapping type.`,
+      canonicalMappingExample(missingTypeSeparator[1], languageIdInHeader(text)),
+    );
+  }
+
+  const explicitMatch = text.match(/^->([A-Za-z][A-Za-z0-9_-]*):(.*)$/);
+  if (!explicitMatch) {
+    invalidMappingHeader(
+      text,
+      sourceName,
+      lineNumber,
+      "Expected an explicit mapping type followed immediately by :.",
+      canonicalMappingExample(),
+    );
+  }
+
+  const [, mappingType, attributeSource] = explicitMatch;
+  if (!supportedExplicitMappingTypes.has(mappingType)) {
+    invalidMappingHeader(
+      text,
+      sourceName,
+      lineNumber,
+      `Unsupported explicit mapping type ${JSON.stringify(mappingType)}. Supported types are translation and gloss.`,
+      canonicalMappingExample(),
+    );
+  }
+
+  if (attributeSource.startsWith(":")) {
+    invalidMappingHeader(
+      text,
+      sourceName,
+      lineNumber,
+      "Unexpected : after the mapping type separator.",
+      canonicalMappingExample(mappingType),
+    );
+  }
+
+  if (attributeSource && !/^\s/.test(attributeSource)) {
+    invalidMappingHeader(
+      text,
+      sourceName,
+      lineNumber,
+      "Add whitespace between the mapping type separator and its attributes.",
+      canonicalMappingExample(mappingType, languageIdInHeader(` ${attributeSource}`)),
+    );
+  }
+
+  const attributeTokens = attributeSource.trim().split(/\s+/).filter(Boolean);
+  if (!attributeTokens.length) {
+    invalidMappingHeader(
+      text,
+      sourceName,
+      lineNumber,
+      "This mapping type requires a lang:<id> attribute.",
+      canonicalMappingExample(mappingType),
+    );
+  }
+
+  const attributes = new Map();
+  for (const token of attributeTokens) {
+    if (/^[^:]+:[^:]+:$/.test(token)) {
+      const languageId = token.startsWith("lang:") ? token.slice(5, -1) : "en";
+      invalidMappingHeader(
+        text,
+        sourceName,
+        lineNumber,
+        "Do not add a trailing colon after an attribute value. Mapping blocks are defined by indentation.",
+        canonicalMappingExample(mappingType, languageId),
+      );
+    }
+
+    const attributeMatch = token.match(/^([A-Za-z][A-Za-z0-9_-]*):([^\s:]+)$/);
+    if (!attributeMatch) {
+      const explanation =
+        token === "lang:"
+          ? "The lang attribute is missing its language ID."
+          : `Invalid mapping attribute ${JSON.stringify(token)}. Attributes use key:value syntax.`;
+      invalidMappingHeader(
+        text,
+        sourceName,
+        lineNumber,
+        explanation,
+        canonicalMappingExample(mappingType),
+      );
+    }
+
+    const [, key, value] = attributeMatch;
+    if (key !== "lang") {
+      invalidMappingHeader(
+        text,
+        sourceName,
+        lineNumber,
+        `Unsupported mapping attribute ${JSON.stringify(key)}.`,
+        canonicalMappingExample(mappingType),
+      );
+    }
+    if (attributes.has(key)) {
+      invalidMappingHeader(
+        text,
+        sourceName,
+        lineNumber,
+        `The ${key} attribute may appear only once.`,
+        canonicalMappingExample(mappingType, value),
+      );
+    }
+    attributes.set(key, value);
+  }
+
+  if (!attributes.has("lang")) {
+    invalidMappingHeader(
+      text,
+      sourceName,
+      lineNumber,
+      "This mapping type requires a lang:<id> attribute.",
+      canonicalMappingExample(mappingType),
+    );
+  }
+
+  return { mappingType, languageId: attributes.get("lang") };
+}
+
+function mappingSpec(text, sourceName, lineNumber) {
+  const anonymousSpec = anonymousMappingSpec(text);
+  if (anonymousSpec) return anonymousSpec;
+  return explicitMappingSpec(text, sourceName, lineNumber);
 }
 
 function quotedParts(text) {

@@ -110,13 +110,16 @@ The compiler only supports syntax exercised by the registered fixtures:
 - positional selection references such as `@1` and `@2`
 - tag refs with `+tag`
 - editorial note refs with `+note`
-- whole-line translations using `-> lang:<id>`
-- explicit translations using `-> translation lang:<id>`
-- gloss mappings using `-> gloss lang:<id>`
+- whole-line translations using the legacy-compatible `-> lang:<id>` form
+- explicit translations using `->translation: lang:<id>`
+- gloss mappings using `->gloss: lang:<id>`
 - the indentation-based output-image and source-span nesting used by `decomposition-nested-minimum.lcm`
 - source-side nested decomposition materialized as a `localSource` mapping
 
 Single-text selectors use zero-based UTF-16 offsets. The target must have exactly one match. Decomposition parts are resolved left-to-right. These rules are sufficient for the current fixtures but are not a general selector implementation.
+
+See [Explicit mapping headers](authoring-lcm.md#explicit-mapping-headers) for
+the creator-facing syntax and examples.
 
 ## Current Limitations
 

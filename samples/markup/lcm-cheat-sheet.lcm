@@ -36,9 +36,9 @@ resources:
 00:00:00,000 --> 00:00:03,000
 >speaker-a: 大家好
   @line
-    -> translation lang:en:
+    ->translation: lang:en
       Hello everyone
-    -> translation lang:ja:
+    ->translation: lang:ja
       みなさん、こんにちは
 
 00:00:03,000 --> 00:00:06,000
@@ -54,7 +54,7 @@ resources:
       This is an editorial note attached to the whole line.
 
   @"聽得到"
-    -> gloss lang:en:
+    ->gloss: lang:en
       can hear
 
 # Copy-and-replace templates
@@ -62,13 +62,13 @@ resources:
 00:01:00,000 --> 00:01:05,000
 >speaker-a: DIALOGUE PLACEHOLDER
   @line
-    -> translation lang:en:
+    ->translation: lang:en
       TRANSLATION PLACEHOLDER
 
 00:01:05,000 --> 00:01:10,000
 >speaker-b: DIALOGUE WITH SELECTED TEXT
   @"SELECTED TEXT"
-    -> gloss lang:en:
+    ->gloss: lang:en
       GLOSS PLACEHOLDER
 
 00:01:10,000 --> 00:01:15,000
