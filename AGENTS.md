@@ -27,7 +27,7 @@ Optional Viewer configuration may be applied at render time, but do not introduc
 Core JSON is the canonical internal representation.
 
 * `docs/spec/` contains accepted specifications.
-* `docs/rfc/` contains proposed changes.
+* `docs/rfc/` records proposed and accepted design decisions.
 * `samples/markup/` contains human-authored source examples.
 * `samples/core-json/` contains expected Core JSON outputs.
 * `app/types/` must remain consistent with `docs/spec/core-json.md`.
@@ -105,6 +105,22 @@ When conflicts arise, follow this order:
 5. Viewer Implementation
 
 The implementation should follow the specification, not the other way around.
+
+## Functional Architecture
+
+LCT uses [Functional Core, Imperative Shell](docs/rfc/0004-functional-core-imperative-shell.md) by default across the Viewer, future Editor, compiler integration, and other features.
+
+* Put domain decisions, transformations, and state transitions in pure functions where practical. Reducers return next state without mutating input state.
+* Keep DOM, media, storage, network, filesystem, and other external effects in adapter, hook, or controller boundaries.
+* Keep complex decisions and transitions out of React components and `useEffect`; use effects for external synchronization.
+* Choose `useState`, `useReducer`, Context, or Redux according to state complexity and sharing needs. Redux is not a required project standard.
+* Use `useRef` when integration needs it, but do not let a ref become an unexplained second source of truth for domain state.
+* Prefer tests of pure functions and observable behavior. Do not turn simple handlers or independent UI state into reducers, planners, or commands without a useful reason.
+* Record the reason and trade-off for an exception in an Issue, RFC, or PR description.
+
+Before implementing, check where pure decisions end and effects begin; whether domain logic depends unnecessarily on React or browser APIs; whether related state updates are scattered across handlers or effects; whether a pure function can decide before an effect runs; whether each abstraction earns its complexity; and why any imperative ref or state is needed.
+
+These rules address decisions, transitions, and effects. The Viewer architecture boundaries below separately address the direction from Core semantics to shared presentation components.
 
 ## Viewer Configuration
 
