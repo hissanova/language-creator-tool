@@ -9,6 +9,9 @@
     "rootDir": "."
   },
   "include": [
-    "app/components/playback/playbackState.test.tsx"
+    "app/components/playback/*.test.ts",
+    "app/components/playback/*.test.tsx",
+    "app/components/auto-follow/*.test.ts",
+    "app/components/auto-follow/*.test.tsx"
   ]
 }

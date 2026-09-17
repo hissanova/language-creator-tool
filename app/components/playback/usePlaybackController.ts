@@ -21,6 +21,7 @@ import {
   applyPendingPlayback as applyPendingPlaybackToElement,
   beginPendingSourceTransition,
   handlePlaybackPlayingChange,
+  handlePlaybackEnded,
   handlePlaybackTimeUpdate,
   type PendingPlayback,
 } from "./playbackMediaTransition";
@@ -268,33 +269,12 @@ export function usePlaybackController(
   }, [dispatchAndSync]);
 
   const onEnded = useCallback(() => {
-    const currentState = stateRef.current;
-    const element = mediaElementRef.current;
-    const selected = currentState.selectedLineRange;
-    if (element && selected && currentState.rangeEngaged && currentState.loopEnabled) {
-      element.currentTime = selected.start;
-      dispatchAndSync({
-        type: "setCurrentTime",
-        currentTime: selected.start,
-      });
-      safelyPlay(element);
-      return;
-    }
-    if (element && selected && currentState.rangeEngaged) {
-      element.currentTime = selected.end;
-      dispatchAndSync({
-        type: "selectedRangeBoundaryReached",
-        currentTime: selected.end,
-      });
-      return;
-    }
-    if (element && !selected && currentState.loopEnabled) {
-      element.currentTime = 0;
-      dispatchAndSync({ type: "setCurrentTime", currentTime: 0 });
-      safelyPlay(element);
-      return;
-    }
-    dispatchAndSync({ type: "mediaEnded" });
+    handlePlaybackEnded({
+      element: mediaElementRef.current,
+      stateRef,
+      dispatchAndSync,
+      safelyPlay,
+    });
   }, [dispatchAndSync, safelyPlay]);
 
   return {

@@ -107,3 +107,36 @@ export function handlePlaybackPlayingChange({
   if (!playing && pendingPlaybackRef.current) return;
   dispatchAndSync({ type: "setPlaying", playing });
 }
+
+export function handlePlaybackEnded({
+  element,
+  stateRef,
+  dispatchAndSync,
+  safelyPlay,
+}: {
+  element: HTMLMediaElement | null;
+  stateRef: MutablePlaybackRef<PlaybackState>;
+  dispatchAndSync: DispatchAndSync;
+  safelyPlay: (element: HTMLMediaElement) => void;
+}) {
+  const currentState = stateRef.current;
+  const selected = currentState.selectedLineRange;
+  if (element && selected && currentState.rangeEngaged && currentState.loopEnabled) {
+    element.currentTime = selected.start;
+    dispatchAndSync({ type: "setCurrentTime", currentTime: selected.start });
+    safelyPlay(element);
+    return;
+  }
+  if (element && selected && currentState.rangeEngaged) {
+    element.currentTime = selected.end;
+    dispatchAndSync({ type: "selectedRangeBoundaryReached", currentTime: selected.end });
+    return;
+  }
+  if (element && !selected && currentState.loopEnabled) {
+    element.currentTime = 0;
+    dispatchAndSync({ type: "setCurrentTime", currentTime: 0 });
+    safelyPlay(element);
+    return;
+  }
+  dispatchAndSync({ type: "mediaEnded" });
+}
