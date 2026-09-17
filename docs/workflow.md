@@ -21,6 +21,7 @@ instead of copying the complete instructions.
 | Supported authoring workflow and feature-request boundary | [Authoring LCM content](workflow/authoring-lcm.md) |
 | External project-folder and launcher behavior | [Opening an external content project](workflow/open-external-content.md) |
 | Maintainer architecture and change paths | This document |
+| Cross-cutting architecture decisions | [RFC index](rfc/README.md) |
 | Compiler commands, fixtures, and generated files | [Compiling LCM to Core JSON fixtures](workflow/lcm-compiler.md) |
 | Sample directory inventory and conventions | [Samples](../samples/README.md) |
 | Specifications and proposal status | [Specification index](spec/README.md) and [RFCs](rfc/) |
@@ -44,6 +45,10 @@ LCM markup
 
 Do not introduce a separate Viewer JSON or Display JSON layer unless the
 project explicitly adopts one in the future.
+
+## Functional architecture
+
+LCT uses [Functional Core, Imperative Shell](rfc/0004-functional-core-imperative-shell.md) as its default implementation principle for the Viewer, future Editor, and other features. Put domain decisions, transformations, and state transitions in pure functions where practical; keep React, browser, media, storage, and other external effects at adapter, hook, or controller boundaries. This principle does not prescribe `useReducer`, Context, Redux, or another state management library.
 
 ## Two compilation workflows
 
@@ -162,7 +167,8 @@ Do not add presentation-only fields to Core JSON.
 | Current compiler behavior | Compiler implementation and registered fixture checks |
 | Supported LCM subset | `docs/workflow/lcm-compiler.md` and executable fixtures |
 | Viewer presentation | Viewer types, configuration, and components |
-| Proposed changes | GitHub Issues and `docs/rfc/` |
+| Cross-cutting architecture decisions | Accepted RFCs in `docs/rfc/` |
+| Proposed changes | GitHub Issues and Draft RFCs in `docs/rfc/` |
 
 If these disagree, open an Issue and reconcile them rather than silently
 choosing one representation.
