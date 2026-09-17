@@ -5,7 +5,7 @@ import type { LinePlaybackRange } from "./playbackState";
 
 export function resolveLinePlaybackRange(
   textLine: TextLine,
-  resources: Resource[],
+  resources: readonly Resource[],
   normalizeSource: (source: string) => string,
   knownDuration?: { mediaSource: string | null; duration: number | null },
 ): LinePlaybackRange | null {
