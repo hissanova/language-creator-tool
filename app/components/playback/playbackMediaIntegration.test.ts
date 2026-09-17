@@ -1,8 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { resolveCurrentPlaybackLineId } from "./playbackDisplay";
-import { getSelectedRangeToStart, initialPlaybackState, playbackReducer, type PlaybackState } from "./playbackState";
-import { applyPendingPlayback, beginPendingSourceTransition, handlePlaybackEnded, handlePlaybackPlayingChange, handlePlaybackTimeUpdate, type MutablePlaybackRef, type PendingPlayback } from "./playbackMediaTransition";
+import { initialPlaybackState, playbackReducer, type PlaybackState } from "./playbackState";
+import { planGlobalPlay, planPlayingChange, planTimeUpdate, planLoadedMetadata, planMediaEnded, type PendingPlayback } from "./playbackMediaPlan";
+import { executePlaybackInstructions, type MutablePlaybackRef } from "./playbackMediaAdapter";
 import { handlePlaybackKeyboardShortcut } from "./playbackKeyboardShortcuts";
 import { initialAutoFollowState, reduceAutoFollow, type AutoFollowObservation } from "../auto-follow/autoFollowState";
 import { firstRange, secondRange, withMedia, noop } from "./playbackTestFixtures";
@@ -23,6 +24,7 @@ test("initial locked-line Space playback rejects pre-metadata media events", () 
   const events: string[] = ["lock:line-2"];
   const dispatchAndSync = (action: Parameters<typeof playbackReducer>[1]) => {
     events.push(`commit:${action.type}`);
+    if (action.type === "playLine") assert.equal(pendingPlaybackRef.current?.time, secondRange.start);
     stateRef.current = playbackReducer(stateRef.current, action);
     committedTimes.push(stateRef.current.currentTime);
     if (stateRef.current.playing) {
@@ -41,39 +43,19 @@ test("initial locked-line Space playback rejects pre-metadata media events", () 
     pause: () => {
       sourcePauseCount += 1;
       events.push("media:pause");
-      handlePlaybackPlayingChange({
-        playing: false,
-        pendingPlaybackRef,
-        dispatchAndSync,
-      });
+      executePlaybackInstructions(planPlayingChange(false, pendingPlaybackRef.current), { element: mediaElement, pendingPlaybackRef, dispatchAndSync });
     },
     play: () => {
       playCount += 1;
       events.push("media:play");
-      handlePlaybackPlayingChange({
-        playing: true,
-        pendingPlaybackRef,
-        dispatchAndSync,
-      });
+      executePlaybackInstructions(planPlayingChange(true, pendingPlaybackRef.current), { element: mediaElement, pendingPlaybackRef, dispatchAndSync });
       return Promise.resolve();
     },
   } as unknown as HTMLMediaElement;
 
   const globalPlay = () => {
-    const selectedLineRange = getSelectedRangeToStart(stateRef.current);
-    assert.ok(selectedLineRange);
-    assert.equal(selectedLineRange, secondRange);
-    beginPendingSourceTransition({
-      pendingPlaybackRef,
-      pending: {
-        time: selectedLineRange.start,
-        end: selectedLineRange.end,
-      },
-      commitSourceChange: () => {
-        assert.equal(pendingPlaybackRef.current?.time, secondRange.start);
-        dispatchAndSync({ type: "playLine", range: selectedLineRange });
-      },
-      pauseElement: () => mediaElement.pause(),
+    executePlaybackInstructions(planGlobalPlay(stateRef.current), {
+      element: mediaElement, pendingPlaybackRef, dispatchAndSync,
     });
   };
   let prevented = false;
@@ -99,11 +81,8 @@ test("initial locked-line Space playback rejects pre-metadata media events", () 
 
   mediaElement.currentTime = 0;
   events.push("media:timeupdate:0");
-  handlePlaybackTimeUpdate({
-    element: mediaElement,
-    pendingPlaybackRef,
-    stateRef,
-    dispatchAndSync,
+  executePlaybackInstructions(planTimeUpdate(stateRef.current, pendingPlaybackRef.current, mediaElement.currentTime), {
+    element: mediaElement, pendingPlaybackRef, dispatchAndSync,
   });
   assert.equal(stateRef.current.currentTime, secondRange.start);
   assert.equal(committedTimes.includes(0), false);
@@ -157,20 +136,16 @@ test("initial locked-line Space playback rejects pre-metadata media events", () 
   assert.equal(offDuringPlayback.followRevision, 0);
 
   events.push("media:loadedmetadata");
-  applyPendingPlayback({
-    element: mediaElement,
-    pendingPlaybackRef,
-    playbackRate: stateRef.current.playbackRate,
-    dispatchAndSync,
-    safelyPlay: (element) => { void element.play(); },
+  executePlaybackInstructions(planLoadedMetadata(30, pendingPlaybackRef.current, stateRef.current.playbackRate), {
+    element: mediaElement, pendingPlaybackRef, dispatchAndSync,
   });
   assert.equal(pendingPlaybackRef.current, null);
   assert.equal(mediaElement.currentTime, secondRange.start);
   assert.equal(stateRef.current.currentTime, secondRange.start);
   assert.equal(playCount, 1);
-  assert.deepEqual(events.slice(0, 7), [
+  assert.deepEqual(events.slice(0, 8), [
     "lock:line-2", "commit:playLine", "media:pause", "media:timeupdate:0",
-    "media:loadedmetadata", "commit:setCurrentTime", "media:play",
+    "media:loadedmetadata", "commit:setDuration", "commit:setCurrentTime", "media:play",
   ]);
   assert.equal(
     resolveCurrentPlaybackLineId(stateRef.current, [initialLine, secondRange]),
@@ -179,11 +154,8 @@ test("initial locked-line Space playback rejects pre-metadata media events", () 
   assert.deepEqual([...new Set(followTargets)], ["line-2"]);
 
   mediaElement.currentTime = 21;
-  handlePlaybackTimeUpdate({
-    element: mediaElement,
-    pendingPlaybackRef,
-    stateRef,
-    dispatchAndSync,
+  executePlaybackInstructions(planTimeUpdate(stateRef.current, pendingPlaybackRef.current, mediaElement.currentTime), {
+    element: mediaElement, pendingPlaybackRef, dispatchAndSync,
   });
   assert.equal(stateRef.current.currentTime, 21);
 
@@ -201,13 +173,12 @@ test("media end follows the active Loop scope and preserves a stopped Lock", () 
     { state: withMedia({ playing: true, currentTime: 30, selectedLineRange: firstRange, loopEnabled: true }), time: 30, expectedTime: 30, expectedPlaying: false, ended: true, plays: 0 },
   ]) {
     const stateRef = { current: scenario.state };
-    const element = { currentTime: scenario.time } as HTMLMediaElement;
     let plays = 0;
-    handlePlaybackEnded({
+    const element = { currentTime: scenario.time, play: () => { plays += 1; return Promise.resolve(); } } as HTMLMediaElement;
+    executePlaybackInstructions(planMediaEnded(stateRef.current, true), {
       element,
-      stateRef,
+      pendingPlaybackRef: { current: null },
       dispatchAndSync: (action) => { stateRef.current = playbackReducer(stateRef.current, action); },
-      safelyPlay: () => { plays += 1; },
     });
     assert.equal(element.currentTime, scenario.expectedTime);
     assert.equal(stateRef.current.currentTime, scenario.expectedTime);
