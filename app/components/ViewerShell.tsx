@@ -15,16 +15,24 @@ import type { ScriptLineComponent } from "./script-line/types";
 import { viewerStyle as defaultStyle } from "../styles/viewerStyle";
 import { PlaybackBar } from "./playback/PlaybackBar";
 import { releasePlaybackButtonFocusOnPointerUp } from "./playback/playbackButtonFocus";
-import { resolveLinePlaybackRange } from "./playback/linePlayback";
-import type { LinePlaybackRange } from "./playback/playbackState";
 import { usePlaybackController } from "./playback/usePlaybackController";
 import { usePlaybackKeyboardShortcuts } from "./playback/playbackKeyboardShortcuts";
 import { resolveCurrentPlaybackLineId } from "./playback/playbackDisplay";
 import { PlayIcon } from "./playback/PlaybackIcons";
-import { getAlignmentRef } from "./script-line/coreQueries";
 import { normalizeMediaSrc } from "./media/normalizeMediaSrc";
 import { AutoFollowControls } from "./auto-follow/AutoFollowControls";
 import { useActiveLineAutoFollow } from "./auto-follow/useActiveLineAutoFollow";
+import {
+  buildLinePlaybackRangeIndex,
+  classifyViewerMediaResources,
+  collectDocumentTextLines,
+  deriveViewerDocumentOptions,
+  resolveInitialViewerFormId,
+  resolveInitialViewerTranslationLanguageId,
+  resolveSectionPlaybackRange,
+  resolveViewerLinePlaybackPresentation,
+  resolveViewerSpeakers,
+} from "./viewerDocumentModel";
 
 type Props = {
   document: Document;
@@ -36,20 +44,6 @@ type ViewerShellProps = Props & {
   showMetadata?: boolean;
   showViewerControls?: boolean;
 };
-
-type SelectOption = {
-  id: string;
-  label?: string;
-};
-
-const noneOption: SelectOption = { id: "none", label: "Off" };
-
-function withNone(options: SelectOption[] | undefined): SelectOption[] {
-  if (!options || options.length === 0) return [noneOption];
-  return options.some((option) => option.id === "none")
-    ? options
-    : [noneOption, ...options];
-}
 
 function formatTime(value: number | undefined) {
   if (value == null) return "";
@@ -183,59 +177,24 @@ export function ViewerShell({
   showMetadata = false,
   showViewerControls = false,
 }: ViewerShellProps) {
-  const formOptions = document.metadata.forms ?? [];
-  const translationLanguageOptions = withNone(document.metadata.languages);
+  const { formOptions, translationLanguageOptions, audioResources, fallbackVideo, speakers, textLines } = useMemo(() => ({
+    ...deriveViewerDocumentOptions(document),
+    ...classifyViewerMediaResources(document),
+    speakers: resolveViewerSpeakers(document),
+    textLines: collectDocumentTextLines(document.sections),
+  }), [document]);
 
-  const [formId, setFormId] = useState<string>(
-    document.metadata.defaultFormId ?? formOptions[0]?.id ?? "none"
-  );
-
-  const [translationLanguageId, setTranslationLanguageId] = useState<string>(
-    "none"
-  );
-
-  const audioResources = useMemo(
-    () => (document.resources ?? []).filter(
-      (resource): resource is Extract<typeof resource, { type: "media" }> =>
-        resource.type === "media" && resource.mediaType === "audio",
-    ),
-    [document.resources],
-  );
-  const fallbackVideo = document.resources?.find(
-    (resource) => resource.type === "media" && resource.mediaType === "video",
-  );
+  const [formId, setFormId] = useState<string>(() => resolveInitialViewerFormId(document));
+  const [translationLanguageId, setTranslationLanguageId] = useState<string>(resolveInitialViewerTranslationLanguageId);
   const playback = usePlaybackController(audioResources, normalizeMediaSrc);
   usePlaybackKeyboardShortcuts(playback, audioResources.length > 0);
 
-  const speakers = useMemo(() => document.metadata.speakers ?? [], [document]);
-
-  const playbackRanges = useMemo(() => {
-    const ranges = new Map<string, LinePlaybackRange>();
-
-    const collectSectionRanges = (section: Section) => {
-      for (const block of section.blocks) {
-        if (block.type === "section") {
-          collectSectionRanges(block.section);
-          continue;
-        }
-        if (block.type !== "text") continue;
-
-        const range = resolveLinePlaybackRange(
-          block.text,
-          document.resources ?? [],
-          normalizeMediaSrc,
-          {
-            mediaSource: playback.state.mediaSource,
-            duration: playback.state.duration,
-          },
-        );
-        if (range) ranges.set(block.text.id, range);
-      }
-    };
-
-    document.sections.forEach(collectSectionRanges);
-    return ranges;
-  }, [document, playback.state.duration, playback.state.mediaSource]);
+  const playbackRanges = useMemo(() => buildLinePlaybackRangeIndex(
+    textLines,
+    document.resources ?? [],
+    normalizeMediaSrc,
+    { mediaSource: playback.state.mediaSource, duration: playback.state.duration },
+  ), [textLines, document.resources, playback.state.duration, playback.state.mediaSource]);
 
   const currentPlaybackLineId = resolveCurrentPlaybackLineId(
     playback.state,
@@ -262,8 +221,9 @@ export function ViewerShell({
   const renderBlock = (block: SectionBlock) => {
     switch (block.type) {
       case "text": {
-        const playbackRange = playbackRanges.get(block.text.id) ?? null;
-        const hasPlaybackTiming = Boolean(getAlignmentRef(block.text.textLineRefs));
+        const linePlaybackPresentation = resolveViewerLinePlaybackPresentation(
+          block.text, playbackRanges, playback.state.selectedLineRange, currentPlaybackLineId,
+        );
         return (
           <div key={block.text.id} ref={registerLineElement(block.text.id)}>
             <LineComponent
@@ -275,13 +235,10 @@ export function ViewerShell({
               formId={formId}
               translationLanguageId={translationLanguageId}
               style={style}
-              playbackRange={playbackRange}
-              hasPlaybackTiming={hasPlaybackTiming}
-              isRangeLocked={
-                playback.state.selectedLineRange?.lineId === block.text.id &&
-                playback.state.selectedLineRange.mediaSource === playbackRange?.mediaSource
-              }
-              isCurrentPlaybackLine={currentPlaybackLineId === block.text.id}
+              playbackRange={linePlaybackPresentation.playbackRange}
+              hasPlaybackTiming={linePlaybackPresentation.hasPlaybackTiming}
+              isRangeLocked={linePlaybackPresentation.isRangeLocked}
+              isCurrentPlaybackLine={linePlaybackPresentation.isCurrentPlaybackLine}
               onPlayLine={playback.actions.playLine}
               onToggleLineLock={playback.actions.toggleLineLock}
             />
@@ -299,47 +256,43 @@ export function ViewerShell({
     }
   };
 
-  const renderSection = (section: Section) => (
-    <section key={section.id} className={style.layout.section}>
-      <div className={style.layout.sectionHeader}>
-        <div className="flex items-center gap-3">
-          {audioResources[0] && section.time?.end != null && (
-            <button
-              type="button"
-              onClick={() => playback.actions.playLine({
-                type: "line",
-                lineId: section.id,
-                mediaResourceId: audioResources[0].id,
-                mediaSource: normalizeMediaSrc(audioResources[0].src),
-                start: section.time!.start,
-                end: section.time!.end!,
-              } satisfies LinePlaybackRange)}
-              onPointerUp={releasePlaybackButtonFocusOnPointerUp}
-              className={style.layout.playButton}
-              aria-label="Play section"
-              title="Play section"
-            >
-              <PlayIcon />
-            </button>
-          )}
-
-          <div>
-            <h2 className={style.layout.sectionTitle}>{section.title}</h2>
-            {section.time && (
-              <p className={style.layout.sectionTime}>
-                {formatTime(section.time.start)}
-                {section.time.end != null ? ` - ${formatTime(section.time.end)}` : ""}
-              </p>
+  const renderSection = (section: Section) => {
+    const sectionPlaybackRange = resolveSectionPlaybackRange(section, audioResources, normalizeMediaSrc);
+    return (
+      <section key={section.id} className={style.layout.section}>
+        <div className={style.layout.sectionHeader}>
+          <div className="flex items-center gap-3">
+            {sectionPlaybackRange && (
+              <button
+                type="button"
+                onClick={() => playback.actions.playLine(sectionPlaybackRange)}
+                onPointerUp={releasePlaybackButtonFocusOnPointerUp}
+                className={style.layout.playButton}
+                aria-label="Play section"
+                title="Play section"
+              >
+                <PlayIcon />
+              </button>
             )}
+
+            <div>
+              <h2 className={style.layout.sectionTitle}>{section.title}</h2>
+              {section.time && (
+                <p className={style.layout.sectionTime}>
+                  {formatTime(section.time.start)}
+                  {section.time.end != null ? ` - ${formatTime(section.time.end)}` : ""}
+                </p>
+              )}
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className={style.layout.lines}>
-        {section.blocks.map((block) => renderBlock(block))}
-      </div>
-    </section>
-  );
+        <div className={style.layout.lines}>
+          {section.blocks.map((block) => renderBlock(block))}
+        </div>
+      </section>
+    );
+  };
 
   return (
     <main className={style.layout.main}>
