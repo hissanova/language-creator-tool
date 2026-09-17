@@ -4,7 +4,7 @@ import { resolveCurrentPlaybackLineId } from "./playbackDisplay";
 import { getSelectedRangeToStart, initialPlaybackState, playbackReducer, type PlaybackState } from "./playbackState";
 import { applyPendingPlayback, beginPendingSourceTransition, handlePlaybackEnded, handlePlaybackPlayingChange, handlePlaybackTimeUpdate, type MutablePlaybackRef, type PendingPlayback } from "./playbackMediaTransition";
 import { handlePlaybackKeyboardShortcut } from "./playbackKeyboardShortcuts";
-import { shouldEvaluateAutoFollow, shouldRunAutoFollow, type AutoFollowSnapshot } from "../auto-follow/autoFollow";
+import { initialAutoFollowState, reduceAutoFollow, type AutoFollowObservation } from "../auto-follow/autoFollowState";
 import { firstRange, secondRange, withMedia, noop } from "./playbackTestFixtures";
 
 test("initial locked-line Space playback rejects pre-metadata media events", () => {
@@ -113,45 +113,48 @@ test("initial locked-line Space playback rejects pre-metadata media events", () 
     "line-2",
   );
 
-  const previous: AutoFollowSnapshot = {
+  const beforePlayback: AutoFollowObservation = {
     documentToken: "document",
     sourceToken: null,
-    enabled: true,
     playing: false,
     currentLineId: null,
     playbackPosition: 0,
-    mode: "unpinned",
-    followRequest: 0,
   };
-  for (const mode of ["unpinned", "pinned"] as const) {
-    const next: AutoFollowSnapshot = {
-      ...previous,
-      sourceToken: stateRef.current.mediaSource,
-      playing: stateRef.current.playing,
-      currentLineId: resolveCurrentPlaybackLineId(
-        stateRef.current,
-        [initialLine, secondRange],
-      ),
-      playbackPosition: stateRef.current.currentTime,
-      mode,
-    };
-    assert.equal(next.currentLineId, "line-2");
-    assert.equal(shouldEvaluateAutoFollow(previous, next), true);
-  }
-  const offShouldEvaluate = shouldEvaluateAutoFollow(previous, {
-    ...previous,
-    enabled: false,
+  const firstCurrentLineId = resolveCurrentPlaybackLineId(
+    stateRef.current,
+    [initialLine, secondRange],
+  );
+  const firstActiveObservation: AutoFollowObservation = {
+    ...beforePlayback,
     sourceToken: stateRef.current.mediaSource,
-    playing: true,
-    currentLineId: "line-2",
+    playing: stateRef.current.playing,
+    currentLineId: firstCurrentLineId,
     playbackPosition: stateRef.current.currentTime,
+  };
+  assert.equal(firstCurrentLineId, "line-2");
+  assert.notEqual(firstActiveObservation.currentLineId, initialLine.lineId);
+  for (const mode of ["unpinned", "pinned"] as const) {
+    const before = reduceAutoFollow(initialAutoFollowState, {
+      type: "playbackObserved", observation: beforePlayback,
+    });
+    const configured = reduceAutoFollow(before, { type: "modeChanged", mode });
+    const active = reduceAutoFollow(configured, {
+      type: "playbackObserved", observation: firstActiveObservation,
+    });
+    assert.equal(configured.followRevision, 0);
+    assert.equal(active.playback?.currentLineId, "line-2");
+    assert.equal(active.followRevision, 1);
+  }
+  const off = reduceAutoFollow(initialAutoFollowState, {
+    type: "enabledChanged", enabled: false,
   });
-  assert.equal(offShouldEvaluate, false);
-  assert.equal(shouldRunAutoFollow({
-    shouldEvaluate: offShouldEvaluate,
-    suspended: false,
-    playbackStarted: true,
-  }), false);
+  const offBeforePlayback = reduceAutoFollow(off, {
+    type: "playbackObserved", observation: beforePlayback,
+  });
+  const offDuringPlayback = reduceAutoFollow(offBeforePlayback, {
+    type: "playbackObserved", observation: firstActiveObservation,
+  });
+  assert.equal(offDuringPlayback.followRevision, 0);
 
   events.push("media:loadedmetadata");
   applyPendingPlayback({
