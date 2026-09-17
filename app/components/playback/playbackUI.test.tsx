@@ -135,8 +135,8 @@ test("Space and mouse global Play share the same atomic controller action", () =
   const controller = readFileSync("app/components/playback/usePlaybackController.ts", "utf8");
   assert.match(bar, /onClick=\{state\.playing \? actions\.pause : actions\.play\}/);
   assert.match(keyboard, /play: actions\.play/);
-  assert.match(controller, /if \(selectedLineRange\) \{\s*startLine\(selectedLineRange\)/);
-  assert.match(controller, /dispatchAndSync\(\{ type: "playLine", range \}\)/);
+  assert.match(controller, /execute\(planGlobalPlay\(stateRef\.current/);
+  assert.match(controller, /execute\(planLinePlay\(stateRef\.current, range\)\)/);
 });
 
 

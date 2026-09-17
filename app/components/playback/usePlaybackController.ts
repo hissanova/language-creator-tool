@@ -9,7 +9,6 @@ import {
 import type { MediaResource } from "../../types/core/document";
 import {
   getClampedSkipTime,
-  getSelectedRangeToStart,
   initialPlaybackState,
   parseStoredPlaybackRate,
   playbackReducer,
@@ -18,13 +17,10 @@ import {
   type PlaybackRate,
 } from "./playbackState";
 import {
-  applyPendingPlayback as applyPendingPlaybackToElement,
-  beginPendingSourceTransition,
-  handlePlaybackPlayingChange,
-  handlePlaybackEnded,
-  handlePlaybackTimeUpdate,
-  type PendingPlayback,
-} from "./playbackMediaTransition";
+  planLinePlay, planGlobalPlay, planPlayingChange, planTimeUpdate, planLoadedMetadata,
+  planDuration, planMediaEnded, type PendingPlayback, type PlaybackInstruction,
+} from "./playbackMediaPlan";
+import { executePlaybackInstructions } from "./playbackMediaAdapter";
 
 const PLAYBACK_RATE_STORAGE_KEY = "lct.viewer.playbackRate";
 
@@ -62,127 +58,41 @@ export function usePlaybackController(
     });
   }, [dispatchAndSync]);
 
+  const execute = useCallback((instructions: readonly PlaybackInstruction[]) => {
+    executePlaybackInstructions(instructions, {
+      element: mediaElementRef.current,
+      pendingPlaybackRef,
+      dispatchAndSync,
+    });
+  }, [dispatchAndSync]);
+
   useEffect(() => {
-    const element = mediaElementRef.current;
-    if (element) element.playbackRate = state.playbackRate;
-  }, [state.playbackRate]);
+    execute([{ type: "setMediaPlaybackRate", playbackRate: state.playbackRate }]);
+  }, [execute, state.playbackRate]);
 
   useEffect(() => () => {
-    pendingPlaybackRef.current = null;
-    mediaElementRef.current?.pause();
-  }, []);
-
-  const safelyPlay = useCallback((element: HTMLMediaElement) => {
-    void element.play().catch(() => {
-      dispatchAndSync({ type: "setPlaying", playing: false });
-    });
-  }, [dispatchAndSync]);
-
-  const applyPendingPlayback = useCallback(() => {
-    const element = mediaElementRef.current;
-    applyPendingPlaybackToElement({
-      element,
-      pendingPlaybackRef,
-      playbackRate: stateRef.current.playbackRate,
-      dispatchAndSync,
-      safelyPlay,
-    });
-  }, [dispatchAndSync, safelyPlay]);
-
-  const startMediaAt = useCallback((
-    mediaResourceId: string,
-    mediaSource: string,
-    time: number,
-  ) => {
-    const currentState = stateRef.current;
-    const element = mediaElementRef.current;
-    const sourceChanged = currentState.mediaSource !== mediaSource;
-
-    if (sourceChanged) {
-      beginPendingSourceTransition({
-        pendingPlaybackRef,
-        pending: { time },
-        commitSourceChange: () => dispatchAndSync({
-          type: "setSource",
-          mediaResourceId,
-          mediaSource,
-          currentTime: time,
-          playing: true,
-        }),
-        pauseElement: element ? () => element.pause() : undefined,
-      });
-      return;
-    }
-
-    dispatchAndSync({
-      type: "setSource",
-      mediaResourceId,
-      mediaSource,
-      currentTime: time,
-      playing: true,
-    });
-    if (element) {
-      element.currentTime = time;
-      element.playbackRate = currentState.playbackRate;
-      safelyPlay(element);
-    }
-  }, [dispatchAndSync, safelyPlay]);
+    execute([{ type: "setPending", pending: null }, { type: "pauseMedia" }]);
+  }, [execute]);
 
   const startLine = useCallback((range: LinePlaybackRange) => {
-    const element = mediaElementRef.current;
-    const sourceChanged = stateRef.current.mediaSource !== range.mediaSource;
-    if (sourceChanged) {
-      beginPendingSourceTransition({
-        pendingPlaybackRef,
-        pending: { time: range.start, end: range.end },
-        commitSourceChange: () => dispatchAndSync({ type: "playLine", range }),
-        pauseElement: element ? () => element.pause() : undefined,
-      });
-      return;
-    }
-    dispatchAndSync({ type: "playLine", range });
-    if (element) {
-      element.currentTime = range.start;
-      element.playbackRate = stateRef.current.playbackRate;
-      safelyPlay(element);
-    }
-  }, [dispatchAndSync, safelyPlay]);
+    execute(planLinePlay(stateRef.current, range));
+  }, [execute]);
 
   const play = useCallback(() => {
-    const currentState = stateRef.current;
-    const selectedLineRange = getSelectedRangeToStart(currentState);
-    if (selectedLineRange) {
-      startLine(selectedLineRange);
-      return;
-    }
-    let mediaResourceId = currentState.mediaResourceId;
-    let mediaSource = currentState.mediaSource;
-
-    if (!mediaSource || !mediaResourceId) {
-      const selected = currentState.selectedLineRange;
-      const fallback = audioResources[0];
-      mediaResourceId = selected?.mediaResourceId ?? fallback?.id ?? null;
-      mediaSource = selected?.mediaSource ?? (fallback ? normalizeSource(fallback.src) : null);
-    }
-    if (!mediaSource || !mediaResourceId) return;
-
-    const atEnd =
-      currentState.duration != null &&
-      currentState.currentTime >= currentState.duration;
-    const time = atEnd ? 0 : currentState.currentTime;
-    startMediaAt(mediaResourceId, mediaSource, time);
-  }, [audioResources, normalizeSource, startLine, startMediaAt]);
+    const fallback = audioResources[0];
+    execute(planGlobalPlay(stateRef.current, fallback ? {
+      mediaResourceId: fallback.id,
+      mediaSource: normalizeSource(fallback.src),
+    } : undefined));
+  }, [audioResources, normalizeSource, execute]);
 
   const pause = useCallback(() => {
-    mediaElementRef.current?.pause();
-    dispatchAndSync({ type: "setPlaying", playing: false });
-  }, [dispatchAndSync]);
+    execute([{ type: "pauseMedia" }, { type: "dispatch", action: { type: "setPlaying", playing: false } }]);
+  }, [execute]);
 
   const seek = useCallback((time: number) => {
-    const element = mediaElementRef.current;
-    if (element) element.currentTime = time;
-    dispatchAndSync({ type: "seek", currentTime: time });
-  }, [dispatchAndSync]);
+    execute([{ type: "seekMedia", time }, { type: "dispatch", action: { type: "seek", currentTime: time } }]);
+  }, [execute]);
 
   const skip = useCallback((seconds: number) => {
     const currentState = stateRef.current;
@@ -194,9 +104,8 @@ export function usePlaybackController(
       seconds,
       currentState.duration,
     );
-    if (element) element.currentTime = currentTime;
-    dispatchAndSync({ type: "seek", currentTime });
-  }, [dispatchAndSync]);
+    execute([{ type: "seekMedia", time: currentTime }, { type: "dispatch", action: { type: "seek", currentTime } }]);
+  }, [execute]);
 
   const toggleLoop = useCallback(() => {
     dispatchAndSync({ type: "toggleLoop" });
@@ -211,71 +120,39 @@ export function usePlaybackController(
   }, [dispatchAndSync]);
 
   const attachMediaElement = useCallback((element: HTMLMediaElement | null) => {
-    if (!element && mediaElementRef.current) mediaElementRef.current.pause();
+    if (!element && mediaElementRef.current) execute([{ type: "pauseMedia" }]);
     mediaElementRef.current = element;
-  }, []);
+  }, [execute]);
 
   const onLoadedMetadata = useCallback(() => {
     const element = mediaElementRef.current;
     if (!element) return;
-    const duration = Number.isFinite(element.duration) ? element.duration : null;
-    dispatchAndSync({
-      type: "setDuration",
-      duration,
-    });
-    const pending = pendingPlaybackRef.current;
-    if (duration != null && pending?.end != null && pending.end > duration) {
-      console.warn("Playback disabled: line timestamp exceeds the media duration.");
-      pendingPlaybackRef.current = null;
-      element.pause();
-      dispatchAndSync({ type: "setPlaying", playing: false });
-      return;
-    }
-    applyPendingPlayback();
-  }, [applyPendingPlayback, dispatchAndSync]);
+    execute(planLoadedMetadata(element.duration, pendingPlaybackRef.current, stateRef.current.playbackRate));
+  }, [execute]);
 
   const onDurationChange = useCallback(() => {
     const element = mediaElementRef.current;
     if (!element) return;
-    dispatchAndSync({
-      type: "setDuration",
-      duration: Number.isFinite(element.duration) ? element.duration : null,
-    });
-  }, [dispatchAndSync]);
+    execute(planDuration(element.duration));
+  }, [execute]);
 
   const onTimeUpdate = useCallback(() => {
-    handlePlaybackTimeUpdate({
-      element: mediaElementRef.current,
-      pendingPlaybackRef,
-      stateRef,
-      dispatchAndSync,
-    });
-  }, [dispatchAndSync]);
+    const element = mediaElementRef.current;
+    if (!element) return;
+    execute(planTimeUpdate(stateRef.current, pendingPlaybackRef.current, element.currentTime));
+  }, [execute]);
 
   const onPlay = useCallback(() => {
-    handlePlaybackPlayingChange({
-      playing: true,
-      pendingPlaybackRef,
-      dispatchAndSync,
-    });
-  }, [dispatchAndSync]);
+    execute(planPlayingChange(true, pendingPlaybackRef.current));
+  }, [execute]);
 
   const onPause = useCallback(() => {
-    handlePlaybackPlayingChange({
-      playing: false,
-      pendingPlaybackRef,
-      dispatchAndSync,
-    });
-  }, [dispatchAndSync]);
+    execute(planPlayingChange(false, pendingPlaybackRef.current));
+  }, [execute]);
 
   const onEnded = useCallback(() => {
-    handlePlaybackEnded({
-      element: mediaElementRef.current,
-      stateRef,
-      dispatchAndSync,
-      safelyPlay,
-    });
-  }, [dispatchAndSync, safelyPlay]);
+    execute(planMediaEnded(stateRef.current, Boolean(mediaElementRef.current)));
+  }, [execute]);
 
   return {
     state,
