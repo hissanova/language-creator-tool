@@ -11,26 +11,9 @@ export type VerticalRegion = {
   bottom: number;
 };
 
-export type AutoFollowSnapshot = {
-  documentToken: unknown;
-  sourceToken: unknown;
-  enabled: boolean;
-  playing: boolean;
-  currentLineId: string | null;
-  playbackPosition: number;
-  mode: AutoFollowMode;
-  followRequest: number;
-};
-
 export type ProgrammaticScroll = {
   targetY: number;
   expiresAt: number;
-};
-
-export type ManualScrollSuspension = {
-  suspended: boolean;
-  outsideSafeRegion: boolean;
-  shouldResume: boolean;
 };
 
 type KeyboardScrollIntent = {
@@ -154,61 +137,6 @@ export function shouldIgnoreProgrammaticScroll(
   now: number,
 ) {
   return programmaticScroll != null && now <= programmaticScroll.expiresAt;
-}
-
-export function resolveManualScrollSuspension({
-  suspended,
-  outsideSafeRegion,
-  lineWithinSafeRegion,
-}: {
-  suspended: boolean;
-  outsideSafeRegion: boolean;
-  lineWithinSafeRegion: boolean;
-}): ManualScrollSuspension {
-  if (!suspended) {
-    return {
-      suspended: true,
-      outsideSafeRegion: !lineWithinSafeRegion,
-      shouldResume: false,
-    };
-  }
-  if (!lineWithinSafeRegion) {
-    return { suspended: true, outsideSafeRegion: true, shouldResume: false };
-  }
-  if (outsideSafeRegion) {
-    return { suspended: false, outsideSafeRegion: false, shouldResume: true };
-  }
-  return { suspended: true, outsideSafeRegion: false, shouldResume: false };
-}
-
-export function shouldEvaluateAutoFollow(
-  previous: AutoFollowSnapshot | null,
-  next: AutoFollowSnapshot,
-) {
-  if (!next.enabled || !next.playing || next.currentLineId == null) return false;
-  if (previous == null) return true;
-
-  return previous.documentToken !== next.documentToken ||
-    previous.sourceToken !== next.sourceToken ||
-    !previous.enabled ||
-    !previous.playing ||
-    previous.currentLineId !== next.currentLineId ||
-    next.playbackPosition <
-      previous.playbackPosition - AUTO_FOLLOW_REWIND_TOLERANCE_SECONDS ||
-    previous.mode !== next.mode ||
-    previous.followRequest !== next.followRequest;
-}
-
-export function shouldRunAutoFollow({
-  shouldEvaluate,
-  suspended,
-  playbackStarted,
-}: {
-  shouldEvaluate: boolean;
-  suspended: boolean;
-  playbackStarted: boolean;
-}) {
-  return shouldEvaluate && (!suspended || playbackStarted);
 }
 
 export function isInteractiveAutoFollowTarget(target: EventTarget | null) {

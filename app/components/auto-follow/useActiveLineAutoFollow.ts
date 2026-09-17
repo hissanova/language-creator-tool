@@ -143,6 +143,7 @@ export function useActiveLineAutoFollow({
 
   useEffect(() => {
     const suspendForManualIntent = () => {
+      if (!state.enabled || !playing || currentLineId == null) return;
       clearProgrammaticScroll();
       dispatch({ type: "manualScrollIntent" });
     };
@@ -157,6 +158,7 @@ export function useActiveLineAutoFollow({
       const programmaticScroll = programmaticScrollRef.current;
       if (shouldIgnoreProgrammaticScroll(programmaticScroll, Date.now())) return;
       if (programmaticScroll) clearProgrammaticScroll();
+      if (!state.enabled || !playing || currentLineId == null) return;
 
       const geometry = getCurrentGeometry(currentLineId);
       if (!geometry) return;
@@ -181,7 +183,7 @@ export function useActiveLineAutoFollow({
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("scrollend", clearProgrammaticScroll);
     };
-  }, [clearProgrammaticScroll, currentLineId, getCurrentGeometry]);
+  }, [clearProgrammaticScroll, currentLineId, getCurrentGeometry, playing, state.enabled]);
 
   // A new document/source replaces the line registry, so its old scroll target is obsolete.
   useEffect(() => () => clearProgrammaticScroll(), [clearProgrammaticScroll, registry]);
