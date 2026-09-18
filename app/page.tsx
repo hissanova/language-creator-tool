@@ -1,20 +1,7 @@
-import fs from "fs";
-import path from "path";
 import Link from "next/link";
-
-const generatedDir = path.join(process.cwd(), "app", "contents", "generated");
-
-function getGeneratedSubdirs() {
-  return fs
-    .readdirSync(generatedDir, { withFileTypes: true })
-    .filter((entry) => entry.isDirectory())
-    .map((entry) => entry.name)
-    .filter((name) => fs.existsSync(path.join(generatedDir, name, "page.tsx")));
-}
+import { viewerSamples } from "@/samples/core-json/sampleRegistry";
 
 export default function Home() {
-  const generatedSubdirs = getGeneratedSubdirs();
-
   return (
     <main className="mx-auto max-w-3xl p-6">
       <h1 className="mb-4 text-2xl font-bold">
@@ -42,15 +29,15 @@ export default function Home() {
         Open external content
       </Link>
       <h1 className="mt-6 mb-4 text-2xl font-bold">
-        Generated sample JSON files
+        Built-in Viewer samples
       </h1>
-      {generatedSubdirs.map((subdir) => (
-        <div key={subdir}>
+      {viewerSamples.map((sample) => (
+        <div key={sample.id}>
           <Link
-            href={`/contents/generated/${subdir}`}
+            href={`/contents/generated/${sample.id}`}
             className="text-blue-600 underline"
           >
-            {subdir}.generated.json
+            {sample.label}
           </Link>
         </div>
       ))}

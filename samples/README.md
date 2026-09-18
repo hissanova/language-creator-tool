@@ -49,3 +49,11 @@ samples/core-json/example.ts
 ```
 
 Not every registered compiler input needs a separate hand-written fixture.
+
+## View a built-in sample
+
+1. Add or compile the sample document.
+2. Add one typed entry to `samples/core-json/sampleRegistry.ts` with a stable ID, label, and loader.
+3. Open `/contents/generated/<sample-id>`.
+
+No per-sample Next.js `page.tsx` is required. The registry also supplies the home-page links and static route parameters.
