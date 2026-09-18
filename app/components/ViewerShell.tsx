@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import type {
   Document,
   FigureBlock,
@@ -20,6 +20,7 @@ import { usePlaybackKeyboardShortcuts } from "./playback/playbackKeyboardShortcu
 import { resolveCurrentPlaybackLineId } from "./playback/playbackDisplay";
 import { PlayIcon } from "./playback/PlaybackIcons";
 import { normalizeMediaSrc } from "./media/normalizeMediaSrc";
+import type { LinePlaybackRange } from "./playback/playbackState";
 import { AutoFollowControls } from "./auto-follow/AutoFollowControls";
 import { useActiveLineAutoFollow } from "./auto-follow/useActiveLineAutoFollow";
 import {
@@ -112,6 +113,107 @@ function TableBlockView({ table }: { table: TableBlock }) {
         </tbody>
       </table>
     </div>
+  );
+}
+
+/**
+ * Everything renderSectionBlock/renderDocumentSection need to turn a block
+ * or section into JSX, gathered in one place so those functions can be
+ * plain top-level mappers instead of closures over ViewerShell's body.
+ */
+type SectionRenderContext = {
+  document: Document;
+  style: ViewerStyle;
+  LineComponent: ScriptLineComponent;
+  formId: string;
+  translationLanguageId: string;
+  speakers: ReturnType<typeof resolveViewerSpeakers>;
+  audioResources: ReturnType<typeof classifyViewerMediaResources>["audioResources"];
+  playbackRanges: ReturnType<typeof buildLinePlaybackRangeIndex>;
+  selectedLineRange: LinePlaybackRange | null;
+  currentPlaybackLineId: string | null;
+  playLine: (range: LinePlaybackRange) => void;
+  toggleLineLock: (range: LinePlaybackRange) => void;
+  registerLineElement: (lineId: string) => (element: HTMLDivElement | null) => void;
+};
+
+function renderSectionBlock(block: SectionBlock, context: SectionRenderContext): ReactNode {
+  const { document, style, LineComponent } = context;
+
+  switch (block.type) {
+    case "text": {
+      const linePlaybackPresentation = resolveViewerLinePlaybackPresentation(
+        block.text, context.playbackRanges, context.selectedLineRange, context.currentPlaybackLineId,
+      );
+      return (
+        <div key={block.text.id} ref={context.registerLineElement(block.text.id)}>
+          <LineComponent
+            textNode={block.text}
+            speakers={context.speakers}
+            resources={document.resources}
+            defaultLanguageId={document.metadata.defaultLanguageId}
+            languages={document.metadata.languages}
+            formId={context.formId}
+            translationLanguageId={context.translationLanguageId}
+            style={style}
+            playbackRange={linePlaybackPresentation.playbackRange}
+            hasPlaybackTiming={linePlaybackPresentation.hasPlaybackTiming}
+            isRangeLocked={linePlaybackPresentation.isRangeLocked}
+            isCurrentPlaybackLine={linePlaybackPresentation.isCurrentPlaybackLine}
+            onPlayLine={context.playLine}
+            onToggleLineLock={context.toggleLineLock}
+          />
+        </div>
+      );
+    }
+    case "note":
+      return <NoteBlockView key={block.note.id} note={block.note} />;
+    case "figure":
+      return <FigureBlockView key={block.figure.id} figure={block.figure} resources={document.resources} />;
+    case "table":
+      return <TableBlockView key={block.table.id} table={block.table} />;
+    case "section":
+      return renderDocumentSection(block.section, context);
+  }
+}
+
+function renderDocumentSection(section: Section, context: SectionRenderContext): ReactNode {
+  const { style } = context;
+  const sectionPlaybackRange = resolveSectionPlaybackRange(section, context.audioResources, normalizeMediaSrc);
+
+  return (
+    <section key={section.id} className={style.layout.section}>
+      <div className={style.layout.sectionHeader}>
+        <div className="flex items-center gap-3">
+          {sectionPlaybackRange && (
+            <button
+              type="button"
+              onClick={() => context.playLine(sectionPlaybackRange)}
+              onPointerUp={releasePlaybackButtonFocusOnPointerUp}
+              className={style.layout.playButton}
+              aria-label="Play section"
+              title="Play section"
+            >
+              <PlayIcon />
+            </button>
+          )}
+
+          <div>
+            <h2 className={style.layout.sectionTitle}>{section.title}</h2>
+            {section.time && (
+              <p className={style.layout.sectionTime}>
+                {formatTime(section.time.start)}
+                {section.time.end != null ? ` - ${formatTime(section.time.end)}` : ""}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className={style.layout.lines}>
+        {section.blocks.map((block) => renderSectionBlock(block, context))}
+      </div>
+    </section>
   );
 }
 
@@ -211,80 +313,20 @@ export function ViewerShell({
     playing: playback.state.playing,
   });
 
-  const renderBlock = (block: SectionBlock) => {
-    switch (block.type) {
-      case "text": {
-        const linePlaybackPresentation = resolveViewerLinePlaybackPresentation(
-          block.text, playbackRanges, playback.state.selectedLineRange, currentPlaybackLineId,
-        );
-        return (
-          <div key={block.text.id} ref={registerLineElement(block.text.id)}>
-            <LineComponent
-              textNode={block.text}
-              speakers={speakers}
-              resources={document.resources}
-              defaultLanguageId={document.metadata.defaultLanguageId}
-              languages={document.metadata.languages}
-              formId={formId}
-              translationLanguageId={translationLanguageId}
-              style={style}
-              playbackRange={linePlaybackPresentation.playbackRange}
-              hasPlaybackTiming={linePlaybackPresentation.hasPlaybackTiming}
-              isRangeLocked={linePlaybackPresentation.isRangeLocked}
-              isCurrentPlaybackLine={linePlaybackPresentation.isCurrentPlaybackLine}
-              onPlayLine={playback.actions.playLine}
-              onToggleLineLock={playback.actions.toggleLineLock}
-            />
-          </div>
-        );
-      }
-      case "note":
-        return <NoteBlockView key={block.note.id} note={block.note} />;
-      case "figure":
-        return <FigureBlockView key={block.figure.id} figure={block.figure} resources={document.resources} />;
-      case "table":
-        return <TableBlockView key={block.table.id} table={block.table} />;
-      case "section":
-        return renderSection(block.section);
-    }
-  };
-
-  const renderSection = (section: Section) => {
-    const sectionPlaybackRange = resolveSectionPlaybackRange(section, audioResources, normalizeMediaSrc);
-    return (
-      <section key={section.id} className={style.layout.section}>
-        <div className={style.layout.sectionHeader}>
-          <div className="flex items-center gap-3">
-            {sectionPlaybackRange && (
-              <button
-                type="button"
-                onClick={() => playback.actions.playLine(sectionPlaybackRange)}
-                onPointerUp={releasePlaybackButtonFocusOnPointerUp}
-                className={style.layout.playButton}
-                aria-label="Play section"
-                title="Play section"
-              >
-                <PlayIcon />
-              </button>
-            )}
-
-            <div>
-              <h2 className={style.layout.sectionTitle}>{section.title}</h2>
-              {section.time && (
-                <p className={style.layout.sectionTime}>
-                  {formatTime(section.time.start)}
-                  {section.time.end != null ? ` - ${formatTime(section.time.end)}` : ""}
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className={style.layout.lines}>
-          {section.blocks.map((block) => renderBlock(block))}
-        </div>
-      </section>
-    );
+  const renderContext: SectionRenderContext = {
+    document,
+    style,
+    LineComponent,
+    formId,
+    translationLanguageId,
+    speakers,
+    audioResources,
+    playbackRanges,
+    selectedLineRange: playback.state.selectedLineRange,
+    currentPlaybackLineId,
+    playLine: playback.actions.playLine,
+    toggleLineLock: playback.actions.toggleLineLock,
+    registerLineElement,
   };
 
   return (
@@ -364,7 +406,7 @@ export function ViewerShell({
       )}
 
       <div className="space-y-8">
-        {document.sections.map((section) => renderSection(section))}
+        {document.sections.map((section) => renderDocumentSection(section, renderContext))}
       </div>
     </main>
   );

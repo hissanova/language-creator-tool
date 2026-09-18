@@ -176,7 +176,7 @@ test("Conversation and Developer compositions receive identical Lock presentatio
   const conversation = readFileSync("app/components/script-line/ConversationScriptLine.tsx", "utf8");
   const developer = readFileSync("app/components/script-line/DeveloperScriptLine.tsx", "utf8");
   assert.match(viewer, /isRangeLocked=/);
-  assert.match(viewer, /onToggleLineLock=\{playback\.actions\.toggleLineLock\}/);
+  assert.match(viewer, /onToggleLineLock=\{context\.toggleLineLock\}/);
   assert.match(conversation, /isRangeLocked=\{isRangeLocked\}/);
   assert.match(developer, /isRangeLocked=\{isRangeLocked\}/);
 });
