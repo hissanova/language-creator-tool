@@ -89,6 +89,15 @@ function selectRenderedSegments<TAnnotation>(
   }, []);
 }
 
+export function resolveRenderedAnnotationSegments<TAnnotation>(
+  segments: readonly ResolvedTextSegment<TAnnotation>[],
+): ResolvedTextSegment<TAnnotation>[] {
+  return selectRenderedSegments(segments).map(({ annotation, ...segment }) => ({
+    ...segment,
+    annotations: annotation === undefined ? [] : [annotation],
+  }));
+}
+
 export function AnnotatedText<TAnnotation>({
   segments,
   getAnnotationPresentation,

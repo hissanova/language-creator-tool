@@ -8,5 +8,5 @@
     "outDir": "/tmp/lct-mapping-presentation-tests",
     "rootDir": "."
   },
-  "include": ["app/components/script-line/resolveMappingPresentations.test.ts"]
+  "include": ["app/components/script-line/resolveMappingPresentations.test.ts", "app/components/script-line/resolveAlignedTextLayout.test.ts"]
 }

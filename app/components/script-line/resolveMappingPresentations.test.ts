@@ -109,6 +109,18 @@ test("rule filters are exact, independent, and empty lists match nothing", () =>
   assert.deepEqual(matchingMappingPresentationRules(mapping("wrong-form", "reading", "kana"), [reading]), []);
 });
 
+test("sourceKinds distinguishes selector and whole-line rules", () => {
+  const source = line({
+    selectedTextMappings: [{ id: "bundle", source: "emoji", mappings: [mapping("selected")] }],
+    textLineMappings: [mapping("whole")],
+  });
+  const selectorRule: MappingPresentationRule = { ...reading, id: "selector", match: { mappingTypes: ["reading"], sourceKinds: ["selector"] } };
+  const wholeRule: MappingPresentationRule = { ...reading, id: "whole", match: { mappingTypes: ["reading"], sourceKinds: ["wholeLine"] } };
+  const result = resolveMappingPresentations(source, [selectorRule, wholeRule]);
+  assert.deepEqual(result.above.map(({ ruleId }) => ruleId), ["whole", "selector"]);
+  assert.deepEqual(resolveMappingPresentations(source, [{ ...reading, match: { sourceKinds: [] } }]).above, []);
+});
+
 test("unmatched and conflicting rules create fallbacks without duplicate items", () => {
   const source = line({ textLineMappings: [mapping("read"), mapping("unknown", "translation")] });
   const result = resolveMappingPresentations(source, [reading, { ...reading, id: "other" }]);

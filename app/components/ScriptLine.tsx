@@ -23,7 +23,8 @@ type Props = {
   textClassName?: string;
   textStyle?: CSSProperties;
   languageLabel?: string;
-  translations?: ReactNode;
+  textAreaAbove?: ReactNode;
+  textAreaBelow?: ReactNode;
   rowClassName?: string;
   topSlot?: ReactNode;
   bottomSlot?: ReactNode;
@@ -44,7 +45,8 @@ export function ScriptLine({
   textClassName,
   textStyle,
   languageLabel,
-  translations,
+  textAreaAbove,
+  textAreaBelow,
   rowClassName,
   topSlot,
   bottomSlot,
@@ -117,14 +119,11 @@ export function ScriptLine({
     </>
   );
 
-  const text = isGridLayout ? (
-    <>
-      <div>{primaryText}</div>
-      {translations}
-    </>
-  ) : (
-    primaryText
-  );
+  const text = <div className="min-w-0">
+    {textAreaAbove}
+    <div>{primaryText}</div>
+    {textAreaBelow}
+  </div>;
 
   return (
     <ScriptLineFrame

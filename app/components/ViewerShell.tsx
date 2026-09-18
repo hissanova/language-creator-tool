@@ -10,6 +10,8 @@ import type {
   TableBlock,
 } from "../types/core/document";
 import type { ViewerStyle } from "../types/viewerStyle";
+import type { MappingPresentationRule } from "../types/viewer/mappingPresentation";
+import { defaultMappingPresentationRules } from "../config/mappingPresentationPresets";
 import type { ScriptLineComponent } from "./script-line/types";
 import { viewerStyle as defaultStyle } from "../styles/viewerStyle";
 import { findImageResource, firstCaption } from "./blockContentQueries";
@@ -38,6 +40,7 @@ import {
 type Props = {
   document: Document;
   style?: ViewerStyle;
+  mappingPresentationRules?: readonly MappingPresentationRule[];
 };
 
 type ViewerShellProps = Props & {
@@ -124,6 +127,7 @@ function TableBlockView({ table }: { table: TableBlock }) {
 type SectionRenderContext = {
   document: Document;
   style: ViewerStyle;
+  mappingPresentationRules: readonly MappingPresentationRule[];
   LineComponent: ScriptLineComponent;
   formId: string;
   translationLanguageId: string;
@@ -156,6 +160,7 @@ function renderSectionBlock(block: SectionBlock, context: SectionRenderContext):
             formId={context.formId}
             translationLanguageId={context.translationLanguageId}
             style={style}
+            mappingPresentationRules={context.mappingPresentationRules}
             playbackRange={linePlaybackPresentation.playbackRange}
             hasPlaybackTiming={linePlaybackPresentation.hasPlaybackTiming}
             isRangeLocked={linePlaybackPresentation.isRangeLocked}
@@ -268,6 +273,7 @@ function MetadataDetails({ document }: { document: Document }) {
 export function ViewerShell({
   document,
   style = defaultStyle,
+  mappingPresentationRules = defaultMappingPresentationRules,
   LineComponent,
   showMetadata = false,
   showViewerControls = false,
@@ -316,6 +322,7 @@ export function ViewerShell({
   const renderContext: SectionRenderContext = {
     document,
     style,
+    mappingPresentationRules,
     LineComponent,
     formId,
     translationLanguageId,

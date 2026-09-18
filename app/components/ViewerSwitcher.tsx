@@ -3,6 +3,7 @@
 import { useState } from "react";
 import type { Document } from "../types/core/document";
 import type { ViewerStyle } from "../types/viewerStyle";
+import type { MappingPresentationRule } from "../types/viewer/mappingPresentation";
 import { ConversationViewer } from "./ConversationViewer";
 import { DeveloperViewer } from "./DeveloperViewer";
 import { TextViewer } from "./TextViewer";
@@ -10,6 +11,7 @@ import { TextViewer } from "./TextViewer";
 type Props = {
   document: Document;
   style?: ViewerStyle;
+  mappingPresentationRules?: readonly MappingPresentationRule[];
 };
 
 type ViewerId = "conversation" | "text" | "developer";
@@ -27,7 +29,7 @@ function getViewerOptions(): ViewerOption[] {
   ];
 }
 
-export function ViewerSwitcher({ document, style }: Props) {
+export function ViewerSwitcher({ document, style, mappingPresentationRules }: Props) {
   const viewerOptions = getViewerOptions();
   const [viewerId, setViewerId] = useState<ViewerId>(viewerOptions[0].id);
 
@@ -53,11 +55,11 @@ export function ViewerSwitcher({ document, style }: Props) {
       </div>
 
       {selectedViewer.id === "developer" ? (
-        <DeveloperViewer document={document} style={style} />
+        <DeveloperViewer document={document} style={style} mappingPresentationRules={mappingPresentationRules} />
       ) : selectedViewer.id === "text" ? (
         <TextViewer document={document} />
       ) : (
-        <ConversationViewer document={document} style={style} />
+        <ConversationViewer document={document} style={style} mappingPresentationRules={mappingPresentationRules} />
       )}
     </>
   );

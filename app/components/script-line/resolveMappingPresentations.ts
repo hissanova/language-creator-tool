@@ -78,11 +78,14 @@ function matchesFilter(value: string, filter: readonly string[] | undefined): bo
 export function matchingMappingPresentationRules(
   mapping: TextMappingPayload,
   rules: readonly MappingPresentationRule[],
+  sourceKind?: "wholeLine" | "selector",
 ): readonly MappingPresentationRule[] {
   return rules.filter((rule) =>
     matchesFilter(mapping.mappingType, rule.match.mappingTypes) &&
     matchesFilter(mapping.image.content.languageId, rule.match.languageIds) &&
-    matchesFilter(mapping.image.content.formId, rule.match.formIds),
+    matchesFilter(mapping.image.content.formId, rule.match.formIds) &&
+    (rule.match.sourceKinds === undefined ||
+      (sourceKind !== undefined && rule.match.sourceKinds.includes(sourceKind))),
   );
 }
 
@@ -119,7 +122,7 @@ export function resolveMappingPresentations(
       fallback("unsupported-selection-source");
       continue;
     }
-    const matches = matchingMappingPresentationRules(mapping, rules);
+    const matches = matchingMappingPresentationRules(mapping, rules, source.kind);
     if (matches.length === 0) {
       fallback("unmatched");
       continue;

@@ -7,6 +7,7 @@ export type MappingPresentationRule = {
     readonly mappingTypes?: readonly string[];
     readonly languageIds?: readonly string[];
     readonly formIds?: readonly string[];
+    readonly sourceKinds?: readonly ("wholeLine" | "selector")[];
   };
   readonly presentation: "alignedText" | "ruby";
   readonly placement: "above" | "below";
@@ -43,6 +44,7 @@ export type MappingPresentationFallbackReason =
   | "missing-selector"
   | "unsupported-selector"
   | "invalid-range"
+  | "overlapping-ranges"
   | "unsupported-selection-source";
 
 export type MappingPresentationFallback = {

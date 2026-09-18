@@ -10,6 +10,7 @@
   },
   "include": [
     "app/components/script-line/speakerPresentation.test.tsx",
-    "app/components/script-line/scriptLinePresentation.test.tsx"
+    "app/components/script-line/scriptLinePresentation.test.tsx",
+    "app/components/script-line/alignedTextIntegration.test.tsx"
   ]
 }

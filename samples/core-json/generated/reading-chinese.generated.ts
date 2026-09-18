@@ -13,6 +13,9 @@ export const readingChineseGenerated: Document = {
     "languages": [
       {
         "id": "zh-Hant"
+      },
+      {
+        "id": "en"
       }
     ],
     "forms": [
@@ -38,7 +41,7 @@ export const readingChineseGenerated: Document = {
           "text": {
             "id": "reading-chinese-line-001",
             "content": {
-              "text": "你好",
+              "text": "我看到了",
               "languageId": "zh-Hant",
               "formId": "surface"
             },
@@ -46,7 +49,7 @@ export const readingChineseGenerated: Document = {
               "reading-chinese-selector-001": {
                 "selectorType": "range",
                 "range": {
-                  "start": 0,
+                  "start": 1,
                   "end": 2
                 }
               }
@@ -62,7 +65,7 @@ export const readingChineseGenerated: Document = {
                     "image": {
                       "id": "reading-chinese-line-002",
                       "content": {
-                        "text": "nǐ hǎo",
+                        "text": "kàn",
                         "languageId": "zh-Hant",
                         "formId": "pinyin"
                       }
@@ -74,9 +77,21 @@ export const readingChineseGenerated: Document = {
                     "image": {
                       "id": "reading-chinese-line-003",
                       "content": {
-                        "text": "ㄋㄧˇ ㄏㄠˇ",
+                        "text": "ㄎㄢˋ",
                         "languageId": "zh-Hant",
                         "formId": "zhuyin"
+                      }
+                    }
+                  },
+                  {
+                    "id": "reading-chinese-map-003",
+                    "mappingType": "gloss",
+                    "image": {
+                      "id": "reading-chinese-line-004",
+                      "content": {
+                        "text": "see",
+                        "languageId": "en",
+                        "formId": "surface"
                       }
                     }
                   }
