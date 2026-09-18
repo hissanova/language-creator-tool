@@ -299,6 +299,20 @@ function pushValue(owner, key, value) {
   owner[key].push(value);
 }
 
+/**
+ * Advances a per-kind id counter and formats the next id for `kind`.
+ * Pure: does not read or mutate `counts`; the caller decides what to do
+ * with the returned counts. Generated ids are positional (`${slug}-${kind}-NNN`),
+ * so the sequence of `nextSequenceId` calls for a given kind determines the
+ * numbers it produces, not just how many calls are made.
+ */
+function nextSequenceId(counts, slug, kind) {
+  const count = (counts.get(kind) ?? 0) + 1;
+  const nextCounts = new Map(counts);
+  nextCounts.set(kind, count);
+  return { id: `${slug}-${kind}-${String(count).padStart(3, "0")}`, counts: nextCounts };
+}
+
 export class MinimumLcmCompiler {
   constructor(frontMatter, sourceName, frontMatterLineNumbers = new Map()) {
     this.frontMatter = frontMatter;
@@ -334,10 +348,11 @@ export class MinimumLcmCompiler {
     throw new Error(lines.join("\n"));
   }
 
+  /** Wraps nextSequenceId, keeping this.counts as the compiler's one piece of counter state. */
   nextId(kind) {
-    const count = (this.counts.get(kind) ?? 0) + 1;
-    this.counts.set(kind, count);
-    return `${this.slug}-${kind}-${String(count).padStart(3, "0")}`;
+    const { id, counts } = nextSequenceId(this.counts, this.slug, kind);
+    this.counts = counts;
+    return id;
   }
 
   createTextLine(text, languageId, formId) {

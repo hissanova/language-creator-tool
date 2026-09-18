@@ -20,9 +20,7 @@ import {
   planLinePlay, planGlobalPlay, planPlayingChange, planTimeUpdate, planLoadedMetadata,
   planDuration, planMediaEnded, type PendingPlayback, type PlaybackInstruction,
 } from "./playbackMediaPlan";
-import { executePlaybackInstructions } from "./playbackMediaAdapter";
-
-const PLAYBACK_RATE_STORAGE_KEY = "lct.viewer.playbackRate";
+import { executePlaybackInstructions, PLAYBACK_RATE_STORAGE_KEY } from "./playbackMediaAdapter";
 
 export type PlaybackController = ReturnType<typeof usePlaybackController>;
 
@@ -115,9 +113,11 @@ export function usePlaybackController(
   }, [dispatchAndSync]);
 
   const setPlaybackRate = useCallback((playbackRate: PlaybackRate) => {
-    localStorage.setItem(PLAYBACK_RATE_STORAGE_KEY, String(playbackRate));
-    dispatchAndSync({ type: "setPlaybackRate", playbackRate });
-  }, [dispatchAndSync]);
+    execute([
+      { type: "persistPlaybackRate", playbackRate },
+      { type: "dispatch", action: { type: "setPlaybackRate", playbackRate } },
+    ]);
+  }, [execute]);
 
   const attachMediaElement = useCallback((element: HTMLMediaElement | null) => {
     if (!element && mediaElementRef.current) execute([{ type: "pauseMedia" }]);
