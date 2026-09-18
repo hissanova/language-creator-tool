@@ -17,6 +17,7 @@ export type PlaybackInstruction = Readonly<
   | { type: "setPending"; pending: PendingPlayback | null }
   | { type: "seekMedia"; time: number }
   | { type: "setMediaPlaybackRate"; playbackRate: PlaybackRate }
+  | { type: "persistPlaybackRate"; playbackRate: PlaybackRate }
   | { type: "playMedia" }
   | { type: "pauseMedia" }
   | { type: "warn"; message: string }>;
