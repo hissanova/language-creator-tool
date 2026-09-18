@@ -11,6 +11,7 @@
     "start": "next start",
     "lint": "eslint",
     "check:samples": "tsc -p tsconfig.samples.json",
+    "check:sample-registry": "tsc -p tsconfig.sample-registry-tests.json && node --test /tmp/lct-sample-registry-tests/samples/core-json/sampleRegistry.test.js",
     "compile:lcm": "node scripts/lcm/compile-fixtures.mjs",
     "compile:lcm:file": "node scripts/lcm/compile-file.mjs",
     "check:lcm": "node scripts/lcm/check-lcm-compiler.mjs",
@@ -21,7 +22,7 @@
     "check:playback": "tsc -p tsconfig.playback-tests.json && NODE_PATH=./node_modules node --test /tmp/lct-playback-tests/app/components/playback/*.test.js /tmp/lct-playback-tests/app/components/auto-follow/*.test.js",
     "check:speaker-presentation": "tsc -p tsconfig.speaker-presentation-tests.json && NODE_PATH=./node_modules node --test /tmp/lct-speaker-presentation-tests/app/components/script-line/speakerPresentation.test.js /tmp/lct-speaker-presentation-tests/app/components/script-line/scriptLinePresentation.test.js",
     "check:viewer-model": "tsc -p tsconfig.viewer-model-tests.json && NODE_PATH=./node_modules node --test /tmp/lct-viewer-model-tests/app/components/viewerDocumentModel.test.js",
-    "check": "npm run lint && npm run check:lcm && npm run check:open-content && npm run check:update && npm run check:samples && npm run check:annotated-text && npm run check:mapping-presentation && npm run check:playback && npm run check:speaker-presentation && npm run check:viewer-model && npm run build"
+    "check": "npm run lint && npm run check:lcm && npm run check:open-content && npm run check:update && npm run check:samples && npm run check:sample-registry && npm run check:annotated-text && npm run check:mapping-presentation && npm run check:playback && npm run check:speaker-presentation && npm run check:viewer-model && npm run build"
   },
   "dependencies": {
     "next": "16.2.6",
