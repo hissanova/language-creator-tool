@@ -1,0 +1,21 @@
+---
+specVersion: "0.5-draft"
+title: "Chinese readings"
+defaultLanguageId: "zh-Hant"
+defaultFormId: "surface"
+languages:
+  - id: "zh-Hant"
+forms:
+  - id: "surface"
+  - id: "pinyin"
+  - id: "zhuyin"
+---
+
+# Reading aids
+
+>: 你好
+  @"你好"
+    ->reading: form:pinyin
+      nǐ hǎo
+    ->reading: form:zhuyin
+      ㄋㄧˇ ㄏㄠˇ

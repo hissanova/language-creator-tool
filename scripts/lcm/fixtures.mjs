@@ -8,6 +8,8 @@ export const lcmFixtures = [
   "lcm-cheat-sheet",
   "decomposition-minimum",
   "decomposition-nested-minimum",
+  "reading-kana",
+  "reading-chinese",
 ].map((name) => ({
   name,
   sourcePath: path.join(repositoryRoot, "samples", "markup", `${name}.lcm`),

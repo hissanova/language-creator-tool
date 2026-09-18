@@ -111,15 +111,18 @@ The compiler only supports syntax exercised by the registered fixtures:
 - tag refs with `+tag`
 - editorial note refs with `+note`
 - whole-line translations using the legacy-compatible `-> lang:<id>` form
-- explicit translations using `->translation: lang:<id>`
-- gloss mappings using `->gloss: lang:<id>`
+- explicit `translation`, `gloss`, and `reading` mappings using `-><mapping-type>:`
+- optional `lang:<id>` and `form:<id>` attributes in either order, inherited from the source text when omitted
 - the indentation-based output-image and source-span nesting used by `decomposition-nested-minimum.lcm`
 - source-side nested decomposition materialized as a `localSource` mapping
 
 Single-text selectors use zero-based UTF-16 offsets. The target must have exactly one match. Decomposition parts are resolved left-to-right. These rules are sufficient for the current fixtures but are not a general selector implementation.
 
 See [Explicit mapping headers](authoring-lcm.md#explicit-mapping-headers) for
-the creator-facing syntax and examples.
+the creator-facing syntax and examples. Mapping blocks are indentation-based;
+a trailing colon after an attribute value is invalid. The legacy
+`-> lang:<id>` form remains compatible. Anonymous form mappings are not
+supported, and form IDs are not validated against the forms list.
 
 ## Current Limitations
 
@@ -168,7 +171,7 @@ Do not use `satisfies Document` for generated fixtures, because its narrower nes
 
 ### `formId: "gloss"` appears
 
-`gloss` is a mapping type, not a `FormedText.formId`. Use `mappingType: "gloss"` and set the mapping image's `content.formId` to `"surface"`.
+`gloss` is a mapping type, not a `FormedText.formId`. A mapping image inherits the source form unless the header declares `form:<id>`. Reading aids use `mappingType: "reading"`; `formId` records the notation system, such as `kana`, `pinyin`, or `zhuyin`.
 
 ### Media does not play
 

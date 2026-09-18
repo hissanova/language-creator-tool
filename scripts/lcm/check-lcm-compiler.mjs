@@ -39,6 +39,7 @@ function localMappings(selection) {
 
 function sourceWithLanguages({
   defaultLanguageId = "zh-Hant",
+  defaultFormId,
   languages = ["zh-Hant", "en", "ja"],
   annotation,
 }) {
@@ -49,6 +50,7 @@ function sourceWithLanguages({
   return `---
 title: Language validation test
 defaultLanguageId: ${defaultLanguageId}
+${defaultFormId ? `defaultFormId: ${defaultFormId}\n` : ""}
 ${languageFrontMatter}---
 
 # Test
@@ -178,11 +180,15 @@ function checkExplicitMappingHeaders() {
     ["-> translation lang:zh-Hant:", /Do not put whitespace between ->/],
     ["->translation:: lang:zh-Hant", /Unexpected : after the mapping type separator/],
     ["->translation:lang:zh-Hant", /Add whitespace between the mapping type separator/],
-    ["->translation:", /requires a lang:<id> attribute/],
     ["->translation: lang:", /missing its language ID/],
-    ["->translation: form:surface", /Unsupported mapping attribute "form"/],
+    ["->reading: form:", /missing its form ID/],
+    ["->reading: form:kana:", /trailing colon after an attribute value/],
+    ["->reading: form:kana form:pinyin", /form attribute may appear only once/],
+    ["->reading: script:kana", /Unsupported mapping attribute "script"/],
+    ["->reading: form", /Invalid mapping attribute "form"/],
     ["->translation: lang:en lang:zh-Hant", /lang attribute may appear only once/],
     ["->correction: lang:en", /Unsupported explicit mapping type "correction"/],
+    ["->romanization: form:pinyin", /Unsupported explicit mapping type "romanization"/],
   ];
 
   for (const [header, expectedExplanation] of malformedHeaders) {
@@ -191,7 +197,7 @@ function checkExplicitMappingHeaders() {
     assert.match(message, /Invalid mapping header at episode\.lcm:\d+\./);
     assert.match(message, expectedExplanation);
     assert.match(message, new RegExp(header.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
-    assert.match(message, /Use:\n  ->translation: lang:/);
+    assert.match(message, /Use:\n  ->(?:translation|reading):/);
     assert.doesNotMatch(message, /Unknown language ID/);
   }
 
@@ -216,6 +222,85 @@ function checkExplicitMappingHeaders() {
   assert.equal(mappingText(anonymousLine.textLineMappings?.[0]), "Compatibility translation");
 }
 
+function checkReadingAndInheritance() {
+  const source = sourceWithLanguages({
+    annotation: [
+      "  @line",
+      "    ->reading: form:kana",
+      "      あみ",
+      "    ->translation:",
+      "      inherited",
+      '  @"source"',
+      "    ->reading: form:pinyin lang:zh-Hant",
+      "      nǐ hǎo",
+      "    ->reading: lang:zh-Hant form:zhuyin",
+      "      ㄋㄧˇ ㄏㄠˇ",
+      "    ->translation: lang:en",
+      "      translated",
+      '  @"source" | " text"',
+      "    ->reading: form:kana",
+      "      selected",
+      "    @1",
+      "      ->reading: form:zhuyin",
+      "        local",
+      '      @"source"',
+      "        ->reading: form:pinyin",
+      "          nested local",
+    ].join("\n"),
+  });
+  const [line] = textLines(compileLcm(source, "reading.lcm"));
+  const content = (mapping) => mapping.image.content;
+  assert.deepEqual(content(line.textLineMappings[0]), {
+    text: "あみ", languageId: "zh-Hant", formId: "kana",
+  });
+  assert.deepEqual(content(line.textLineMappings[1]), {
+    text: "inherited", languageId: "zh-Hant", formId: "surface",
+  });
+  const direct = line.selectedTextMappings[0].mappings;
+  assert.deepEqual(direct.map(content), [
+    { text: "nǐ hǎo", languageId: "zh-Hant", formId: "pinyin" },
+    { text: "ㄋㄧˇ ㄏㄠˇ", languageId: "zh-Hant", formId: "zhuyin" },
+    { text: "translated", languageId: "en", formId: "surface" },
+  ]);
+  const selection = line.selections[0];
+  assert.deepEqual(content(selection.selectionMappings[0]), {
+    text: "selected", languageId: "zh-Hant", formId: "kana",
+  });
+  const local = localMappings(selection);
+  assert.deepEqual(content(local[0]), {
+    text: "local", languageId: "zh-Hant", formId: "zhuyin",
+  });
+  assert.deepEqual(content(local[1].image.selectedTextMappings[0].mappings[0]), {
+    text: "nested local", languageId: "zh-Hant", formId: "pinyin",
+  });
+
+  const nested = sourceWithLanguages({
+    annotation: '  @"source"\n    ->reading: lang:en form:pinyin\n      output\n        @"output"\n          ->reading:\n            inherited nested\n          ->translation: lang:zh-Hant\n            changed language',
+  });
+  const [nestedLine] = textLines(compileLcm(nested, "nested-reading.lcm"));
+  const outer = nestedLine.selectedTextMappings[0].mappings[0];
+  assert.deepEqual(content(outer.image.selectedTextMappings[0].mappings[0]), {
+    text: "inherited nested", languageId: "en", formId: "pinyin",
+  });
+  assert.deepEqual(content(outer.image.selectedTextMappings[0].mappings[1]), {
+    text: "changed language", languageId: "zh-Hant", formId: "pinyin",
+  });
+  assert.equal(outer.mappingType, "reading");
+
+  const nonSurfaceSource = sourceWithLanguages({
+    defaultFormId: "kana",
+    annotation: '  @line\n    ->translation: lang:en\n      whole line\n  @"source"\n    ->reading:\n      selected',
+  });
+  const [nonSurfaceLine] = textLines(compileLcm(nonSurfaceSource, "non-surface.lcm"));
+  assert.equal(nonSurfaceLine.textLineMappings[0].image.content.formId, "kana");
+  assert.equal(nonSurfaceLine.selectedTextMappings[0].mappings[0].image.content.formId, "kana");
+
+  const invalidResolved = sourceWithLanguages({
+    annotation: "  @line\n    ->reading: lang:unknown form:kana\n      あみ",
+  });
+  assert.match(errorFor(invalidResolved), /Unknown language ID "unknown"/);
+}
+
 async function checkInvalidInputDoesNotWriteOutput() {
   const temporaryDirectory = await mkdtemp(path.join(os.tmpdir(), "lct-language-validation-"));
   const inputPath = path.join(temporaryDirectory, "episode.lcm");
@@ -223,7 +308,7 @@ async function checkInvalidInputDoesNotWriteOutput() {
   const existingOutputPath = path.join(temporaryDirectory, "existing-output.ts");
   const originalOutput = "existing output must remain unchanged\n";
   const invalidSource = sourceWithLanguages({
-    annotation: "  @line\n    ->translation: lang:zh-Hant:\n      譯文",
+    annotation: "  @line\n    ->reading: form:kana form:pinyin\n      あみ",
   });
 
   try {
@@ -306,6 +391,35 @@ function checkCheatSheet(document) {
   );
 }
 
+function checkReadingKana(document) {
+  const lines = textLines(document);
+  assert.equal(lines.length, 1);
+  assert.equal(lines[0].content.languageId, "uch");
+  assert.equal(lines[0].content.text, "雨");
+  assert.deepEqual(
+    lines.flatMap((line) => line.selectedTextMappings?.flatMap((bundle) => bundle.mappings) ?? [])
+      .map((mapping) => ({ mappingType: mapping.mappingType, ...mapping.image.content })),
+    [
+      { mappingType: "reading", text: "あみ", languageId: "uch", formId: "kana" },
+    ],
+  );
+}
+
+function checkReadingChinese(document) {
+  const lines = textLines(document);
+  assert.equal(lines.length, 1);
+  assert.equal(lines[0].content.languageId, "zh-Hant");
+  assert.equal(lines[0].content.text, "你好");
+  assert.deepEqual(
+    lines.flatMap((line) => line.selectedTextMappings?.flatMap((bundle) => bundle.mappings) ?? [])
+      .map((mapping) => ({ mappingType: mapping.mappingType, ...mapping.image.content })),
+    [
+      { mappingType: "reading", text: "nǐ hǎo", languageId: "zh-Hant", formId: "pinyin" },
+      { mappingType: "reading", text: "ㄋㄧˇ ㄏㄠˇ", languageId: "zh-Hant", formId: "zhuyin" },
+    ],
+  );
+}
+
 function checkMinimum(document) {
   const [line] = textLines(document);
   assert.equal(line.content.text, "喫到飽");
@@ -380,9 +494,12 @@ const checks = {
   "lcm-cheat-sheet": checkCheatSheet,
   "decomposition-minimum": checkMinimum,
   "decomposition-nested-minimum": checkNested,
+  "reading-kana": checkReadingKana,
+  "reading-chinese": checkReadingChinese,
 };
 
 checkExplicitMappingHeaders();
+checkReadingAndInheritance();
 checkLanguageIdValidation();
 await checkInvalidInputDoesNotWriteOutput();
 console.log("Checked mapping headers and language ID validation");

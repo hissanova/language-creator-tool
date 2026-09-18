@@ -121,7 +121,7 @@ function parseTimestamp(value, sourceName, lineNumber) {
   );
 }
 
-const supportedExplicitMappingTypes = new Set(["translation", "gloss"]);
+const supportedExplicitMappingTypes = new Set(["translation", "gloss", "reading"]);
 
 function invalidMappingHeader(text, sourceName, lineNumber, explanation, example) {
   throw new Error(
@@ -139,10 +139,12 @@ function invalidMappingHeader(text, sourceName, lineNumber, explanation, example
   );
 }
 
-function canonicalMappingExample(mappingType = "translation", languageId = "en") {
+function canonicalMappingExample(mappingType = "translation", languageId, formId) {
   const safeType = supportedExplicitMappingTypes.has(mappingType) ? mappingType : "translation";
-  const safeLanguageId = /^[^\s:]+$/.test(languageId) ? languageId : "en";
-  return `->${safeType}: lang:${safeLanguageId}`;
+  const attributes = [];
+  if (languageId && /^[^\s:]+$/.test(languageId)) attributes.push(`lang:${languageId}`);
+  if (formId && /^[^\s:]+$/.test(formId)) attributes.push(`form:${formId}`);
+  return `->${safeType}:${attributes.length ? ` ${attributes.join(" ")}` : ""}`;
 }
 
 function languageIdInHeader(text) {
@@ -194,7 +196,7 @@ function explicitMappingSpec(text, sourceName, lineNumber) {
       text,
       sourceName,
       lineNumber,
-      `Unsupported explicit mapping type ${JSON.stringify(mappingType)}. Supported types are translation and gloss.`,
+      `Unsupported explicit mapping type ${JSON.stringify(mappingType)}. Supported types are translation, gloss, and reading.`,
       canonicalMappingExample(),
     );
   }
@@ -220,34 +222,25 @@ function explicitMappingSpec(text, sourceName, lineNumber) {
   }
 
   const attributeTokens = attributeSource.trim().split(/\s+/).filter(Boolean);
-  if (!attributeTokens.length) {
-    invalidMappingHeader(
-      text,
-      sourceName,
-      lineNumber,
-      "This mapping type requires a lang:<id> attribute.",
-      canonicalMappingExample(mappingType),
-    );
-  }
-
   const attributes = new Map();
   for (const token of attributeTokens) {
     if (/^[^:]+:[^:]+:$/.test(token)) {
-      const languageId = token.startsWith("lang:") ? token.slice(5, -1) : "en";
+      const languageId = token.startsWith("lang:") ? token.slice(5, -1) : undefined;
+      const formId = token.startsWith("form:") ? token.slice(5, -1) : undefined;
       invalidMappingHeader(
         text,
         sourceName,
         lineNumber,
         "Do not add a trailing colon after an attribute value. Mapping blocks are defined by indentation.",
-        canonicalMappingExample(mappingType, languageId),
+        canonicalMappingExample(mappingType, languageId, formId),
       );
     }
 
     const attributeMatch = token.match(/^([A-Za-z][A-Za-z0-9_-]*):([^\s:]+)$/);
     if (!attributeMatch) {
       const explanation =
-        token === "lang:"
-          ? "The lang attribute is missing its language ID."
+        token === "lang:" || token === "form:"
+          ? `The ${token.slice(0, -1)} attribute is missing its ${token === "lang:" ? "language ID" : "form ID"}.`
           : `Invalid mapping attribute ${JSON.stringify(token)}. Attributes use key:value syntax.`;
       invalidMappingHeader(
         text,
@@ -259,7 +252,7 @@ function explicitMappingSpec(text, sourceName, lineNumber) {
     }
 
     const [, key, value] = attributeMatch;
-    if (key !== "lang") {
+    if (key !== "lang" && key !== "form") {
       invalidMappingHeader(
         text,
         sourceName,
@@ -274,23 +267,21 @@ function explicitMappingSpec(text, sourceName, lineNumber) {
         sourceName,
         lineNumber,
         `The ${key} attribute may appear only once.`,
-        canonicalMappingExample(mappingType, value),
+        canonicalMappingExample(mappingType, key === "lang" ? value : undefined, key === "form" ? value : undefined),
       );
     }
     attributes.set(key, value);
   }
 
-  if (!attributes.has("lang")) {
-    invalidMappingHeader(
-      text,
-      sourceName,
-      lineNumber,
-      "This mapping type requires a lang:<id> attribute.",
-      canonicalMappingExample(mappingType),
-    );
-  }
+  return { mappingType, languageId: attributes.get("lang"), formId: attributes.get("form") };
+}
 
-  return { mappingType, languageId: attributes.get("lang") };
+function resolveMappingContent(spec, sourceContent, text) {
+  return {
+    text,
+    languageId: spec.languageId ?? sourceContent.languageId,
+    formId: spec.formId ?? sourceContent.formId,
+  };
 }
 
 function mappingSpec(text, sourceName, lineNumber) {
@@ -414,15 +405,16 @@ export class MinimumLcmCompiler {
     return selection;
   }
 
-  createMapping(node) {
+  createMapping(node, sourceContent) {
     const spec = mappingSpec(node.text, this.sourceName, node.lineNumber);
-    this.validateLanguageId(spec.languageId, node.lineNumber);
     const valueNode = node.children.find((child) => !child.text.startsWith("@"));
     if (!valueNode) {
       throw new Error(`${this.sourceName}:${node.lineNumber}: mapping is missing output text`);
     }
 
-    const image = this.createTextLine(valueNode.text, spec.languageId, "surface");
+    const content = resolveMappingContent(spec, sourceContent, valueNode.text);
+    this.validateLanguageId(content.languageId, node.lineNumber);
+    const image = { id: this.nextId("line"), content };
     if (valueNode.children.length) this.processTextLineNodes(image, valueNode.children);
 
     return {
@@ -492,7 +484,7 @@ export class MinimumLcmCompiler {
   processLineActions(textLine, nodes) {
     for (const node of nodes) {
       if (node.text.startsWith("->")) {
-        pushValue(textLine, "textLineMappings", this.createMapping(node));
+        pushValue(textLine, "textLineMappings", this.createMapping(node, textLine.content));
       } else if (node.text.startsWith("+")) {
         pushValue(textLine, "textLineRefs", this.createRef(node));
       } else {
@@ -508,7 +500,7 @@ export class MinimumLcmCompiler {
     for (const child of node.children) {
       if (child.text.startsWith("->")) {
         const bundle = this.mappingBundle(textLine, "selectedTextMappings", selectorId);
-        bundle.mappings.push(this.createMapping(child));
+        bundle.mappings.push(this.createMapping(child, textLine.content));
       } else if (child.text.startsWith("+")) {
         const bundle = this.refBundle(textLine, "selectedTextRefs", selectorId);
         bundle.attachments.push({
@@ -535,7 +527,7 @@ export class MinimumLcmCompiler {
           "localSelectedTextMappings",
           selectorId,
         );
-        bundle.mappings.push(this.createMapping(child));
+        bundle.mappings.push(this.createMapping(child, textLine.content));
       } else if (child.text.startsWith("+")) {
         this.attachLocalRef(selection, selectorId, this.createRef(child));
       } else if (child.text.startsWith('@"')) {
@@ -566,7 +558,7 @@ export class MinimumLcmCompiler {
       if (node.text.startsWith("+")) {
         pushValue(selection, "selectionRefs", this.createRef(node));
       } else if (node.text.startsWith("->")) {
-        pushValue(selection, "selectionMappings", this.createMapping(node));
+        pushValue(selection, "selectionMappings", this.createMapping(node, textLine.content));
       } else if (/^@\d+$/.test(node.text)) {
         this.processPosition(textLine, selection, node);
       } else {
