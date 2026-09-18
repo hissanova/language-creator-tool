@@ -9,10 +9,10 @@ import type {
   SectionBlock,
   TableBlock,
 } from "../types/core/document";
-import type { FormedText } from "../types/core/common";
 import type { ViewerStyle } from "../types/viewerStyle";
 import type { ScriptLineComponent } from "./script-line/types";
 import { viewerStyle as defaultStyle } from "../styles/viewerStyle";
+import { findImageResource, firstCaption } from "./blockContentQueries";
 import { PlaybackBar } from "./playback/PlaybackBar";
 import { releasePlaybackButtonFocusOnPointerUp } from "./playback/playbackButtonFocus";
 import { usePlaybackController } from "./playback/usePlaybackController";
@@ -50,11 +50,6 @@ function formatTime(value: number | undefined) {
   return `${value}s`;
 }
 
-function firstCaption(caption: Record<string, FormedText> | FormedText[] | undefined) {
-  if (Array.isArray(caption)) return caption[0]?.text;
-  return Object.values(caption ?? {})[0]?.text;
-}
-
 function NoteBlockView({ note }: { note: NoteBlock }) {
   return (
     <aside className="rounded border-l-4 border-gray-300 bg-gray-50 p-3 text-sm">
@@ -75,14 +70,12 @@ function FigureBlockView({
   figure: FigureBlock;
   resources: Document["resources"];
 }) {
-  const resource = resources?.find(
-    (candidate) => candidate.id === figure.resourceRef.resourceId && candidate.type === "image"
-  );
+  const resource = findImageResource(resources, figure.resourceRef.resourceId);
   const caption = firstCaption(figure.caption);
 
   return (
     <figure className="rounded border bg-white p-3">
-      {resource?.type === "image" && (
+      {resource && (
         <img src={normalizeMediaSrc(resource.src)} alt={resource.alt ?? ""} className="max-h-80 max-w-full rounded object-contain" />
       )}
       {caption && <figcaption className="mt-2 text-sm text-gray-600">{caption}</figcaption>}

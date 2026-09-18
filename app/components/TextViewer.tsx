@@ -10,14 +10,8 @@ import type {
 } from "../types/core/document";
 import type { TextLine } from "../types/core/textLine";
 import type { TextLineRef } from "../types/core/references";
-
-type SpeakerRef = TextLineRef & {
-  body: { type: "speaker"; speakerId: string };
-};
-
-type AlignmentRef = TextLineRef & {
-  body: { type: "alignment"; interval: TimeSpan };
-};
+import { findImageResource, firstCaption } from "./blockContentQueries";
+import { getAlignmentRef, getSpeakerRef } from "./script-line/coreQueries";
 
 type Props = {
   document: Document;
@@ -110,12 +104,8 @@ function SectionBlockView({ block, resources }: { block: SectionBlock; resources
 }
 
 function TextLineView({ textLine, resources }: { textLine: TextLine; resources: Resource[] }) {
-  const speaker = textLine.textLineRefs?.find(
-    (ref): ref is SpeakerRef => ref.body.type === "speaker"
-  )?.body.speakerId;
-  const alignment = textLine.textLineRefs?.find(
-    (ref): ref is AlignmentRef => ref.body.type === "alignment"
-  )?.body.interval;
+  const speaker = getSpeakerRef(textLine.textLineRefs)?.body.speakerId;
+  const alignment = getAlignmentRef(textLine.textLineRefs)?.body.interval;
 
   return (
     <div className="rounded-lg border p-4">
@@ -240,10 +230,7 @@ function FigureBlockView({
   figure: FigureBlock;
   resources: Resource[];
 }) {
-  const resource = resources.find(
-    (candidate): candidate is Extract<Resource, { type: "image" }> =>
-      candidate.id === figure.resourceRef.resourceId && candidate.type === "image"
-  );
+  const resource = findImageResource(resources, figure.resourceRef.resourceId);
   const caption = firstCaption(figure.caption ?? resource?.caption);
 
   return (
@@ -309,11 +296,6 @@ function ResourceView({ resource }: { resource: Resource }) {
         </div>
       ) : null;
   }
-}
-
-function firstCaption(caption: Record<string, FormedText> | FormedText[] | undefined) {
-  if (Array.isArray(caption)) return caption[0]?.text;
-  return Object.values(caption ?? {})[0]?.text;
 }
 
 function formatTimeSpan(time: TimeSpan): string {
