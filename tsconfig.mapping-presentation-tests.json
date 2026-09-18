@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noEmit": false,
+    "outDir": "/tmp/lct-mapping-presentation-tests",
+    "rootDir": "."
+  },
+  "include": ["app/components/script-line/resolveMappingPresentations.test.ts"]
+}
