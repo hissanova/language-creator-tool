@@ -1,0 +1,18 @@
+---
+specVersion: "0.5-draft"
+title: "Okinawan kana reading"
+defaultLanguageId: "uch"
+defaultFormId: "surface"
+languages:
+  - id: "uch"
+forms:
+  - id: "surface"
+  - id: "kana"
+---
+
+# Reading aid
+
+>: 雨
+  @"雨"
+    ->reading: form:kana
+      あみ

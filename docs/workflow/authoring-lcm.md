@@ -68,7 +68,7 @@ oriented list is in [Compiling LCM to Core JSON fixtures](lcm-compiler.md#suppor
 | Audio resource used for line alignment | Supported | Declare the media resource in front matter |
 | Level-1 section | Supported | Use `# Section title` |
 | Timestamped speaker or plain-text line | Supported | Use the documented timestamp and line forms |
-| Whole-line translation | Supported | Use `@line` with `->translation: lang:<id>` |
+| Whole-line translation | Supported | Use `@line` with `->translation:` and optional `lang:<id>` |
 | Tag | Supported | Use `+tag:` with one or more list items |
 | Editorial note | Supported | Use `+note:` |
 | Translation or gloss for selected text | Supported with current selector limits | Use an exact quoted-text selector |
@@ -84,46 +84,39 @@ with the compiler.
 
 ## Explicit mapping headers
 
-The canonical shape of an explicitly named mapping is:
-
-```text
--><mapping-type>: <key>:<value>
-  <mapping output>
-```
-
-The compiler currently supports the `translation` and `gloss` mapping types,
-and both require one `lang:<id>` attribute:
+The canonical header is `-><mapping-type>:` followed by optional `lang:<id>`
+and `form:<id>` attributes. The attributes may appear in either order and each
+may appear once. The compiler supports `translation`, `gloss`, and `reading`.
+The output is the indented text below the header:
 
 ```lcm
-->translation: lang:zh-Hant
-  譯文
+@"雨"
+  ->reading: form:kana
+    あみ
 
-->gloss: lang:en
-  Gloss
+@"你好"
+  ->reading: lang:zh-Hant form:pinyin
+    nǐ hǎo
+  ->reading: lang:zh-Hant form:zhuyin
+    ㄋㄧˇ ㄏㄠˇ
 ```
 
-There is no space between `->` and the mapping type. The colon after the
-mapping type separates it from its attributes; `lang` is an attribute key, not
-part of the mapping type. Indentation creates the output block, so the language
-ID must not have a trailing colon.
+`reading` identifies the semantic relationship. `formId` identifies the
+notation system, such as `kana`, `pinyin`, or `zhuyin`. When `lang:` or `form:`
+is omitted, the output inherits that value from its actual source text. For
+example, `->translation: lang:en` inherits the source form, while
+`->reading: form:kana` inherits the source language. A bare
+`->translation:` also inherits both values.
 
-Wrong:
+There is no space between `->` and the mapping type. The colon immediately
+after the type is required. Do not add a trailing colon after an attribute
+value: indentation defines the output block. For example,
+`->translation: lang:zh-Hant:` is invalid.
 
-```lcm
-->translation: lang:zh-Hant:
-  譯文
-```
-
-Correct:
-
-```lcm
-->translation: lang:zh-Hant
-  譯文
-```
-
-Existing whole-line mappings written as `-> lang:<id>` remain supported as a
-compatibility path. This is not a newly designed anonymous mapping syntax; use
-the explicit form above for new content.
+Existing `-> lang:<id>` mappings remain supported for compatibility. Anonymous
+form mappings such as `-> form:kana` and `->: form:kana` are not supported.
+Use explicit `->reading: form:kana` for reading aids. The compiler does not
+validate `form:` IDs against the front-matter forms list.
 
 ## Language IDs must match their declarations
 
