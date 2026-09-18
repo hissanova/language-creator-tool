@@ -16,14 +16,20 @@ function readStoredTheme(): Theme {
   return isTheme(stored) ? stored : "system";
 }
 
+/** Pure: which html-element class, if any, a theme corresponds to. */
+function getThemeClassName(theme: Theme): "dark" | "light" | null {
+  if (theme === "dark") return "dark";
+  if (theme === "light") return "light";
+  return null; // system -> no class, relies on prefers-color-scheme
+}
+
 function applyTheme(theme: Theme) {
   const html = document.documentElement;
   html.classList.remove("dark");
   html.classList.remove("light");
 
-  if (theme === "dark") html.classList.add("dark");
-  else if (theme === "light") html.classList.add("light");
-  // system -> no class, relies on prefers-color-scheme
+  const className = getThemeClassName(theme);
+  if (className) html.classList.add(className);
 }
 
 export default function ThemeToggle() {
