@@ -2,7 +2,7 @@ import type { MappingPresentationRule } from "../types/viewer/mappingPresentatio
 
 export const defaultMappingPresentationRules: readonly MappingPresentationRule[] = [{
   id: "reading-above",
-  match: { mappingTypes: ["reading"] },
+  match: { mappingTypes: ["reading"], formIds: "currentReading" },
   presentation: "alignedText",
   placement: "above",
   order: 10,

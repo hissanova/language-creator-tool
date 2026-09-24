@@ -27,6 +27,7 @@ type ModelInput = Pick<
   | "defaultLanguageId"
   | "languages"
   | "formId"
+  | "selectedReadingFormId"
   | "translationLanguageId"
   | "mappingPresentationRules"
 >;
@@ -38,6 +39,7 @@ export function buildScriptLineModel({
   defaultLanguageId,
   languages,
   formId,
+  selectedReadingFormId,
   translationLanguageId,
   mappingPresentationRules = defaultMappingPresentationRules,
 }: ModelInput) {
@@ -49,7 +51,10 @@ export function buildScriptLineModel({
     defaultLanguageId
   );
   const resourceRefs = collectResourceRefs(textNode.textLineRefs);
-  const mappingPresentations = resolveMappingPresentations(textNode, mappingPresentationRules);
+  const mappingPresentations = resolveMappingPresentations(textNode, mappingPresentationRules, {
+    selectedFormId: formId,
+    selectedReadingFormId,
+  });
   const alignedText = resolveAlignedTextLayout(textNode.content.text, mappingPresentations);
   const presentedWholeLineIds = new Set(
     [...alignedText.wholeLineAbove, ...alignedText.wholeLineBelow].map((item) => item.mappingId),

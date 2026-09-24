@@ -31,6 +31,24 @@ Display Style may define:
 - figure and table presentation
 - reference presentation
 
+## Form and Reading controls
+
+The Viewer keeps base-text Form selection separate from Reading selection.
+
+- **Form** chooses the canonical source form or a form supplied by a supported
+  whole-line display mapping. Declaring a form in `metadata.forms` alone does
+  not make it a base-text option. The control is hidden when only the canonical
+  source form is available.
+- **Reading** chooses the target form of an available `reading` mapping, such
+  as `pinyin` or `zhuyin`. It starts at **None**, meaning that no reading aid is
+  displayed. `None` is represented internally by `null`; it is not a form ID.
+  The control is hidden when the document has no reading mappings.
+
+The Core mapping type `reading` describes the semantic relationship. A form ID
+describes the notation used by that reading. `alignedText` is a presentation
+renderer, and a future `ruby` renderer is another presentation mechanism; they
+are not selectable forms and the control remains labelled **Reading**.
+
 ## Illustrative example
 
 `samples/display-style/basic-viewer.yaml` shows a possible configuration shape.

@@ -62,6 +62,7 @@ const sharedCompositionProps = {
   textNode,
   speakers,
   formId: "written",
+  selectedReadingFormId: null,
   translationLanguageId: "none",
   style: viewerStyle,
 };

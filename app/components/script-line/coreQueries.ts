@@ -124,16 +124,20 @@ export function shouldShowMapping(mapping: TextMappingPayload, translationLangua
   return mapping.image.content.languageId === translationLanguageId;
 }
 
+export function isWholeLineDisplayFormMapping(mapping: TextMappingPayload) {
+  return mapping.mappingType === "form" ||
+    mapping.mappingType === "transliteration" ||
+    mapping.mappingType === "romanization" ||
+    mapping.mappingType === "phonemization" ||
+    mapping.mappingType === "representation";
+}
+
 export function getDisplayMapping(textLine: TextLine, formId: string): TextMappingPayload | undefined {
   if (!formId || formId === "none" || formId === textLine.content.formId) return undefined;
 
   return textLine.textLineMappings?.find(
     (mapping) =>
-      (mapping.mappingType === "form" ||
-        mapping.mappingType === "transliteration" ||
-        mapping.mappingType === "romanization" ||
-        mapping.mappingType === "phonemization" ||
-        mapping.mappingType === "representation") &&
+      isWholeLineDisplayFormMapping(mapping) &&
       mapping.image.content.formId === formId
   );
 }

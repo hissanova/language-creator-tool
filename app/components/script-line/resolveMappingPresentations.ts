@@ -1,6 +1,7 @@
 import type { TextLine, TextMappingPayload } from "../../types/core/textLine";
 import type {
   MappingPresentationCandidate,
+  MappingPresentationContext,
   MappingPresentationFallbackReason,
   MappingPresentationItem,
   MappingPresentationResult,
@@ -75,15 +76,29 @@ function matchesFilter(value: string, filter: readonly string[] | undefined): bo
   return filter === undefined || filter.includes(value);
 }
 
+function matchesFormFilter(
+  value: string,
+  filter: MappingPresentationRule["match"]["formIds"],
+  context: MappingPresentationContext,
+): boolean {
+  if (filter === undefined || filter === "any") return true;
+  if (filter === "currentForm") return value === context.selectedFormId;
+  if (filter === "currentReading") {
+    return context.selectedReadingFormId !== null && value === context.selectedReadingFormId;
+  }
+  return filter.includes(value);
+}
+
 export function matchingMappingPresentationRules(
   mapping: TextMappingPayload,
   rules: readonly MappingPresentationRule[],
+  context: MappingPresentationContext,
   sourceKind?: "wholeLine" | "selector",
 ): readonly MappingPresentationRule[] {
   return rules.filter((rule) =>
     matchesFilter(mapping.mappingType, rule.match.mappingTypes) &&
     matchesFilter(mapping.image.content.languageId, rule.match.languageIds) &&
-    matchesFilter(mapping.image.content.formId, rule.match.formIds) &&
+    matchesFormFilter(mapping.image.content.formId, rule.match.formIds, context) &&
     (rule.match.sourceKinds === undefined ||
       (sourceKind !== undefined && rule.match.sourceKinds.includes(sourceKind))),
   );
@@ -101,6 +116,7 @@ function compareItems(a: MappingPresentationItem, b: MappingPresentationItem): n
 export function resolveMappingPresentations(
   textLine: TextLine,
   rules: readonly MappingPresentationRule[],
+  context: MappingPresentationContext,
 ): MappingPresentationResult {
   const above: MappingPresentationItem[] = [];
   const below: MappingPresentationItem[] = [];
@@ -122,7 +138,7 @@ export function resolveMappingPresentations(
       fallback("unsupported-selection-source");
       continue;
     }
-    const matches = matchingMappingPresentationRules(mapping, rules, source.kind);
+    const matches = matchingMappingPresentationRules(mapping, rules, context, source.kind);
     if (matches.length === 0) {
       fallback("unmatched");
       continue;

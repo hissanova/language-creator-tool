@@ -2,26 +2,112 @@ import type { Document, MediaResource, Resource, Section } from "../types/core/d
 import type { TextLine } from "../types/core/textLine";
 import { resolveLinePlaybackRange } from "./playback/linePlayback";
 import type { LinePlaybackRange } from "./playback/playbackState";
-import { getAlignmentRef } from "./script-line/coreQueries";
+import { getAlignmentRef, isWholeLineDisplayFormMapping } from "./script-line/coreQueries";
+import { collectMappingPresentationCandidates } from "./script-line/resolveMappingPresentations";
 
-type SelectOption = { id: string; label?: string };
+export type SelectOption = { id: string; label?: string };
+export type ViewerPresentationSelections = {
+  formId: string;
+  selectedReadingFormId: string | null;
+};
 
-export function deriveViewerDocumentOptions(document: Document) {
-  const formOptions = document.metadata.forms ?? [];
+function collectViewerFormOptions(
+  document: Document,
+  lines: readonly TextLine[],
+): SelectOption[] {
+  const formRegistry = new Map(
+    (document.metadata.forms ?? []).map((form) => [form.id, form]),
+  );
+  const options: SelectOption[] = [];
+  const seen = new Set<string>();
+  const add = (id: string) => {
+    if (seen.has(id)) return;
+    seen.add(id);
+    options.push(formRegistry.get(id) ?? { id });
+  };
+
+  const canonicalFormId = document.metadata.defaultFormId &&
+    (lines.length === 0 || lines.some((line) => line.content.formId === document.metadata.defaultFormId))
+    ? document.metadata.defaultFormId
+    : lines[0]?.content.formId;
+  if (canonicalFormId) add(canonicalFormId);
+  lines.forEach((line) => line.textLineMappings
+    ?.filter(isWholeLineDisplayFormMapping)
+    .forEach((mapping) => add(mapping.image.content.formId)));
+
+  return options;
+}
+
+function collectViewerReadingOptions(
+  document: Document,
+  lines: readonly TextLine[],
+): SelectOption[] {
+  const formRegistry = new Map(
+    (document.metadata.forms ?? []).map((form) => [form.id, form]),
+  );
+  const options: SelectOption[] = [];
+  const seen = new Set<string>();
+
+  lines.flatMap(collectMappingPresentationCandidates).forEach(({ mapping }) => {
+    if (mapping.mappingType !== "reading") return;
+    const id = mapping.image.content.formId;
+    if (seen.has(id)) return;
+    seen.add(id);
+    options.push(formRegistry.get(id) ?? { id });
+  });
+
+  return options;
+}
+
+export function deriveViewerDocumentOptions(
+  document: Document,
+  lines = collectDocumentTextLines(document.sections),
+) {
+  const formOptions = collectViewerFormOptions(document, lines);
+  const readingOptions = collectViewerReadingOptions(document, lines);
   const languages = document.metadata.languages ?? [];
   const translationLanguageOptions: SelectOption[] = languages.some((language) => language.id === "none")
     ? languages
     : [{ id: "none", label: "Off" }, ...languages];
 
-  return { formOptions, translationLanguageOptions };
+  return { formOptions, readingOptions, translationLanguageOptions };
 }
 
-export function resolveInitialViewerFormId(document: Document) {
-  return document.metadata.defaultFormId ?? document.metadata.forms?.[0]?.id ?? "none";
+export function resolveInitialViewerFormId(
+  document: Document,
+  formOptions: readonly SelectOption[] = deriveViewerDocumentOptions(document).formOptions,
+) {
+  const defaultFormId = document.metadata.defaultFormId;
+  if (defaultFormId && formOptions.some((option) => option.id === defaultFormId)) {
+    return defaultFormId;
+  }
+  return formOptions[0]?.id ?? "none";
 }
 
 export function resolveInitialViewerTranslationLanguageId() {
   return "none";
+}
+
+export function resolveInitialViewerReadingFormId(): string | null {
+  return null;
+}
+
+export function resolveAvailableViewerSelections(
+  document: Document,
+  formOptions: readonly SelectOption[],
+  readingOptions: readonly SelectOption[],
+  current?: ViewerPresentationSelections,
+): ViewerPresentationSelections {
+  const initialFormId = resolveInitialViewerFormId(document, formOptions);
+  return {
+    formId: current && formOptions.some((option) => option.id === current.formId)
+      ? current.formId
+      : initialFormId,
+    selectedReadingFormId: current?.selectedReadingFormId != null &&
+      readingOptions.some((option) => option.id === current.selectedReadingFormId)
+      ? current.selectedReadingFormId
+      : resolveInitialViewerReadingFormId(),
+  };
 }
 
 export function classifyViewerMediaResources(document: Document) {

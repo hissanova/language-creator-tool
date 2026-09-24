@@ -30,7 +30,9 @@ import {
   classifyViewerMediaResources,
   collectDocumentTextLines,
   deriveViewerDocumentOptions,
+  resolveAvailableViewerSelections,
   resolveInitialViewerFormId,
+  resolveInitialViewerReadingFormId,
   resolveInitialViewerTranslationLanguageId,
   resolveSectionPlaybackRange,
   resolveViewerLinePlaybackPresentation,
@@ -130,6 +132,7 @@ type SectionRenderContext = {
   mappingPresentationRules: readonly MappingPresentationRule[];
   LineComponent: ScriptLineComponent;
   formId: string;
+  selectedReadingFormId: string | null;
   translationLanguageId: string;
   speakers: ReturnType<typeof resolveViewerSpeakers>;
   audioResources: ReturnType<typeof classifyViewerMediaResources>["audioResources"];
@@ -158,6 +161,7 @@ function renderSectionBlock(block: SectionBlock, context: SectionRenderContext):
             defaultLanguageId={document.metadata.defaultLanguageId}
             languages={document.metadata.languages}
             formId={context.formId}
+            selectedReadingFormId={context.selectedReadingFormId}
             translationLanguageId={context.translationLanguageId}
             style={style}
             mappingPresentationRules={context.mappingPresentationRules}
@@ -278,15 +282,45 @@ export function ViewerShell({
   showMetadata = false,
   showViewerControls = false,
 }: ViewerShellProps) {
-  const { formOptions, translationLanguageOptions, audioResources, fallbackVideo, speakers, textLines } = useMemo(() => ({
-    ...deriveViewerDocumentOptions(document),
-    ...classifyViewerMediaResources(document),
-    speakers: resolveViewerSpeakers(document),
-    textLines: collectDocumentTextLines(document.sections),
-  }), [document]);
+  const {
+    formOptions,
+    readingOptions,
+    translationLanguageOptions,
+    audioResources,
+    fallbackVideo,
+    speakers,
+    textLines,
+  } = useMemo(() => {
+    const nextTextLines = collectDocumentTextLines(document.sections);
+    return {
+      ...deriveViewerDocumentOptions(document, nextTextLines),
+      ...classifyViewerMediaResources(document),
+      speakers: resolveViewerSpeakers(document),
+      textLines: nextTextLines,
+    };
+  }, [document]);
 
-  const [formId, setFormId] = useState<string>(() => resolveInitialViewerFormId(document));
+  const initialFormId = resolveInitialViewerFormId(document, formOptions);
+  const [selections, setSelections] = useState(() => ({
+    document,
+    formId: initialFormId,
+    selectedReadingFormId: resolveInitialViewerReadingFormId(),
+  }));
   const [translationLanguageId, setTranslationLanguageId] = useState<string>(resolveInitialViewerTranslationLanguageId);
+  const normalizedSelections = {
+    document,
+    ...resolveAvailableViewerSelections(
+      document,
+      formOptions,
+      readingOptions,
+      selections.document === document ? selections : undefined,
+    ),
+  };
+  if (normalizedSelections.formId !== selections.formId ||
+      normalizedSelections.selectedReadingFormId !== selections.selectedReadingFormId ||
+      normalizedSelections.document !== selections.document) {
+    setSelections(normalizedSelections);
+  }
   const playback = usePlaybackController(audioResources, normalizeMediaSrc);
   usePlaybackKeyboardShortcuts(playback, audioResources.length > 0);
 
@@ -324,7 +358,8 @@ export function ViewerShell({
     style,
     mappingPresentationRules,
     LineComponent,
-    formId,
+    formId: normalizedSelections.formId,
+    selectedReadingFormId: normalizedSelections.selectedReadingFormId,
     translationLanguageId,
     speakers,
     audioResources,
@@ -371,22 +406,39 @@ export function ViewerShell({
 
       {showViewerControls && (
         <div className={style.layout.controls}>
-          {formOptions.length === 1 ? (
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium">Form</span>
-              <span className="rounded border bg-gray-100 px-2 py-1 text-gray-950">
-                {formOptions[0].label ?? formOptions[0].id}
-              </span>
-            </div>
-          ) : formOptions.length > 1 ? (
+          {formOptions.length > 1 ? (
             <label className="flex items-center gap-2">
               <span className="text-sm font-medium">Form</span>
               <select
                 className="rounded border bg-white px-2 py-1 text-gray-950"
-                value={formId}
-                onChange={(event) => setFormId(event.target.value)}
+                value={normalizedSelections.formId}
+                onChange={(event) => setSelections((current) => ({
+                  ...current,
+                  formId: event.target.value,
+                }))}
               >
                 {formOptions.map((form) => (
+                  <option key={form.id} value={form.id} className="bg-white text-gray-950">
+                    {form.label ?? form.id}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ) : null}
+
+          {readingOptions.length > 0 ? (
+            <label className="flex items-center gap-2">
+              <span className="text-sm font-medium">Reading</span>
+              <select
+                className="rounded border bg-white px-2 py-1 text-gray-950"
+                value={normalizedSelections.selectedReadingFormId ?? ""}
+                onChange={(event) => setSelections((current) => ({
+                  ...current,
+                  selectedReadingFormId: event.target.value || null,
+                }))}
+              >
+                <option value="" className="bg-white text-gray-950">None</option>
+                {readingOptions.map((form) => (
                   <option key={form.id} value={form.id} className="bg-white text-gray-950">
                     {form.label ?? form.id}
                   </option>

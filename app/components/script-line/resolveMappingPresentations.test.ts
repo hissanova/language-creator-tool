@@ -1,12 +1,36 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { TextLine, TextMappingPayload } from "../../types/core/textLine";
-import type { MappingPresentationRule } from "../../types/viewer/mappingPresentation";
+import type {
+  MappingPresentationContext,
+  MappingPresentationRule,
+} from "../../types/viewer/mappingPresentation";
 import {
   collectMappingPresentationCandidates,
-  matchingMappingPresentationRules,
-  resolveMappingPresentations,
+  matchingMappingPresentationRules as matchRules,
+  resolveMappingPresentations as resolvePresentations,
 } from "./resolveMappingPresentations";
+
+const context: MappingPresentationContext = {
+  selectedFormId: "hanzi",
+  selectedReadingFormId: "pinyin",
+};
+
+function matchingMappingPresentationRules(
+  mappingValue: TextMappingPayload,
+  rules: readonly MappingPresentationRule[],
+  sourceKind?: "wholeLine" | "selector",
+) {
+  return matchRules(mappingValue, rules, context, sourceKind);
+}
+
+function resolveMappingPresentations(
+  textLine: TextLine,
+  rules: readonly MappingPresentationRule[],
+  current: MappingPresentationContext = context,
+) {
+  return resolvePresentations(textLine, rules, current);
+}
 
 const reading: MappingPresentationRule = {
   id: "reading", match: { mappingTypes: ["reading"], formIds: ["pinyin"] },
@@ -109,6 +133,52 @@ test("rule filters are exact, independent, and empty lists match nothing", () =>
   assert.deepEqual(matchingMappingPresentationRules(mapping("wrong-form", "reading", "kana"), [reading]), []);
 });
 
+test("symbolic form filters keep base Form and Reading selections independent", () => {
+  const value = mapping("m");
+  const rules: MappingPresentationRule[] = [
+    { ...reading, id: "current-form", match: { formIds: "currentForm" } },
+    { ...reading, id: "current-reading", match: { formIds: "currentReading" } },
+    { ...reading, id: "all-forms", match: { formIds: "any" } },
+  ];
+
+  assert.deepEqual(matchRules(value, rules, {
+    selectedFormId: "pinyin",
+    selectedReadingFormId: null,
+  }).map((rule) => rule.id), ["current-form", "all-forms"]);
+  assert.deepEqual(matchRules(value, rules, {
+    selectedFormId: "hanzi",
+    selectedReadingFormId: "pinyin",
+  }).map((rule) => rule.id), ["current-reading", "all-forms"]);
+  assert.deepEqual(matchRules(value, rules, {
+    selectedFormId: "hanzi",
+    selectedReadingFormId: "Pinyin",
+  }).map((rule) => rule.id), ["all-forms"]);
+});
+
+test("the default reading rule selects exactly one reading form and None selects none", () => {
+  const rules: MappingPresentationRule[] = [{
+    id: "reading-current",
+    match: { mappingTypes: ["reading"], formIds: "currentReading" },
+    presentation: "alignedText",
+    placement: "above",
+  }];
+  const source = line({ selectedTextMappings: [{
+    id: "readings",
+    source: "emoji",
+    mappings: [mapping("pinyin"), mapping("zhuyin", "reading", "zhuyin")],
+  }] });
+
+  assert.deepEqual(resolveMappingPresentations(source, rules, {
+    selectedFormId: "hanzi", selectedReadingFormId: null,
+  }).above, []);
+  assert.deepEqual(resolveMappingPresentations(source, rules, {
+    selectedFormId: "hanzi", selectedReadingFormId: "pinyin",
+  }).above.map((item) => item.mappingId), ["pinyin"]);
+  assert.deepEqual(resolveMappingPresentations(source, rules, {
+    selectedFormId: "hanzi", selectedReadingFormId: "zhuyin",
+  }).above.map((item) => item.mappingId), ["zhuyin"]);
+});
+
 test("sourceKinds distinguishes selector and whole-line rules", () => {
   const source = line({
     selectedTextMappings: [{ id: "bundle", source: "emoji", mappings: [mapping("selected")] }],
@@ -156,7 +226,7 @@ test("candidate collection deduplicates mappings and does not descend into image
   assert.deepEqual(resolveMappingPresentations(source, [reading]).above.map(({ mappingId }) => mappingId), ["shared"]);
 });
 
-test("resolution does not mutate Core input and has no view-mode or alternative-form state", () => {
+test("resolution does not mutate Core input and keeps presentation selections out of its result", () => {
   const source = line({ textLineMappings: [mapping("m")] });
   const before = structuredClone(source);
   const result = resolveMappingPresentations(source, [reading]);

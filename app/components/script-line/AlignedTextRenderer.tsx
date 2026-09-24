@@ -12,13 +12,16 @@ export function AlignedTextRenderer({ layout, renderSourceRange }: Props) {
       return <span key={chunk.start}>{renderSourceRange(chunk.start, chunk.end)}</span>;
     }
     return (
-      <span key={chunk.start} className="inline-grid align-baseline text-center leading-tight whitespace-nowrap">
-        <span className="col-start-1 row-start-2 text-left leading-normal">{renderSourceRange(chunk.start, chunk.end)}</span>
-        {chunk.above.length > 0 && <span className="col-start-1 row-start-1 flex flex-col items-center text-[0.7em] leading-tight">
-          {chunk.above.map((item) => <span key={item.mappingId}>{item.mappedText.text}</span>)}
+      // An inline table takes its baseline from the first row. Captions add space above or below it.
+      <span key={chunk.start} className="inline-table align-baseline whitespace-nowrap">
+        <span className="table-row">
+          <span className="table-cell text-left leading-normal">{renderSourceRange(chunk.start, chunk.end)}</span>
+        </span>
+        {chunk.above.length > 0 && <span className="table-caption caption-top text-center text-[0.7em] leading-tight">
+          {chunk.above.map((item) => <span key={item.mappingId} className="block">{item.mappedText.text}</span>)}
         </span>}
-        {chunk.below.length > 0 && <span className="col-start-1 row-start-3 flex flex-col items-center text-[0.7em] leading-tight">
-          {chunk.below.map((item) => <span key={item.mappingId}>{item.mappedText.text}</span>)}
+        {chunk.below.length > 0 && <span className="table-caption caption-bottom text-center text-[0.7em] leading-tight">
+          {chunk.below.map((item) => <span key={item.mappingId} className="block">{item.mappedText.text}</span>)}
         </span>}
       </span>
     );

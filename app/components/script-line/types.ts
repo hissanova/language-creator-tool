@@ -12,6 +12,7 @@ export type ScriptLineCompositionProps = {
   defaultLanguageId?: string;
   languages?: Language[];
   formId: string;
+  selectedReadingFormId: string | null;
   translationLanguageId: string;
   style: ViewerStyle;
   mappingPresentationRules?: readonly MappingPresentationRule[];
