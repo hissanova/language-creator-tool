@@ -409,13 +409,15 @@ function checkReadingChinese(document) {
   const lines = textLines(document);
   assert.equal(lines.length, 1);
   assert.equal(lines[0].content.languageId, "zh-Hant");
-  assert.equal(lines[0].content.text, "你好");
+  assert.equal(lines[0].content.text, "我看到了");
+  assert.deepEqual(lines[0].selectorRecord["reading-chinese-selector-001"].range, { start: 1, end: 2 });
   assert.deepEqual(
     lines.flatMap((line) => line.selectedTextMappings?.flatMap((bundle) => bundle.mappings) ?? [])
       .map((mapping) => ({ mappingType: mapping.mappingType, ...mapping.image.content })),
     [
-      { mappingType: "reading", text: "nǐ hǎo", languageId: "zh-Hant", formId: "pinyin" },
-      { mappingType: "reading", text: "ㄋㄧˇ ㄏㄠˇ", languageId: "zh-Hant", formId: "zhuyin" },
+      { mappingType: "reading", text: "kàn", languageId: "zh-Hant", formId: "pinyin" },
+      { mappingType: "reading", text: "ㄎㄢˋ", languageId: "zh-Hant", formId: "zhuyin" },
+      { mappingType: "gloss", text: "see", languageId: "en", formId: "surface" },
     ],
   );
 }

@@ -5,6 +5,7 @@ defaultLanguageId: "zh-Hant"
 defaultFormId: "surface"
 languages:
   - id: "zh-Hant"
+  - id: "en"
 forms:
   - id: "surface"
   - id: "pinyin"
@@ -13,9 +14,15 @@ forms:
 
 # Reading aids
 
->: 你好
-  @"你好"
+>: 我看到了
+  @line
+    ->translation: lang:en
+      I saw it.
+
+  @"看"
     ->reading: form:pinyin
-      nǐ hǎo
+      kàn
     ->reading: form:zhuyin
-      ㄋㄧˇ ㄏㄠˇ
+      ㄎㄢˋ
+    ->gloss: lang:en
+      see

@@ -6,11 +6,17 @@ export type MappingPresentationRule = {
   readonly match: {
     readonly mappingTypes?: readonly string[];
     readonly languageIds?: readonly string[];
-    readonly formIds?: readonly string[];
+    readonly formIds?: readonly string[] | "currentForm" | "currentReading" | "any";
+    readonly sourceKinds?: readonly ("wholeLine" | "selector")[];
   };
   readonly presentation: "alignedText" | "ruby";
   readonly placement: "above" | "below";
   readonly order?: number;
+};
+
+export type MappingPresentationContext = {
+  readonly selectedFormId: string;
+  readonly selectedReadingFormId: string | null;
 };
 
 export type MappingSource =
@@ -43,6 +49,7 @@ export type MappingPresentationFallbackReason =
   | "missing-selector"
   | "unsupported-selector"
   | "invalid-range"
+  | "overlapping-ranges"
   | "unsupported-selection-source";
 
 export type MappingPresentationFallback = {

@@ -4,8 +4,10 @@ import { useId, useState, type CSSProperties } from "react";
 import type { Resource } from "../../types/core/document";
 import type { TagTextDisplayStyle, ViewerStyle } from "../../types/viewerStyle";
 import { learnerAnnotationPanelConfig } from "../../config/annotationPanelPresets";
-import { AnnotatedText } from "../AnnotatedText";
+import { AnnotatedText, resolveRenderedAnnotationSegments } from "../AnnotatedText";
 import { ScriptLine } from "../ScriptLine";
+import { AlignedTextRenderer } from "./AlignedTextRenderer";
+import { TextAreaMappingRows } from "./TextAreaMappingRows";
 import { AnnotationPanel } from "./AnnotationPanel";
 import { buildScriptLineModel } from "./buildScriptLineModel";
 import {
@@ -15,7 +17,7 @@ import {
   type LineRef,
   type SelectorAnnotation,
 } from "./coreQueries";
-import { resolveAnnotatedTextSegments } from "./resolveAnnotatedTextSegments";
+import { resolveAnnotatedTextSegments, sliceAnnotatedTextSegments } from "./resolveAnnotatedTextSegments";
 import type { ScriptLineCompositionProps } from "./types";
 import { resolveSpeakerLinePresentation } from "../../styles/speakerLinePresentation";
 import { resolveScriptLinePresentation } from "../../styles/scriptLinePresentation";
@@ -229,6 +231,7 @@ export function ConversationScriptLine(props: ScriptLineCompositionProps) {
     model.displayTextValue,
     model.annotations,
   );
+  const renderedAnnotationSegments = resolveRenderedAnnotationSegments(annotatedTextSegments);
   const tagTextStyle = mergeTagTextDisplayStyles(model.textNodeTags, style);
   const hasAnnotations = hasConversationAnnotations(textNode);
   const dropdown = learnerAnnotationPanelConfig.dropdown;
@@ -288,14 +291,19 @@ export function ConversationScriptLine(props: ScriptLineCompositionProps) {
       style={style}
       layoutVariant="grid"
       languageLabel={model.lineLanguageLabel}
-      textContent={
-        <AnnotatedText
-          segments={annotatedTextSegments}
-          getAnnotationPresentation={(annotation) =>
-            annotationPresentation({ annotation, translationLanguageId, style })
-          }
-        />
-      }
+      textContent={model.displayMapping ? (
+        <AnnotatedText segments={annotatedTextSegments} getAnnotationPresentation={(annotation) =>
+          annotationPresentation({ annotation, translationLanguageId, style })} />
+      ) : (
+        <AlignedTextRenderer layout={model.alignedText} renderSourceRange={(start, end) =>
+          <AnnotatedText
+            segments={sliceAnnotatedTextSegments(renderedAnnotationSegments, start, end)}
+            getAnnotationPresentation={(annotation) =>
+              annotationPresentation({ annotation, translationLanguageId, style })
+            }
+          />
+        } />
+      )}
       textClassName={[
         model.isLineNonDefaultLanguage ? style.text.languageSwitch : undefined,
         tagTextStyle.className,
@@ -303,11 +311,13 @@ export function ConversationScriptLine(props: ScriptLineCompositionProps) {
         .filter(Boolean)
         .join(" ")}
       textStyle={tagTextStyle.style}
-      translations={model.translations.map((translation) => (
-        <p key={translation.id} className={style.text.translation}>
-          {translation.image.content.text}
-        </p>
-      ))}
+      textAreaAbove={<TextAreaMappingRows items={model.displayMapping ? [] : model.alignedText.wholeLineAbove} />}
+      textAreaBelow={<>
+        {(model.displayMapping ? model.legacyTranslations : model.translations).map((translation) => (
+          <p key={translation.id} className={style.text.translation}>{translation.image.content.text}</p>
+        ))}
+        <TextAreaMappingRows items={model.displayMapping ? [] : model.alignedText.wholeLineBelow} />
+      </>}
       rowClassName={hasAnnotations && dropdown.enabled ? "pr-7" : undefined}
       bottomSlot={bottomSlot}
     />

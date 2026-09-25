@@ -2,26 +2,70 @@ import type { Document, MediaResource, Resource, Section } from "../types/core/d
 import type { TextLine } from "../types/core/textLine";
 import { resolveLinePlaybackRange } from "./playback/linePlayback";
 import type { LinePlaybackRange } from "./playback/playbackState";
-import { getAlignmentRef } from "./script-line/coreQueries";
+import { getAlignmentRef, isWholeLineDisplayFormMapping } from "./script-line/coreQueries";
+import { collectMappingPresentationCandidates } from "./script-line/mappingPresentationCandidates";
+import type { SelectOption } from "./viewer-options/viewerOptionState";
 
-type SelectOption = { id: string; label?: string };
+function collectViewerFormOptions(
+  document: Document,
+  lines: readonly TextLine[],
+): SelectOption[] {
+  const formRegistry = new Map(
+    (document.metadata.forms ?? []).map((form) => [form.id, form]),
+  );
+  const options: SelectOption[] = [];
+  const seen = new Set<string>();
+  const add = (id: string) => {
+    if (seen.has(id)) return;
+    seen.add(id);
+    options.push(formRegistry.get(id) ?? { id });
+  };
 
-export function deriveViewerDocumentOptions(document: Document) {
-  const formOptions = document.metadata.forms ?? [];
+  const canonicalFormId = document.metadata.defaultFormId &&
+    (lines.length === 0 || lines.some((line) => line.content.formId === document.metadata.defaultFormId))
+    ? document.metadata.defaultFormId
+    : lines[0]?.content.formId;
+  if (canonicalFormId) add(canonicalFormId);
+  lines.forEach((line) => line.textLineMappings
+    ?.filter(isWholeLineDisplayFormMapping)
+    .forEach((mapping) => add(mapping.image.content.formId)));
+
+  return options;
+}
+
+function collectViewerReadingOptions(
+  document: Document,
+  lines: readonly TextLine[],
+): SelectOption[] {
+  const formRegistry = new Map(
+    (document.metadata.forms ?? []).map((form) => [form.id, form]),
+  );
+  const options: SelectOption[] = [];
+  const seen = new Set<string>();
+
+  lines.flatMap(collectMappingPresentationCandidates).forEach(({ mapping }) => {
+    if (mapping.mappingType !== "reading") return;
+    const id = mapping.image.content.formId;
+    if (seen.has(id)) return;
+    seen.add(id);
+    options.push(formRegistry.get(id) ?? { id });
+  });
+
+  return options;
+}
+
+export function deriveViewerDocumentOptions(
+  document: Document,
+  lines = collectDocumentTextLines(document.sections),
+) {
+  const formOptions = collectViewerFormOptions(document, lines);
+  const readingOptions = collectViewerReadingOptions(document, lines);
   const languages = document.metadata.languages ?? [];
   const translationLanguageOptions: SelectOption[] = languages.some((language) => language.id === "none")
     ? languages
     : [{ id: "none", label: "Off" }, ...languages];
 
-  return { formOptions, translationLanguageOptions };
-}
-
-export function resolveInitialViewerFormId(document: Document) {
-  return document.metadata.defaultFormId ?? document.metadata.forms?.[0]?.id ?? "none";
-}
-
-export function resolveInitialViewerTranslationLanguageId() {
-  return "none";
+  return { formOptions, readingOptions, translationLanguageOptions };
 }
 
 export function classifyViewerMediaResources(document: Document) {

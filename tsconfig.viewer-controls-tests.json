@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "incremental": false,
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noEmit": false,
+    "outDir": "/tmp/lct-viewer-controls-tests",
+    "rootDir": "."
+  },
+  "include": [
+    "app/components/viewer-options/viewerOptionState.test.ts",
+    "app/components/viewer-options/viewerControlsIntegration.test.tsx"
+  ]
+}

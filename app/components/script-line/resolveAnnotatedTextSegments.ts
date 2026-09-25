@@ -80,3 +80,21 @@ export function resolveAnnotatedTextSegments<
     };
   });
 }
+
+/** Clip already-resolved annotation segments without changing their precedence. */
+export function sliceAnnotatedTextSegments<TAnnotation>(
+  segments: readonly ResolvedTextSegment<TAnnotation>[],
+  start: number,
+  end: number,
+): ResolvedTextSegment<TAnnotation>[] {
+  return segments.flatMap((segment) => {
+    const clippedStart = Math.max(start, segment.start);
+    const clippedEnd = Math.min(end, segment.end);
+    return clippedStart < clippedEnd ? [{
+      start: clippedStart,
+      end: clippedEnd,
+      text: segment.text.slice(clippedStart - segment.start, clippedEnd - segment.start),
+      annotations: segment.annotations,
+    }] : [];
+  });
+}

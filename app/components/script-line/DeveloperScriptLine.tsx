@@ -1,4 +1,6 @@
 import { ScriptLine } from "../ScriptLine";
+import { AlignedTextRenderer } from "./AlignedTextRenderer";
+import { TextAreaMappingRows } from "./TextAreaMappingRows";
 import { buildScriptLineModel } from "./buildScriptLineModel";
 import type { ScriptLineCompositionProps } from "./types";
 import type { Resource } from "../../types/core/document";
@@ -93,7 +95,9 @@ export function DeveloperScriptLine(props: ScriptLineCompositionProps) {
       onToggleLineLock={onToggleLineLock}
       style={style}
       layoutVariant="inline"
-      textContent={model.originalText}
+      textContent={<AlignedTextRenderer layout={model.alignedText} renderSourceRange={(start, end) => model.originalText.slice(start, end)} />}
+      textAreaAbove={<TextAreaMappingRows items={model.alignedText.wholeLineAbove} />}
+      textAreaBelow={<TextAreaMappingRows items={model.alignedText.wholeLineBelow} />}
       bottomSlot={showAnnotationPanel ? (
         <DeveloperAnnotationPanel
           textLine={model.textNode}
