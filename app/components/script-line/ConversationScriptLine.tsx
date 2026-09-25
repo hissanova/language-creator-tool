@@ -6,7 +6,7 @@ import type { TagTextDisplayStyle, ViewerStyle } from "../../types/viewerStyle";
 import { learnerAnnotationPanelConfig } from "../../config/annotationPanelPresets";
 import { AnnotatedText, resolveRenderedAnnotationSegments } from "../AnnotatedText";
 import { ScriptLine } from "../ScriptLine";
-import { AlignedTextRenderer } from "./AlignedTextRenderer";
+import { MappedTextRenderer } from "./MappedTextRenderer";
 import { TextAreaMappingRows } from "./TextAreaMappingRows";
 import { AnnotationPanel } from "./AnnotationPanel";
 import { buildScriptLineModel } from "./buildScriptLineModel";
@@ -295,7 +295,7 @@ export function ConversationScriptLine(props: ScriptLineCompositionProps) {
         <AnnotatedText segments={annotatedTextSegments} getAnnotationPresentation={(annotation) =>
           annotationPresentation({ annotation, translationLanguageId, style })} />
       ) : (
-        <AlignedTextRenderer layout={model.alignedText} renderSourceRange={(start, end) =>
+        <MappedTextRenderer layout={model.mappedText} renderSourceRange={(start, end) =>
           <AnnotatedText
             segments={sliceAnnotatedTextSegments(renderedAnnotationSegments, start, end)}
             getAnnotationPresentation={(annotation) =>
@@ -311,12 +311,12 @@ export function ConversationScriptLine(props: ScriptLineCompositionProps) {
         .filter(Boolean)
         .join(" ")}
       textStyle={tagTextStyle.style}
-      textAreaAbove={<TextAreaMappingRows items={model.displayMapping ? [] : model.alignedText.wholeLineAbove} />}
+      textAreaAbove={<TextAreaMappingRows items={model.displayMapping ? [] : model.mappedText.wholeLineAbove} />}
       textAreaBelow={<>
         {(model.displayMapping ? model.legacyTranslations : model.translations).map((translation) => (
           <p key={translation.id} className={style.text.translation}>{translation.image.content.text}</p>
         ))}
-        <TextAreaMappingRows items={model.displayMapping ? [] : model.alignedText.wholeLineBelow} />
+        <TextAreaMappingRows items={model.displayMapping ? [] : model.mappedText.wholeLineBelow} />
       </>}
       rowClassName={hasAnnotations && dropdown.enabled ? "pr-7" : undefined}
       bottomSlot={bottomSlot}

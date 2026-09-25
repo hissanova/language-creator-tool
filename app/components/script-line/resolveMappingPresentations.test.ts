@@ -5,6 +5,7 @@ import type {
   MappingPresentationContext,
   MappingPresentationRule,
 } from "../../types/viewer/mappingPresentation";
+import { defaultMappingPresentationRules } from "../../config/mappingPresentationPresets";
 import { collectMappingPresentationCandidates } from "./mappingPresentationCandidates";
 import {
   matchingMappingPresentationRules as matchRules,
@@ -156,12 +157,7 @@ test("symbolic form filters keep base Form and Reading selections independent", 
 });
 
 test("the default reading rule selects exactly one reading form and None selects none", () => {
-  const rules: MappingPresentationRule[] = [{
-    id: "reading-current",
-    match: { mappingTypes: ["reading"], formIds: "currentReading" },
-    presentation: "alignedText",
-    placement: "above",
-  }];
+  const rules = defaultMappingPresentationRules;
   const source = line({ selectedTextMappings: [{
     id: "readings",
     source: "emoji",
@@ -174,9 +170,13 @@ test("the default reading rule selects exactly one reading form and None selects
   assert.deepEqual(resolveMappingPresentations(source, rules, {
     selectedFormId: "hanzi", selectedReadingFormId: "pinyin",
   }).above.map((item) => item.mappingId), ["pinyin"]);
-  assert.deepEqual(resolveMappingPresentations(source, rules, {
+  const zhuyin = resolveMappingPresentations(source, rules, {
     selectedFormId: "hanzi", selectedReadingFormId: "zhuyin",
-  }).above.map((item) => item.mappingId), ["zhuyin"]);
+  }).above;
+  assert.deepEqual(zhuyin.map((item) => item.mappingId), ["zhuyin"]);
+  assert.equal(zhuyin[0].ruleId, "reading-ruby");
+  assert.equal(zhuyin[0].presentation, "ruby");
+  assert.equal(zhuyin[0].placement, "above");
 });
 
 test("sourceKinds distinguishes selector and whole-line rules", () => {

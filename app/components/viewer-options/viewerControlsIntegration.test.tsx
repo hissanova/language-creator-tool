@@ -75,7 +75,7 @@ test("reading-only forms hide Form and Reading starts at None", () => {
   assert.match(html, />Pinyin<\/option>/);
   assert.match(html, />Zhuyin<\/option>/);
   assert.doesNotMatch(html, />Simplified<\/option>/);
-  assert.doesNotMatch(html, /inline-table/);
+  assert.doesNotMatch(html, /<ruby|<rt/);
 });
 
 test("a whole-line alternative shows Form independently from Reading", () => {
@@ -143,6 +143,7 @@ test("control callbacks preserve independent values and change both line composi
     const presentedText = html.split("<details")[0].replace(/<[^>]*>/g, "");
     assert.match(presentedText, /kàn/);
     assert.doesNotMatch(presentedText, /ㄎㄢˋ/);
+    assert.match(html, /<ruby>[\s\S]*<rt>kàn<\/rt>/);
   }
 
   change(0, "simplified");

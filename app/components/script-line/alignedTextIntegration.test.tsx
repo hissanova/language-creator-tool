@@ -35,26 +35,29 @@ function render(mode: "conversation" | "developer", overrides: Partial<ScriptLin
 function visibleText(html: string) { return html.replace(/<[^>]*>/g, ""); }
 function presentedText(html: string) { return visibleText(html.split("<details")[0]); }
 
-test("both modes use the same resolved reading and preserve canonical source", () => {
+test("both modes use the same semantic ruby reading and preserve canonical source", () => {
   for (const mode of ["conversation", "developer"] as const) {
     const html = render(mode);
-    assert.match(html, /inline-table/);
-    assert.equal(presentedText(html).split("我看到了").length, 1); // Source is split by alignment markup.
-    assert.match(presentedText(html), /我看kàn到了/);
-    assert.doesNotMatch(presentedText(html), /ㄎㄢˋ/);
+    assert.match(html, /<ruby>[\s\S]*看[\s\S]*<rp>\(<\/rp><rt>kàn<\/rt><rp>\)<\/rp><\/ruby>/);
+    assert.doesNotMatch(html, /<rt>ㄎㄢˋ<\/rt>/);
   }
 });
 
 test("None, pinyin, and zhuyin resolve independently from the displayed Form", () => {
   for (const mode of ["conversation", "developer"] as const) {
     const none = presentedText(render(mode, { selectedReadingFormId: null }));
-    const pinyin = presentedText(render(mode, { selectedReadingFormId: "pinyin" }));
-    const zhuyin = presentedText(render(mode, { selectedReadingFormId: "zhuyin" }));
+    const pinyinHtml = render(mode, { selectedReadingFormId: "pinyin" });
+    const zhuyinHtml = render(mode, { selectedReadingFormId: "zhuyin" });
+    const pinyin = presentedText(pinyinHtml);
+    const zhuyin = presentedText(zhuyinHtml);
     assert.doesNotMatch(none, /kàn|ㄎㄢˋ/);
+    assert.doesNotMatch(render(mode, { selectedReadingFormId: null }), /<ruby|<rt/);
     assert.match(pinyin, /kàn/);
     assert.doesNotMatch(pinyin, /ㄎㄢˋ/);
+    assert.match(pinyinHtml, /<rt>kàn<\/rt>/);
     assert.match(zhuyin, /ㄎㄢˋ/);
     assert.doesNotMatch(zhuyin, /kàn/);
+    assert.match(zhuyinHtml, /<rt>ㄎㄢˋ<\/rt>/);
   }
 
   for (const selectedReadingFormId of [null, "pinyin", "zhuyin"] as const) {
@@ -120,23 +123,59 @@ test("annotation title, tags, translation, panel, and playback survive alignment
   assert.match(html, /aria-label="Annotations"/);
   assert.match(html, /aria-current="true"/);
   assert.match(html, /aria-label="Play from this line"/);
+  assert.match(html, /<ruby>[\s\S]*focus-source[\s\S]*<rt>kàn<\/rt>/);
 });
 
 test("alternative whole-line form disables canonical alignment in Conversation only", () => {
   const html = render("conversation", { formId: "latin" });
   assert.match(html, /I saw/);
-  assert.doesNotMatch(html, /inline-table/);
+  assert.doesNotMatch(html, /<ruby|<rt/);
   assert.doesNotMatch(visibleText(html), /kàn|ㄎㄢˋ/);
   assert.match(html, /I saw it/);
   assert.match(render("developer", { formId: "latin" }), /kàn/);
 });
 
-test("ruby rules produce no aligned markup", () => {
+test("multiple ruby annotations for one range fall back instead of being combined", () => {
   const rules: MappingPresentationRule[] = [{ id: "ruby", match: { mappingTypes: ["reading"] }, presentation: "ruby", placement: "above" }];
   for (const mode of ["conversation", "developer"] as const) {
     const html = render(mode, { mappingPresentationRules: rules });
     assert.doesNotMatch(html, /inline-table/);
-    assert.doesNotMatch(visibleText(html.split("<details")[0]), /kàn|ㄎㄢˋ/);
+    assert.doesNotMatch(html, /<ruby|<rt/);
     assert.match(visibleText(html), /我看到了/);
   }
+});
+
+test("Japanese Kana reading renders as ruby", () => {
+  const japanese: TextLine = {
+    id: "ja-line",
+    content: { text: "日本語", formId: "kanji", languageId: "ja" },
+    selectorRecord: { word: { selectorType: "range", range: { start: 0, end: 3 } } },
+    selectedTextMappings: [{
+      id: "ja-readings",
+      source: "word",
+      mappings: [{
+        id: "kana",
+        mappingType: "reading",
+        image: { id: "kana-image", content: { text: "にほんご", formId: "kana", languageId: "ja" } },
+      }],
+    }],
+  };
+  for (const mode of ["conversation", "developer"] as const) {
+    const html = render(mode, { textNode: japanese, selectedReadingFormId: "kana" });
+    assert.match(html, /<ruby>[\s\S]*日本語[\s\S]*<rp>\(<\/rp><rt>にほんご<\/rt>/);
+  }
+});
+
+test("whole-line reading wraps the whole canonical source without becoming a translation row", () => {
+  const wholeLineReading: TextLine = {
+    ...line,
+    selectedTextMappings: undefined,
+    textLineMappings: [
+      mapping("whole-reading", "reading", "wǒ kàn dào le", "pinyin"),
+      mapping("translation", "translation", "I saw it", "written"),
+    ],
+  };
+  const html = render("conversation", { textNode: wholeLineReading });
+  assert.match(html, /<ruby>[\s\S]*我[\s\S]*看[\s\S]*到了[\s\S]*<rp>\(<\/rp><rt>wǒ kàn dào le<\/rt>/);
+  assert.equal(visibleText(html).split("I saw it").length - 1, 1);
 });
