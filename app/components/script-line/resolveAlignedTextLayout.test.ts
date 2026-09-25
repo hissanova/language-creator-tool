@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import type { MappingPresentationItem, MappingPresentationResult } from "../../types/viewer/mappingPresentation";
-import { resolveAlignedTextLayout } from "./resolveAlignedTextLayout";
+import { resolveMappedTextLayout } from "./resolveMappedTextLayout";
 
 function item(id: string, start: number, end: number, placement: "above" | "below" = "above", sourceKind: "selector" | "wholeLine" = "selector", presentation: "alignedText" | "ruby" = "alignedText"): MappingPresentationItem {
   return { ruleId: id, mappingId: id, mappingType: "reading", mappedText: { text: id, formId: "pinyin", languageId: "zh" },
@@ -10,21 +10,21 @@ function item(id: string, start: number, end: number, placement: "above" | "belo
 }
 function layout(text: string, above: MappingPresentationItem[] = [], below: MappingPresentationItem[] = []) {
   const resolved: MappingPresentationResult = { above, below, fallbacks: [] };
-  return resolveAlignedTextLayout(text, resolved);
+  return resolveMappedTextLayout(text, resolved);
 }
 
 test("plain text, adjacent ranges, and simultaneous placements preserve source exactly once", () => {
   const result = layout("我看到了", [item("kan", 1, 2), item("dao", 2, 3)], [item("gloss", 1, 2, "below")]);
   assert.deepEqual(result.chunks.map(({ text }) => text), ["我", "看", "到", "了"]);
   assert.equal(result.chunks.map(({ text }) => text).join(""), "我看到了");
-  assert.deepEqual(result.chunks[1].above.map(({ mappingId }) => mappingId), ["kan"]);
-  assert.deepEqual(result.chunks[1].below.map(({ mappingId }) => mappingId), ["gloss"]);
+  assert.deepEqual(result.chunks[1].alignedAbove.map(({ mappingId }) => mappingId), ["kan"]);
+  assert.deepEqual(result.chunks[1].alignedBelow.map(({ mappingId }) => mappingId), ["gloss"]);
 });
 
 test("identical spans stack in stable above and below order", () => {
   const result = layout("abc", [item("first", 1, 2), item("second", 1, 2)], [item("lower-1", 1, 2, "below"), item("lower-2", 1, 2, "below")]);
-  assert.deepEqual(result.chunks[1].above.map(({ mappingId }) => mappingId), ["first", "second"]);
-  assert.deepEqual(result.chunks[1].below.map(({ mappingId }) => mappingId), ["lower-1", "lower-2"]);
+  assert.deepEqual(result.chunks[1].alignedAbove.map(({ mappingId }) => mappingId), ["first", "second"]);
+  assert.deepEqual(result.chunks[1].alignedBelow.map(({ mappingId }) => mappingId), ["lower-1", "lower-2"]);
   assert.deepEqual(result.fallbacks, []);
 });
 
@@ -40,16 +40,54 @@ test("partial and nested selector overlaps fall back for both ranges", () => {
   for (const [a, b] of [[item("a", 0, 3), item("b", 2, 4)], [item("a", 0, 4), item("b", 1, 2)]]) {
     const result = layout("abcd", [a, b]);
     assert.equal(result.chunks.map(({ text }) => text).join(""), "abcd");
-    assert.equal(result.chunks.some(({ above }) => above.length > 0), false);
+    assert.equal(result.chunks.some(({ alignedAbove }) => alignedAbove.length > 0), false);
     assert.deepEqual(result.fallbacks.map(({ reason }) => reason), ["overlapping-ranges", "overlapping-ranges"]);
   }
 });
 
-test("ruby is excluded and inputs are not mutated", () => {
+test("partial ruby and aligned-text overlap falls back for both presentations", () => {
+  const result = layout("abcd", [
+    item("ruby", 0, 3, "above", "selector", "ruby"),
+    item("aligned", 2, 4),
+  ]);
+  assert.equal(result.chunks.map(({ text }) => text).join(""), "abcd");
+  assert.equal(result.chunks.some(({ ruby }) => ruby !== undefined), false);
+  assert.equal(result.chunks.some(({ alignedAbove }) => alignedAbove.length > 0), false);
+  assert.deepEqual(result.fallbacks.map(({ mappingId, reason }) => ({ mappingId, reason })), [
+    { mappingId: "ruby", reason: "overlapping-ranges" },
+    { mappingId: "aligned", reason: "overlapping-ranges" },
+  ]);
+});
+
+test("ruby and aligned text share exact ranges without mutating inputs", () => {
   const above = [item("ruby", 0, 2, "above", "selector", "ruby"), item("reading", 2, 3)];
+  const below = [item("gloss", 0, 2, "below")];
   const before = structuredClone(above);
-  const result = layout("abcd", above);
+  const result = layout("abcd", above, below);
   assert.deepEqual(above, before);
   assert.equal(result.chunks.map(({ text }) => text).join(""), "abcd");
-  assert.deepEqual(result.chunks.flatMap(({ above }) => above.map(({ mappingId }) => mappingId)), ["reading"]);
+  assert.equal(result.chunks[0].ruby?.mappingId, "ruby");
+  assert.deepEqual(result.chunks[0].alignedBelow.map(({ mappingId }) => mappingId), ["gloss"]);
+  assert.deepEqual(result.chunks.flatMap(({ alignedAbove }) => alignedAbove.map(({ mappingId }) => mappingId)), ["reading"]);
+});
+
+test("multiple ruby annotations on one range fall back while aligned text remains", () => {
+  const result = layout("abc", [
+    item("ruby-a", 1, 2, "above", "selector", "ruby"),
+    item("ruby-b", 1, 2, "above", "selector", "ruby"),
+    item("aligned", 1, 2),
+  ]);
+  assert.equal(result.chunks[1].ruby, undefined);
+  assert.deepEqual(result.chunks[1].alignedAbove.map(({ mappingId }) => mappingId), ["aligned"]);
+  assert.deepEqual(result.fallbacks.map(({ reason }) => reason), [
+    "multiple-ruby-annotations",
+    "multiple-ruby-annotations",
+  ]);
+});
+
+test("whole-line ruby participates in the canonical partition", () => {
+  const result = layout("我看到了", [item("whole", 0, 4, "above", "wholeLine", "ruby")]);
+  assert.equal(result.chunks.length, 1);
+  assert.equal(result.chunks[0].text, "我看到了");
+  assert.equal(result.chunks[0].ruby?.mappingId, "whole");
 });

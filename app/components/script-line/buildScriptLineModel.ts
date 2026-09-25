@@ -2,7 +2,7 @@ import type { Language } from "../../types/core/document";
 import type { ScriptLineCompositionProps } from "./types";
 import { defaultMappingPresentationRules } from "../../config/mappingPresentationPresets";
 import { resolveMappingPresentations } from "./resolveMappingPresentations";
-import { resolveAlignedTextLayout } from "./resolveAlignedTextLayout";
+import { resolveMappedTextLayout } from "./resolveMappedTextLayout";
 import {
   collectResourceRefs,
   collectSelectorAnnotations,
@@ -55,9 +55,9 @@ export function buildScriptLineModel({
     selectedFormId: formId,
     selectedReadingFormId,
   });
-  const alignedText = resolveAlignedTextLayout(textNode.content.text, mappingPresentations);
+  const mappedText = resolveMappedTextLayout(textNode.content.text, mappingPresentations);
   const presentedWholeLineIds = new Set(
-    [...alignedText.wholeLineAbove, ...alignedText.wholeLineBelow].map((item) => item.mappingId),
+    [...mappedText.wholeLineAbove, ...mappedText.wholeLineBelow].map((item) => item.mappingId),
   );
   const legacyTranslations = getTranslations(textNode, translationLanguageId);
 
@@ -75,7 +75,7 @@ export function buildScriptLineModel({
       : undefined,
     translations: legacyTranslations.filter((mapping) => !presentedWholeLineIds.has(mapping.id)),
     legacyTranslations,
-    alignedText,
+    mappedText,
     alignment: getAlignmentRef(textNode.textLineRefs)?.body.interval,
     textNodeTags: lineTags(textNode),
     annotations: collectSelectorAnnotations(textNode, textNode.content.text),

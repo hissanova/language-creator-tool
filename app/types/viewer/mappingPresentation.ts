@@ -50,6 +50,7 @@ export type MappingPresentationFallbackReason =
   | "unsupported-selector"
   | "invalid-range"
   | "overlapping-ranges"
+  | "multiple-ruby-annotations"
   | "unsupported-selection-source";
 
 export type MappingPresentationFallback = {

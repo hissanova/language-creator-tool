@@ -44,10 +44,14 @@ The Viewer keeps base-text Form selection separate from Reading selection.
   displayed. `None` is represented internally by `null`; it is not a form ID.
   The control is hidden when the document has no reading mappings.
 
-The Core mapping type `reading` describes the semantic relationship. A form ID
-describes the notation used by that reading. `alignedText` is a presentation
-renderer, and a future `ruby` renderer is another presentation mechanism; they
-are not selectable forms and the control remains labelled **Reading**.
+The Core mapping type `reading` describes the semantic relationship. Form IDs
+such as `pinyin`, `zhuyin`, and `kana` describe the notation used by that
+reading. The default Reading presentation is semantic HTML `ruby`.
+`alignedText` remains a distinct generic above/below presentation for mapped
+text such as future glosses or selected-text translations. Neither renderer is
+a selectable form and the control remains labelled **Reading**. **Reading:
+None** disables Reading presentation. Existing whole-line Translation display
+is a separate feature.
 
 ## Illustrative example
 
