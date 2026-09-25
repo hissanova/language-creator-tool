@@ -8,10 +8,6 @@ import {
   classifyViewerMediaResources,
   collectDocumentTextLines,
   deriveViewerDocumentOptions,
-  resolveAvailableViewerSelections,
-  resolveInitialViewerFormId,
-  resolveInitialViewerReadingFormId,
-  resolveInitialViewerTranslationLanguageId,
   resolveSectionPlaybackRange,
   resolveViewerLinePlaybackPresentation,
   resolveViewerSpeakers,
@@ -41,29 +37,13 @@ function line(id: string, interval?: { start: number; end?: number }, resourceId
 
 const block = (text: TextLine): Section["blocks"][number] => ({ type: "text", text });
 
-test("default form wins when it is an available base-text form", () => {
-  const source = document(
-    { defaultFormId: "second", forms: [{ id: "first" }, { id: "second" }] },
-    [],
-    [{ id: "section", blocks: [block({ ...line("source"), content: { text: "source", languageId: "en", formId: "second" } })] }],
-  );
-  assert.equal(resolveInitialViewerFormId(source), "second");
-});
-
 test("the canonical source form is the fallback instead of an unavailable declared form", () => {
   const source = document(
     { forms: [{ id: "declared-only" }, { id: "surface", label: "Surface" }] },
     [],
     [{ id: "section", blocks: [block({ ...line("source"), content: { text: "source", languageId: "en", formId: "surface" } })] }],
   );
-  assert.equal(resolveInitialViewerFormId(source), "surface");
   assert.deepEqual(deriveViewerDocumentOptions(source).formOptions, [{ id: "surface", label: "Surface" }]);
-});
-
-test("no forms selects none", () => {
-  assert.equal(resolveInitialViewerFormId(document()), "none");
-  assert.equal(resolveInitialViewerReadingFormId(), null);
-  assert.equal(resolveInitialViewerTranslationLanguageId(), "none");
 });
 
 test("translation options prepend Off without changing metadata options", () => {
@@ -135,35 +115,6 @@ test("a form used for display and reading appears independently in both option l
   const options = deriveViewerDocumentOptions(source);
   assert.deepEqual(options.formOptions.map(({ id }) => id), ["surface", "shared"]);
   assert.deepEqual(options.readingOptions, [{ id: "shared", label: "Shared" }]);
-});
-
-test("selection resolution resets Reading and rejects unavailable values", () => {
-  const source = document({ defaultFormId: "surface" }, [], [{
-    id: "section",
-    blocks: [block({
-      ...line("source"),
-      content: { text: "source", languageId: "en", formId: "surface" },
-    })],
-  }]);
-  const options = deriveViewerDocumentOptions(source);
-
-  assert.deepEqual(resolveAvailableViewerSelections(
-    source,
-    options.formOptions,
-    [{ id: "pinyin" }],
-  ), { formId: "surface", selectedReadingFormId: null });
-  assert.deepEqual(resolveAvailableViewerSelections(
-    source,
-    options.formOptions,
-    [{ id: "pinyin" }],
-    { formId: "missing", selectedReadingFormId: "missing" },
-  ), { formId: "surface", selectedReadingFormId: null });
-  assert.deepEqual(resolveAvailableViewerSelections(
-    source,
-    options.formOptions,
-    [{ id: "pinyin" }],
-    { formId: "surface", selectedReadingFormId: "pinyin" },
-  ), { formId: "surface", selectedReadingFormId: "pinyin" });
 });
 
 test("an existing none option is not duplicated", () => {

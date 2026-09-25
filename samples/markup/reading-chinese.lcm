@@ -15,6 +15,10 @@ forms:
 # Reading aids
 
 >: 我看到了
+  @line
+    ->translation: lang:en
+      I saw it.
+
   @"看"
     ->reading: form:pinyin
       kàn

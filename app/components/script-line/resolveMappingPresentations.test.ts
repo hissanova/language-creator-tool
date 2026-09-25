@@ -5,8 +5,8 @@ import type {
   MappingPresentationContext,
   MappingPresentationRule,
 } from "../../types/viewer/mappingPresentation";
+import { collectMappingPresentationCandidates } from "./mappingPresentationCandidates";
 import {
-  collectMappingPresentationCandidates,
   matchingMappingPresentationRules as matchRules,
   resolveMappingPresentations as resolvePresentations,
 } from "./resolveMappingPresentations";

@@ -12,7 +12,6 @@
     "app/components/script-line/speakerPresentation.test.tsx",
     "app/components/script-line/scriptLinePresentation.test.tsx",
     "app/components/script-line/alignedTextIntegration.test.tsx",
-    "app/components/script-line/AlignedTextRenderer.test.tsx",
-    "app/components/viewerControlsIntegration.test.tsx"
+    "app/components/script-line/AlignedTextRenderer.test.tsx"
   ]
 }

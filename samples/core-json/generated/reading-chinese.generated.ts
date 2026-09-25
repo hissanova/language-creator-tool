@@ -45,6 +45,20 @@ export const readingChineseGenerated: Document = {
               "languageId": "zh-Hant",
               "formId": "surface"
             },
+            "textLineMappings": [
+              {
+                "id": "reading-chinese-map-001",
+                "mappingType": "translation",
+                "image": {
+                  "id": "reading-chinese-line-002",
+                  "content": {
+                    "text": "I saw it.",
+                    "languageId": "en",
+                    "formId": "surface"
+                  }
+                }
+              }
+            ],
             "selectorRecord": {
               "reading-chinese-selector-001": {
                 "selectorType": "range",
@@ -60,10 +74,10 @@ export const readingChineseGenerated: Document = {
                 "source": "reading-chinese-selector-001",
                 "mappings": [
                   {
-                    "id": "reading-chinese-map-001",
+                    "id": "reading-chinese-map-002",
                     "mappingType": "reading",
                     "image": {
-                      "id": "reading-chinese-line-002",
+                      "id": "reading-chinese-line-003",
                       "content": {
                         "text": "kàn",
                         "languageId": "zh-Hant",
@@ -72,10 +86,10 @@ export const readingChineseGenerated: Document = {
                     }
                   },
                   {
-                    "id": "reading-chinese-map-002",
+                    "id": "reading-chinese-map-003",
                     "mappingType": "reading",
                     "image": {
-                      "id": "reading-chinese-line-003",
+                      "id": "reading-chinese-line-004",
                       "content": {
                         "text": "ㄎㄢˋ",
                         "languageId": "zh-Hant",
@@ -84,10 +98,10 @@ export const readingChineseGenerated: Document = {
                     }
                   },
                   {
-                    "id": "reading-chinese-map-003",
+                    "id": "reading-chinese-map-004",
                     "mappingType": "gloss",
                     "image": {
-                      "id": "reading-chinese-line-004",
+                      "id": "reading-chinese-line-005",
                       "content": {
                         "text": "see",
                         "languageId": "en",

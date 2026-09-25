@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, type ReactNode } from "react";
+import { useMemo, type ReactNode } from "react";
 import type {
   Document,
   FigureBlock,
@@ -30,14 +30,12 @@ import {
   classifyViewerMediaResources,
   collectDocumentTextLines,
   deriveViewerDocumentOptions,
-  resolveAvailableViewerSelections,
-  resolveInitialViewerFormId,
-  resolveInitialViewerReadingFormId,
-  resolveInitialViewerTranslationLanguageId,
   resolveSectionPlaybackRange,
   resolveViewerLinePlaybackPresentation,
   resolveViewerSpeakers,
 } from "./viewerDocumentModel";
+import { ViewerOptionControls } from "./viewer-options/ViewerOptionControls";
+import { useViewerOptionSelections } from "./viewer-options/useViewerOptionSelections";
 
 type Props = {
   document: Document;
@@ -282,15 +280,7 @@ export function ViewerShell({
   showMetadata = false,
   showViewerControls = false,
 }: ViewerShellProps) {
-  const {
-    formOptions,
-    readingOptions,
-    translationLanguageOptions,
-    audioResources,
-    fallbackVideo,
-    speakers,
-    textLines,
-  } = useMemo(() => {
+  const viewerModel = useMemo(() => {
     const nextTextLines = collectDocumentTextLines(document.sections);
     return {
       ...deriveViewerDocumentOptions(document, nextTextLines),
@@ -299,28 +289,21 @@ export function ViewerShell({
       textLines: nextTextLines,
     };
   }, [document]);
-
-  const initialFormId = resolveInitialViewerFormId(document, formOptions);
-  const [selections, setSelections] = useState(() => ({
-    document,
-    formId: initialFormId,
-    selectedReadingFormId: resolveInitialViewerReadingFormId(),
-  }));
-  const [translationLanguageId, setTranslationLanguageId] = useState<string>(resolveInitialViewerTranslationLanguageId);
-  const normalizedSelections = {
-    document,
-    ...resolveAvailableViewerSelections(
-      document,
-      formOptions,
-      readingOptions,
-      selections.document === document ? selections : undefined,
-    ),
-  };
-  if (normalizedSelections.formId !== selections.formId ||
-      normalizedSelections.selectedReadingFormId !== selections.selectedReadingFormId ||
-      normalizedSelections.document !== selections.document) {
-    setSelections(normalizedSelections);
-  }
+  const {
+    formOptions,
+    readingOptions,
+    translationLanguageOptions,
+    audioResources,
+    fallbackVideo,
+    speakers,
+    textLines,
+  } = viewerModel;
+  const {
+    selections,
+    selectForm,
+    selectReading,
+    selectTranslationLanguage,
+  } = useViewerOptionSelections(document, viewerModel);
   const playback = usePlaybackController(audioResources, normalizeMediaSrc);
   usePlaybackKeyboardShortcuts(playback, audioResources.length > 0);
 
@@ -358,9 +341,9 @@ export function ViewerShell({
     style,
     mappingPresentationRules,
     LineComponent,
-    formId: normalizedSelections.formId,
-    selectedReadingFormId: normalizedSelections.selectedReadingFormId,
-    translationLanguageId,
+    formId: selections.formId,
+    selectedReadingFormId: selections.readingFormId,
+    translationLanguageId: selections.translationLanguageId,
     speakers,
     audioResources,
     playbackRanges,
@@ -405,63 +388,18 @@ export function ViewerShell({
       )}
 
       {showViewerControls && (
-        <div className={style.layout.controls}>
-          {formOptions.length > 1 ? (
-            <label className="flex items-center gap-2">
-              <span className="text-sm font-medium">Form</span>
-              <select
-                className="rounded border bg-white px-2 py-1 text-gray-950"
-                value={normalizedSelections.formId}
-                onChange={(event) => setSelections((current) => ({
-                  ...current,
-                  formId: event.target.value,
-                }))}
-              >
-                {formOptions.map((form) => (
-                  <option key={form.id} value={form.id} className="bg-white text-gray-950">
-                    {form.label ?? form.id}
-                  </option>
-                ))}
-              </select>
-            </label>
-          ) : null}
-
-          {readingOptions.length > 0 ? (
-            <label className="flex items-center gap-2">
-              <span className="text-sm font-medium">Reading</span>
-              <select
-                className="rounded border bg-white px-2 py-1 text-gray-950"
-                value={normalizedSelections.selectedReadingFormId ?? ""}
-                onChange={(event) => setSelections((current) => ({
-                  ...current,
-                  selectedReadingFormId: event.target.value || null,
-                }))}
-              >
-                <option value="" className="bg-white text-gray-950">None</option>
-                {readingOptions.map((form) => (
-                  <option key={form.id} value={form.id} className="bg-white text-gray-950">
-                    {form.label ?? form.id}
-                  </option>
-                ))}
-              </select>
-            </label>
-          ) : null}
-
-          <label className="flex items-center gap-2">
-            <span className="text-sm font-medium">Translation</span>
-            <select
-              className="rounded border bg-white px-2 py-1 text-gray-950"
-              value={translationLanguageId}
-              onChange={(event) => setTranslationLanguageId(event.target.value)}
-            >
-              {translationLanguageOptions.map((language) => (
-                <option key={language.id} value={language.id} className="bg-white text-gray-950">
-                  {language.label ?? language.id}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
+        <ViewerOptionControls
+          className={style.layout.controls}
+          formOptions={formOptions}
+          readingOptions={readingOptions}
+          translationLanguageOptions={translationLanguageOptions}
+          formId={selections.formId}
+          readingFormId={selections.readingFormId}
+          translationLanguageId={selections.translationLanguageId}
+          onFormChange={selectForm}
+          onReadingChange={selectReading}
+          onTranslationLanguageChange={selectTranslationLanguage}
+        />
       )}
 
       <div className="space-y-8">

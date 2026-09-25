@@ -3,13 +3,8 @@ import type { TextLine } from "../types/core/textLine";
 import { resolveLinePlaybackRange } from "./playback/linePlayback";
 import type { LinePlaybackRange } from "./playback/playbackState";
 import { getAlignmentRef, isWholeLineDisplayFormMapping } from "./script-line/coreQueries";
-import { collectMappingPresentationCandidates } from "./script-line/resolveMappingPresentations";
-
-export type SelectOption = { id: string; label?: string };
-export type ViewerPresentationSelections = {
-  formId: string;
-  selectedReadingFormId: string | null;
-};
+import { collectMappingPresentationCandidates } from "./script-line/mappingPresentationCandidates";
+import type { SelectOption } from "./viewer-options/viewerOptionState";
 
 function collectViewerFormOptions(
   document: Document,
@@ -71,43 +66,6 @@ export function deriveViewerDocumentOptions(
     : [{ id: "none", label: "Off" }, ...languages];
 
   return { formOptions, readingOptions, translationLanguageOptions };
-}
-
-export function resolveInitialViewerFormId(
-  document: Document,
-  formOptions: readonly SelectOption[] = deriveViewerDocumentOptions(document).formOptions,
-) {
-  const defaultFormId = document.metadata.defaultFormId;
-  if (defaultFormId && formOptions.some((option) => option.id === defaultFormId)) {
-    return defaultFormId;
-  }
-  return formOptions[0]?.id ?? "none";
-}
-
-export function resolveInitialViewerTranslationLanguageId() {
-  return "none";
-}
-
-export function resolveInitialViewerReadingFormId(): string | null {
-  return null;
-}
-
-export function resolveAvailableViewerSelections(
-  document: Document,
-  formOptions: readonly SelectOption[],
-  readingOptions: readonly SelectOption[],
-  current?: ViewerPresentationSelections,
-): ViewerPresentationSelections {
-  const initialFormId = resolveInitialViewerFormId(document, formOptions);
-  return {
-    formId: current && formOptions.some((option) => option.id === current.formId)
-      ? current.formId
-      : initialFormId,
-    selectedReadingFormId: current?.selectedReadingFormId != null &&
-      readingOptions.some((option) => option.id === current.selectedReadingFormId)
-      ? current.selectedReadingFormId
-      : resolveInitialViewerReadingFormId(),
-  };
 }
 
 export function classifyViewerMediaResources(document: Document) {
