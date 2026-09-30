@@ -8,7 +8,7 @@ import { viewerStyle } from "../../styles/viewerStyle";
 import { PlaybackBar } from "./PlaybackBar";
 import { releasePlaybackButtonFocusOnPointerUp } from "./playbackButtonFocus";
 import type { PlaybackController } from "./usePlaybackController";
-import type { PlaybackState } from "./playbackState";
+import { initialPlaybackState, type PlaybackState } from "./playbackState";
 import { firstRange, withMedia, noop } from "./playbackTestFixtures";
 
 function renderPlaybackBar(state: PlaybackState) {
@@ -37,6 +37,16 @@ function renderPlaybackBar(state: PlaybackState) {
   } as unknown as PlaybackController;
   return renderToStaticMarkup(<PlaybackBar controller={controller} />);
 }
+
+test("initial playback controls remain disabled until media metadata is ready", () => {
+  const initialHtml = renderPlaybackBar(initialPlaybackState);
+  assert.equal((initialHtml.match(/disabled=""/g) ?? []).length, 5);
+  assert.equal((initialHtml.match(/autocomplete="off"/gi) ?? []).length, 5);
+
+  const metadataReadyHtml = renderPlaybackBar(withMedia());
+  assert.equal((metadataReadyHtml.match(/disabled=""/g) ?? []).length, 0);
+  assert.equal((metadataReadyHtml.match(/autocomplete="off"/gi) ?? []).length, 5);
+});
 
 
 test("Play and Lock controls have required names, pressed states, and distinct icons", () => {
