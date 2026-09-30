@@ -10,6 +10,10 @@ import { playbackModeButtonClass } from "./playbackButtonStyles";
 import { releasePlaybackButtonFocusOnPointerUp } from "./playbackButtonFocus";
 import { LoopIcon, PauseIcon, PlayIcon, SkipIcon } from "./PlaybackIcons";
 
+// Firefox supports autocomplete on buttons and otherwise persists a dynamic
+// disabled state across reloads. React's button typings do not expose it.
+const disableFirefoxControlStateRestoration = { autoComplete: "off" } as const;
+
 function SkipButton({
   seconds,
   disabled,
@@ -26,6 +30,7 @@ function SkipButton({
   return (
     <button
       type="button"
+      {...disableFirefoxControlStateRestoration}
       disabled={disabled}
       aria-label={label}
       title={label}
@@ -220,6 +225,7 @@ export function PlaybackBar({
           ) : null}
           <input
             type="range"
+            autoComplete="off"
             aria-label="Seek"
             min={0}
             max={duration}

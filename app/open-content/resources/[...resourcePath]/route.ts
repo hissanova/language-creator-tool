@@ -1,6 +1,7 @@
 import path from "node:path";
 
 import { readProjectResource } from "@/scripts/open-content/project.mjs";
+import { planResourceResponse } from "@/scripts/open-content/resource-response.mjs";
 
 export const dynamic = "force-dynamic";
 
@@ -21,7 +22,7 @@ const contentTypes: Record<string, string> = {
 };
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: { params: Promise<{ resourcePath: string[] }> },
 ) {
   const root = process.env.LCT_EXTERNAL_CONTENT_ROOT;
@@ -32,11 +33,26 @@ export async function GET(
   try {
     const contents = await readProjectResource(root, relativePath);
     const contentType = contentTypes[path.extname(relativePath).toLowerCase()] ?? "application/octet-stream";
-    return new Response(new Uint8Array(contents), {
+    const plan = planResourceResponse(request.headers.get("range"), contents.byteLength);
+    const headers: Record<string, string> = {
+      "Accept-Ranges": "bytes",
+      "Cache-Control": "no-store",
+      "Content-Length": String(plan.contentLength),
+      "Content-Type": contentType,
+      "X-Content-Type-Options": "nosniff",
+    };
+    if (plan.contentRange) headers["Content-Range"] = plan.contentRange;
+
+    if (plan.status === 416) {
+      return new Response(null, { status: plan.status, headers });
+    }
+    const body = plan.status === 206
+      ? contents.subarray(plan.start, plan.end + 1)
+      : contents;
+    return new Response(new Uint8Array(body), {
+      status: plan.status,
       headers: {
-        "Cache-Control": "no-store",
-        "Content-Type": contentType,
-        "X-Content-Type-Options": "nosniff",
+        ...headers,
       },
     });
   } catch (error) {

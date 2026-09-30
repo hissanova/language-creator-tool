@@ -12,6 +12,7 @@ import {
   resolveProjectResource,
   routePathForResource,
 } from "./project.mjs";
+import { planResourceResponse } from "./resource-response.mjs";
 
 const repositoryRoot = path.resolve(path.dirname(new URL(import.meta.url).pathname), "../..");
 const temporaryRoot = await mkdtemp(path.join(os.tmpdir(), "lct external content "));
@@ -104,6 +105,42 @@ await writeFile(path.join(projectRoot, "node_modules", "package", "ignored.lcm")
 await writeFile(path.join(projectRoot, "dist", "ignored.lcm"), lcm("Generated"));
 await writeFile(path.join(projectRoot, "media", "sample audio.mp3"), "test audio");
 await writeFile(outsideFile, "outside");
+
+assert.deepEqual(planResourceResponse(null, 10), {
+  status: 200, start: 0, end: 9, contentLength: 10,
+});
+assert.deepEqual(planResourceResponse("bytes=2-5", 10), {
+  status: 206, start: 2, end: 5, contentLength: 4, contentRange: "bytes 2-5/10",
+});
+assert.deepEqual(planResourceResponse("bytes=5-", 10), {
+  status: 206, start: 5, end: 9, contentLength: 5, contentRange: "bytes 5-9/10",
+});
+assert.deepEqual(planResourceResponse("bytes=-3", 10), {
+  status: 206, start: 7, end: 9, contentLength: 3, contentRange: "bytes 7-9/10",
+});
+assert.deepEqual(planResourceResponse("bytes=7-99", 10), {
+  status: 206, start: 7, end: 9, contentLength: 3, contentRange: "bytes 7-9/10",
+});
+assert.equal(planResourceResponse("bytes=0-0", 10).contentRange, "bytes 0-0/10");
+assert.equal(planResourceResponse("bytes=9-9", 10).contentRange, "bytes 9-9/10");
+assert.deepEqual(planResourceResponse(null, 0), {
+  status: 200, start: 0, end: 0, contentLength: 0,
+});
+assert.deepEqual(planResourceResponse("bytes=0-0", 0), {
+  status: 416, start: 0, end: 0, contentLength: 0, contentRange: "bytes */0",
+});
+for (const malformed of ["garbage", "bytes=", "bytes=-0", "bytes=abc-2", "bytes=2.5-4", "bytes=5-2"]) {
+  assert.deepEqual(planResourceResponse(malformed, 10), {
+    status: 416, start: 0, end: 0, contentLength: 0, contentRange: "bytes */10",
+  });
+}
+assert.equal(planResourceResponse("bytes=10-", 10).status, 416);
+assert.deepEqual(planResourceResponse("bytes=0-1,4-5", 10), {
+  status: 200, start: 0, end: 9, contentLength: 10,
+});
+assert.deepEqual(planResourceResponse("items=0-1", 10), {
+  status: 200, start: 0, end: 9, contentLength: 10,
+});
 
 assert.deepEqual(await discoverLcmDocuments(projectRoot), ["one/lesson.lcm", "two/lesson.lcm"]);
 const inspected = await inspectExternalProject(projectRoot);
@@ -207,8 +244,46 @@ try {
   const resourceResponse = await fetch(`${baseUrl}/open-content/resources/media/sample%20audio.mp3`);
   assert.equal(resourceResponse.status, 200);
   assert.equal(resourceResponse.headers.get("content-type"), "audio/mpeg");
+  assert.equal(resourceResponse.headers.get("content-length"), "10");
+  assert.equal(resourceResponse.headers.get("accept-ranges"), "bytes");
   assert.match(resourceResponse.headers.get("cache-control") ?? "", /no-store/);
+  assert.equal(resourceResponse.headers.get("x-content-type-options"), "nosniff");
   assert.equal(await resourceResponse.text(), "test audio");
+
+  const resourceUrl = `${baseUrl}/open-content/resources/media/sample%20audio.mp3`;
+  for (const scenario of [
+    { range: "bytes=2-5", status: 206, contentRange: "bytes 2-5/10", length: "4", body: "st a" },
+    { range: "bytes=5-", status: 206, contentRange: "bytes 5-9/10", length: "5", body: "audio" },
+    { range: "bytes=-3", status: 206, contentRange: "bytes 7-9/10", length: "3", body: "dio" },
+    { range: "bytes=7-99", status: 206, contentRange: "bytes 7-9/10", length: "3", body: "dio" },
+    { range: "bytes=0-0", status: 206, contentRange: "bytes 0-0/10", length: "1", body: "t" },
+    { range: "bytes=9-9", status: 206, contentRange: "bytes 9-9/10", length: "1", body: "o" },
+  ]) {
+    const response = await fetch(resourceUrl, { headers: { Range: scenario.range } });
+    assert.equal(response.status, scenario.status);
+    assert.equal(response.headers.get("content-range"), scenario.contentRange);
+    assert.equal(response.headers.get("content-length"), scenario.length);
+    assert.equal(response.headers.get("accept-ranges"), "bytes");
+    assert.equal(response.headers.get("content-type"), "audio/mpeg");
+    assert.match(response.headers.get("cache-control") ?? "", /no-store/);
+    assert.equal(response.headers.get("x-content-type-options"), "nosniff");
+    assert.equal(await response.text(), scenario.body);
+  }
+
+  for (const range of ["bytes=", "bytes=10-", "bytes=5-2"]) {
+    const response = await fetch(resourceUrl, { headers: { Range: range } });
+    assert.equal(response.status, 416);
+    assert.equal(response.headers.get("content-range"), "bytes */10");
+    assert.equal(response.headers.get("content-length"), "0");
+    assert.equal(await response.text(), "");
+  }
+
+  const multipleRangeResponse = await fetch(resourceUrl, {
+    headers: { Range: "bytes=0-1,4-5" },
+  });
+  assert.equal(multipleRangeResponse.status, 200);
+  assert.equal(multipleRangeResponse.headers.get("content-range"), null);
+  assert.equal(await multipleRangeResponse.text(), "test audio");
 
   const sampleResponse = await fetch(`${baseUrl}/contents/generated/decomposition-minimum`);
   assert.equal(sampleResponse.status, 200);
