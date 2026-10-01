@@ -2,12 +2,14 @@
 
 import { useCallback, useEffect, useMemo, useReducer, useRef } from "react";
 import {
-  AUTO_FOLLOW_PROGRAMMATIC_SCROLL_TIMEOUT_MS,
+  AUTO_FOLLOW_PROGRAMMATIC_SCROLL_QUIET_MS,
+  createProgrammaticScroll,
   getAutoFollowScrollBehavior,
   getAutoFollowSafeRegion,
   getUsableViewport,
   isLineWithinRegion,
   isManualAutoFollowKey,
+  reduceProgrammaticScroll,
   resolveAutoFollowScrollTarget,
   shouldIgnoreProgrammaticScroll,
   type AutoFollowMode,
@@ -55,6 +57,7 @@ export function useActiveLineAutoFollow({
   const stickyControlsElementRef = useRef<HTMLDivElement | null>(null);
   const programmaticScrollRef = useRef<ProgrammaticScroll | null>(null);
   const programmaticScrollTimerRef = useRef<number | null>(null);
+  const nextProgrammaticScrollTokenRef = useRef(1);
 
   const registry = useMemo(() => {
     void documentToken;
@@ -66,13 +69,52 @@ export function useActiveLineAutoFollow({
     stickyControlsElementRef.current = element;
   }, []);
 
-  const clearProgrammaticScroll = useCallback(() => {
-    programmaticScrollRef.current = null;
+  const clearProgrammaticScroll = useCallback((
+    token?: number,
+    reason: "manualIntent" | "sourceChanged" = "manualIntent",
+  ) => {
+    programmaticScrollRef.current = token == null
+      ? reduceProgrammaticScroll(programmaticScrollRef.current, { type: reason })
+      : reduceProgrammaticScroll(programmaticScrollRef.current, { type: "quietElapsed", token });
+    if (programmaticScrollRef.current != null) return;
     if (programmaticScrollTimerRef.current != null) {
       window.clearTimeout(programmaticScrollTimerRef.current);
       programmaticScrollTimerRef.current = null;
     }
   }, []);
+
+  const scheduleProgrammaticScrollSettlement = useCallback((token: number) => {
+    if (programmaticScrollTimerRef.current != null) {
+      window.clearTimeout(programmaticScrollTimerRef.current);
+    }
+    programmaticScrollTimerRef.current = window.setTimeout(
+      () => clearProgrammaticScroll(token),
+      AUTO_FOLLOW_PROGRAMMATIC_SCROLL_QUIET_MS,
+    );
+  }, [clearProgrammaticScroll]);
+
+  const beginProgrammaticScroll = useCallback((targetY: number | null = null) => {
+    clearProgrammaticScroll();
+    const operation = createProgrammaticScroll(
+      nextProgrammaticScrollTokenRef.current++,
+      targetY,
+    );
+    programmaticScrollRef.current = operation;
+    scheduleProgrammaticScrollSettlement(operation.token);
+    return operation;
+  }, [clearProgrammaticScroll, scheduleProgrammaticScrollSettlement]);
+
+  const settleProgrammaticScroll = useCallback((
+    eventType: "scrollObserved" | "scrollEnded" = "scrollObserved",
+  ) => {
+    const operation = programmaticScrollRef.current;
+    if (!operation) return false;
+    const settling = reduceProgrammaticScroll(operation, { type: eventType });
+    if (!settling) return false;
+    programmaticScrollRef.current = settling;
+    scheduleProgrammaticScrollSettlement(settling.token);
+    return true;
+  }, [scheduleProgrammaticScrollSettlement]);
 
   const setEnabled = useCallback((enabled: boolean) => {
     if (!enabled) clearProgrammaticScroll();
@@ -84,8 +126,11 @@ export function useActiveLineAutoFollow({
   }, []);
 
   const requestFollow = useCallback(() => {
+    // Arm before dispatch: hiding Resume can change sticky-control height and scroll
+    // the page before the follow effect gets a chance to evaluate the active line.
+    beginProgrammaticScroll();
     dispatch({ type: "followRequested" });
-  }, []);
+  }, [beginProgrammaticScroll]);
 
   const getCurrentGeometry = useCallback((lineId: string | null) => {
     const lineElement = lineId ? registry.elements.get(lineId) : undefined;
@@ -121,17 +166,13 @@ export function useActiveLineAutoFollow({
       usableViewport: geometry.usableViewport,
       currentScrollY: window.scrollY,
     });
+    const operation = beginProgrammaticScroll();
+    programmaticScrollRef.current = reduceProgrammaticScroll(operation, {
+      type: "targetResolved",
+      targetY,
+    });
     if (targetY == null) return;
 
-    clearProgrammaticScroll();
-    programmaticScrollRef.current = {
-      targetY,
-      expiresAt: Date.now() + AUTO_FOLLOW_PROGRAMMATIC_SCROLL_TIMEOUT_MS,
-    };
-    programmaticScrollTimerRef.current = window.setTimeout(
-      clearProgrammaticScroll,
-      AUTO_FOLLOW_PROGRAMMATIC_SCROLL_TIMEOUT_MS,
-    );
     const reducedMotion = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
     window.scrollTo({
       top: targetY,
@@ -155,9 +196,10 @@ export function useActiveLineAutoFollow({
     };
 
     const onScroll = () => {
-      const programmaticScroll = programmaticScrollRef.current;
-      if (shouldIgnoreProgrammaticScroll(programmaticScroll, Date.now())) return;
-      if (programmaticScroll) clearProgrammaticScroll();
+      if (shouldIgnoreProgrammaticScroll(programmaticScrollRef.current)) {
+        settleProgrammaticScroll();
+        return;
+      }
       if (!state.enabled || !playing || currentLineId == null) return;
 
       const geometry = getCurrentGeometry(currentLineId);
@@ -171,22 +213,31 @@ export function useActiveLineAutoFollow({
       });
     };
 
+    const onScrollEnd = () => {
+      // scrollend is settlement evidence, not proof that no trailing scroll event
+      // from the same browser operation remains queued.
+      settleProgrammaticScroll("scrollEnded");
+    };
+
     window.addEventListener("wheel", suspendForManualIntent, { passive: true });
     window.addEventListener("touchmove", suspendForManualIntent, { passive: true });
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener("scroll", onScroll, { passive: true });
-    window.addEventListener("scrollend", clearProgrammaticScroll);
+    window.addEventListener("scrollend", onScrollEnd);
     return () => {
       window.removeEventListener("wheel", suspendForManualIntent);
       window.removeEventListener("touchmove", suspendForManualIntent);
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("scroll", onScroll);
-      window.removeEventListener("scrollend", clearProgrammaticScroll);
+      window.removeEventListener("scrollend", onScrollEnd);
     };
-  }, [clearProgrammaticScroll, currentLineId, getCurrentGeometry, playing, state.enabled]);
+  }, [clearProgrammaticScroll, currentLineId, getCurrentGeometry, playing, settleProgrammaticScroll, state.enabled]);
 
   // A new document/source replaces the line registry, so its old scroll target is obsolete.
-  useEffect(() => () => clearProgrammaticScroll(), [clearProgrammaticScroll, registry]);
+  useEffect(
+    () => () => clearProgrammaticScroll(undefined, "sourceChanged"),
+    [clearProgrammaticScroll, registry],
+  );
 
   return {
     enabled: state.enabled,

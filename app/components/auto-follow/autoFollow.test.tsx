@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { renderToStaticMarkup } from "react-dom/server";
 import { AutoFollowControls } from "./AutoFollowControls";
-import { AUTO_FOLLOW_DEFAULT_ENABLED, AUTO_FOLLOW_DEFAULT_MODE, getAutoFollowSafeRegion, getAutoFollowScrollBehavior, getCenteredScrollTarget, getUsableViewport, isLineWithinRegion, isManualAutoFollowKey, resolveAutoFollowScrollTarget, shouldIgnoreProgrammaticScroll, type AutoFollowMode } from "./autoFollow";
+import { AUTO_FOLLOW_DEFAULT_ENABLED, AUTO_FOLLOW_DEFAULT_MODE, createProgrammaticScroll, getAutoFollowSafeRegion, getAutoFollowScrollBehavior, getCenteredScrollTarget, getUsableViewport, isLineWithinRegion, isManualAutoFollowKey, reduceProgrammaticScroll, resolveAutoFollowScrollTarget, shouldIgnoreProgrammaticScroll, type AutoFollowMode, type ProgrammaticScroll, type ProgrammaticScrollEvent } from "./autoFollow";
 import { noop, targetMatching } from "../playback/playbackTestFixtures";
 
 function renderAutoFollowControls(
@@ -20,6 +20,13 @@ function renderAutoFollowControls(
       onResume={noop}
     />,
   );
+}
+
+function scrollStep(
+  operation: ProgrammaticScroll | null,
+  ...events: ProgrammaticScrollEvent[]
+) {
+  return events.reduce(reduceProgrammaticScroll, operation);
 }
 
 
@@ -76,11 +83,61 @@ test("auto-follow geometry retains the established safe-region and pinned polici
 });
 
 
-test("programmatic-scroll timeout and reduced-motion policy", () => {
-  assert.equal(shouldIgnoreProgrammaticScroll({ targetY: 500, expiresAt: 2_000 }, 1_999), true);
-  assert.equal(shouldIgnoreProgrammaticScroll({ targetY: 500, expiresAt: 2_000 }, 2_001), false);
+test("programmatic-scroll lifecycle covers guarding, scrolling, and settlement", () => {
+  const guarding = createProgrammaticScroll(1);
+  assert.deepEqual(guarding, { token: 1, targetY: null, phase: "guarding" });
+  assert.equal(shouldIgnoreProgrammaticScroll(guarding), true);
+
+  const scrolling = scrollStep(guarding, { type: "targetResolved", targetY: 500 });
+  assert.deepEqual(scrolling, { token: 1, targetY: 500, phase: "scrolling" });
+  const settling = scrollStep(scrolling, { type: "scrollObserved" });
+  assert.deepEqual(settling, { token: 1, targetY: 500, phase: "settling" });
+  assert.equal(shouldIgnoreProgrammaticScroll(settling), true);
+  assert.equal(shouldIgnoreProgrammaticScroll(null), false);
+
   assert.equal(getAutoFollowScrollBehavior(true), "auto");
   assert.equal(getAutoFollowScrollBehavior(false), "smooth");
+});
+
+test("no-target Resume and repeated operations use independent guards", () => {
+  const insideSafeRegion = createProgrammaticScroll(7);
+  const layoutScroll = scrollStep(insideSafeRegion, { type: "scrollObserved" });
+  assert.equal(layoutScroll?.phase, "settling");
+  assert.equal(shouldIgnoreProgrammaticScroll(layoutScroll), true);
+
+  const nextResume = createProgrammaticScroll(8);
+  assert.equal(nextResume.token, 8);
+  assert.notEqual(nextResume.token, layoutScroll?.token);
+});
+
+test("scrollend settlement still classifies a trailing scroll as programmatic", () => {
+  const issued = createProgrammaticScroll(3, 900);
+  const atScrollEnd = scrollStep(issued, { type: "scrollEnded" });
+  const trailingScroll = scrollStep(atScrollEnd, { type: "scrollObserved" });
+  assert.equal(atScrollEnd?.phase, "settling");
+  assert.equal(shouldIgnoreProgrammaticScroll(trailingScroll), true);
+});
+
+test("explicit manual intent cancels active programmatic scrolling promptly", () => {
+  for (const input of ["wheel", "touchmove", "scroll key"]) {
+    const scrolling = createProgrammaticScroll(4, 700);
+    assert.equal(
+      scrollStep(scrolling, { type: "manualIntent" }),
+      null,
+      input,
+    );
+  }
+});
+
+test("quiet settlement and source changes clear only the applicable operation", () => {
+  const current = createProgrammaticScroll(10, 400);
+  assert.deepEqual(
+    scrollStep(current, { type: "quietElapsed", token: 9 }),
+    current,
+    "a stale timer cannot clear a repeated Resume",
+  );
+  assert.equal(scrollStep(current, { type: "quietElapsed", token: 10 }), null);
+  assert.equal(scrollStep(current, { type: "sourceChanged" }), null);
 });
 
 test("manual-scroll keys exclude playback Space and interactive Arrow keys", () => {

@@ -1,7 +1,7 @@
 export const AUTO_FOLLOW_DEFAULT_ENABLED = true;
 export const AUTO_FOLLOW_DEFAULT_MODE = "unpinned" as const;
 export const AUTO_FOLLOW_SAFE_REGION_RATIO = 0.5;
-export const AUTO_FOLLOW_PROGRAMMATIC_SCROLL_TIMEOUT_MS = 1_200;
+export const AUTO_FOLLOW_PROGRAMMATIC_SCROLL_QUIET_MS = 150;
 export const AUTO_FOLLOW_REWIND_TOLERANCE_SECONDS = 0.05;
 
 export type AutoFollowMode = "unpinned" | "pinned";
@@ -12,9 +12,18 @@ export type VerticalRegion = {
 };
 
 export type ProgrammaticScroll = {
-  targetY: number;
-  expiresAt: number;
+  token: number;
+  targetY: number | null;
+  phase: "guarding" | "scrolling" | "settling";
 };
+
+export type ProgrammaticScrollEvent =
+  | { type: "targetResolved"; targetY: number | null }
+  | { type: "scrollObserved" }
+  | { type: "scrollEnded" }
+  | { type: "manualIntent" }
+  | { type: "quietElapsed"; token: number }
+  | { type: "sourceChanged" };
 
 type KeyboardScrollIntent = {
   altKey: boolean;
@@ -132,11 +141,44 @@ export function getAutoFollowScrollBehavior(reducedMotion: boolean): ScrollBehav
   return reducedMotion ? "auto" : "smooth";
 }
 
+export function createProgrammaticScroll(
+  token: number,
+  targetY: number | null = null,
+): ProgrammaticScroll {
+  return {
+    token,
+    targetY,
+    phase: targetY == null ? "guarding" : "scrolling",
+  };
+}
+
+export function reduceProgrammaticScroll(
+  operation: ProgrammaticScroll | null,
+  event: ProgrammaticScrollEvent,
+): ProgrammaticScroll | null {
+  if (!operation) return null;
+  switch (event.type) {
+    case "targetResolved":
+      return {
+        ...operation,
+        targetY: event.targetY,
+        phase: event.targetY == null ? "guarding" : "scrolling",
+      };
+    case "scrollObserved":
+    case "scrollEnded":
+      return { ...operation, phase: "settling" };
+    case "quietElapsed":
+      return operation.token === event.token ? null : operation;
+    case "manualIntent":
+    case "sourceChanged":
+      return null;
+  }
+}
+
 export function shouldIgnoreProgrammaticScroll(
   programmaticScroll: ProgrammaticScroll | null,
-  now: number,
 ) {
-  return programmaticScroll != null && now <= programmaticScroll.expiresAt;
+  return programmaticScroll != null;
 }
 
 export function isInteractiveAutoFollowTarget(target: EventTarget | null) {
