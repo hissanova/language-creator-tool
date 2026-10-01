@@ -20,6 +20,15 @@ export function formatPlaybackTime(value: number | null) {
   return `${totalMinutes}:${secondText}.${millisecondText}`;
 }
 
+export function formatPlaybackDuration(value: number | null) {
+  if (value == null || !Number.isFinite(value) || value < 0) return "--:--";
+
+  const totalSeconds = Math.floor(Math.round(value * 1000) / 1000);
+  const seconds = totalSeconds % 60;
+  const totalMinutes = Math.floor(totalSeconds / 60);
+  return `${totalMinutes}:${seconds.toString().padStart(2, "0")}`;
+}
+
 export function getPlaybackRangePercentages(
   range: Pick<LinePlaybackRange, "start" | "end">,
   duration: number | null,

@@ -7,6 +7,9 @@ import type { MappingPresentationRule } from "../types/viewer/mappingPresentatio
 import { ConversationViewer } from "./ConversationViewer";
 import { DeveloperViewer } from "./DeveloperViewer";
 import { TextViewer } from "./TextViewer";
+import { useViewerTheme } from "./ThemeToggle";
+import { ViewerSettings } from "./viewer-options/ViewerSettings";
+import type { ViewerId, ViewerOption } from "./viewer-options/viewerSettingsTypes";
 
 type Props = {
   document: Document;
@@ -14,14 +17,7 @@ type Props = {
   mappingPresentationRules?: readonly MappingPresentationRule[];
 };
 
-type ViewerId = "conversation" | "text" | "developer";
-
-type ViewerOption = {
-  id: ViewerId;
-  label: string;
-};
-
-function getViewerOptions(): ViewerOption[] {
+function getViewerOptions(): readonly ViewerOption[] {
   return [
     { id: "conversation", label: "Conversation viewer" },
     { id: "text", label: "Text viewer" },
@@ -32,34 +28,45 @@ function getViewerOptions(): ViewerOption[] {
 export function ViewerSwitcher({ document, style, mappingPresentationRules }: Props) {
   const viewerOptions = getViewerOptions();
   const [viewerId, setViewerId] = useState<ViewerId>(viewerOptions[0].id);
+  const { theme, setTheme } = useViewerTheme();
 
   const selectedViewer = viewerOptions.find((option) => option.id === viewerId) ?? viewerOptions[0];
 
+  const settingsOwner = {
+    theme,
+    onThemeChange: setTheme,
+    viewerId: selectedViewer.id,
+    viewerOptions,
+    onViewerChange: setViewerId,
+  };
+
   return (
     <>
-      <div className="mx-auto max-w-4xl px-6 pt-6">
-        <label className="inline-flex items-center gap-2 rounded border bg-white px-3 py-2 text-sm text-gray-950 shadow-sm">
-          <span className="font-medium text-gray-800">Viewer</span>
-          <select
-            className="rounded border bg-white px-2 py-1 text-gray-950"
-            value={selectedViewer.id}
-            onChange={(event) => setViewerId(event.target.value as ViewerId)}
-          >
-            {viewerOptions.map((option) => (
-              <option key={option.id} value={option.id} className="bg-white text-gray-950">
-                {option.label}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
-
       {selectedViewer.id === "developer" ? (
-        <DeveloperViewer document={document} style={style} mappingPresentationRules={mappingPresentationRules} />
+        <DeveloperViewer document={document} style={style} mappingPresentationRules={mappingPresentationRules} {...settingsOwner} />
       ) : selectedViewer.id === "text" ? (
-        <TextViewer document={document} />
+        <>
+          <ViewerSettings
+            formOptions={[]}
+            readingOptions={[]}
+            translationLanguageOptions={[]}
+            formId=""
+            readingFormId={null}
+            translationLanguageId="none"
+            onFormChange={() => {}}
+            onReadingChange={() => {}}
+            onTranslationLanguageChange={() => {}}
+            autoFollowAvailable={false}
+            autoFollowEnabled={false}
+            autoFollowMode="unpinned"
+            onAutoFollowEnabledChange={() => {}}
+            onAutoFollowModeChange={() => {}}
+            {...settingsOwner}
+          />
+          <TextViewer document={document} />
+        </>
       ) : (
-        <ConversationViewer document={document} style={style} mappingPresentationRules={mappingPresentationRules} />
+        <ConversationViewer document={document} style={style} mappingPresentationRules={mappingPresentationRules} {...settingsOwner} />
       )}
     </>
   );

@@ -11,6 +11,13 @@ export type VerticalRegion = {
   bottom: number;
 };
 
+export type ViewportObstructions = {
+  top?: VerticalRegion | null;
+  bottom?: VerticalRegion | null;
+};
+
+export type ResumePlacement = "top" | "bottom" | "neutral";
+
 export type ProgrammaticScroll = {
   targetY: number;
   expiresAt: number;
@@ -65,17 +72,33 @@ function clamp(value: number, minimum: number, maximum: number) {
 
 export function getUsableViewport(
   viewportHeight: number,
-  stickyControlsRect: VerticalRegion | null,
+  obstructions: ViewportObstructions = {},
 ): VerticalRegion {
-  const bottom = Math.max(0, viewportHeight);
-  const controlsIntersectViewport = stickyControlsRect != null &&
-    stickyControlsRect.bottom > 0 &&
-    stickyControlsRect.top < bottom;
-  const top = controlsIntersectViewport
-    ? clamp(stickyControlsRect.bottom, 0, bottom)
+  const viewportBottom = Math.max(0, viewportHeight);
+  const topIntersectsViewport = obstructions.top != null &&
+    obstructions.top.bottom > 0 &&
+    obstructions.top.top < viewportBottom;
+  const bottomIntersectsViewport = obstructions.bottom != null &&
+    obstructions.bottom.bottom > 0 &&
+    obstructions.bottom.top < viewportBottom;
+  const top = topIntersectsViewport
+    ? clamp(obstructions.top!.bottom, 0, viewportBottom)
     : 0;
+  const bottom = bottomIntersectsViewport
+    ? clamp(obstructions.bottom!.top, top, viewportBottom)
+    : viewportBottom;
 
   return { top, bottom };
+}
+
+export function resolveResumePlacement(
+  lineRect: VerticalRegion | null,
+  usableViewport: VerticalRegion,
+): ResumePlacement {
+  if (lineRect == null) return "neutral";
+  if (lineRect.bottom < usableViewport.top) return "top";
+  if (lineRect.top > usableViewport.bottom) return "bottom";
+  return "neutral";
 }
 
 export function getAutoFollowSafeRegion(

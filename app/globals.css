@@ -1,8 +1,34 @@
 @import "tailwindcss";
 
 :root {
+  color-scheme: light;
   --background: #ffffff;
   --foreground: #171717;
+  --viewer-surface: #f8fafc;
+  --viewer-surface-elevated: #ffffff;
+  --viewer-surface-hover: #f1f5f9;
+  --viewer-surface-text: #0f172a;
+  --viewer-surface-muted-text: #475569;
+  --viewer-surface-border: #cbd5e1;
+  --viewer-surface-shadow: 0 10px 28px rgba(15, 23, 42, 0.16);
+  --viewer-bottom-panel-shadow: 0 -4px 18px rgba(15, 23, 42, 0.14);
+  --viewer-primary-surface: #eff6ff;
+  --viewer-primary-surface-hover: #dbeafe;
+  --viewer-primary-text: #1e40af;
+  --viewer-primary-border: #1d4ed8;
+  --viewer-selected-surface: #dbeafe;
+  --viewer-selected-text: #1e3a8a;
+  --viewer-selected-border: #1d4ed8;
+  --viewer-disabled-surface: #f1f5f9;
+  --viewer-disabled-text: #64748b;
+  --viewer-disabled-border: #cbd5e1;
+  --viewer-loop-surface: #d1fae5;
+  --viewer-loop-text: #064e3b;
+  --viewer-loop-border: #047857;
+  --viewer-resume-surface: #fffbeb;
+  --viewer-resume-surface-hover: #fef3c7;
+  --viewer-resume-text: #78350f;
+  --viewer-resume-border: #b45309;
   --script-line-elevation-shadow:
     0 2px 4px rgba(15, 23, 42, 0.24),
     0 8px 18px rgba(15, 23, 42, 0.3);
@@ -16,9 +42,35 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not(.light) {
+    color-scheme: dark;
     --background: #0a0a0a;
     --foreground: #ededed;
+    --viewer-surface: #111827;
+    --viewer-surface-elevated: #0f172a;
+    --viewer-surface-hover: #1f2937;
+    --viewer-surface-text: #f8fafc;
+    --viewer-surface-muted-text: #cbd5e1;
+    --viewer-surface-border: #475569;
+    --viewer-surface-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+    --viewer-bottom-panel-shadow: 0 -5px 22px rgba(0, 0, 0, 0.55);
+    --viewer-primary-surface: #172554;
+    --viewer-primary-surface-hover: #1e3a8a;
+    --viewer-primary-text: #dbeafe;
+    --viewer-primary-border: #93c5fd;
+    --viewer-selected-surface: #1e3a8a;
+    --viewer-selected-text: #dbeafe;
+    --viewer-selected-border: #93c5fd;
+    --viewer-disabled-surface: #1f2937;
+    --viewer-disabled-text: #94a3b8;
+    --viewer-disabled-border: #475569;
+    --viewer-loop-surface: #064e3b;
+    --viewer-loop-text: #d1fae5;
+    --viewer-loop-border: #6ee7b7;
+    --viewer-resume-surface: #451a03;
+    --viewer-resume-surface-hover: #78350f;
+    --viewer-resume-text: #fef3c7;
+    --viewer-resume-border: #fcd34d;
     --script-line-elevation-shadow:
       0 2px 6px rgba(0, 0, 0, 0.8),
       0 0 0 1px rgba(255, 255, 255, 0.3),
@@ -28,8 +80,34 @@
 
 /* Class-based overrides for manual theme switching (used by the ThemeToggle) */
 html.dark {
+  color-scheme: dark;
   --background: #0a0a0a;
   --foreground: #ededed;
+  --viewer-surface: #111827;
+  --viewer-surface-elevated: #0f172a;
+  --viewer-surface-hover: #1f2937;
+  --viewer-surface-text: #f8fafc;
+  --viewer-surface-muted-text: #cbd5e1;
+  --viewer-surface-border: #475569;
+  --viewer-surface-shadow: 0 12px 32px rgba(0, 0, 0, 0.55);
+  --viewer-bottom-panel-shadow: 0 -5px 22px rgba(0, 0, 0, 0.55);
+  --viewer-primary-surface: #172554;
+  --viewer-primary-surface-hover: #1e3a8a;
+  --viewer-primary-text: #dbeafe;
+  --viewer-primary-border: #93c5fd;
+  --viewer-selected-surface: #1e3a8a;
+  --viewer-selected-text: #dbeafe;
+  --viewer-selected-border: #93c5fd;
+  --viewer-disabled-surface: #1f2937;
+  --viewer-disabled-text: #94a3b8;
+  --viewer-disabled-border: #475569;
+  --viewer-loop-surface: #064e3b;
+  --viewer-loop-text: #d1fae5;
+  --viewer-loop-border: #6ee7b7;
+  --viewer-resume-surface: #451a03;
+  --viewer-resume-surface-hover: #78350f;
+  --viewer-resume-text: #fef3c7;
+  --viewer-resume-border: #fcd34d;
   --script-line-elevation-shadow:
     0 2px 6px rgba(0, 0, 0, 0.8),
     0 0 0 1px rgba(255, 255, 255, 0.3),
@@ -37,8 +115,34 @@ html.dark {
 }
 
 html.light {
+  color-scheme: light;
   --background: #ffffff;
   --foreground: #171717;
+  --viewer-surface: #f8fafc;
+  --viewer-surface-elevated: #ffffff;
+  --viewer-surface-hover: #f1f5f9;
+  --viewer-surface-text: #0f172a;
+  --viewer-surface-muted-text: #475569;
+  --viewer-surface-border: #cbd5e1;
+  --viewer-surface-shadow: 0 10px 28px rgba(15, 23, 42, 0.16);
+  --viewer-bottom-panel-shadow: 0 -4px 18px rgba(15, 23, 42, 0.14);
+  --viewer-primary-surface: #eff6ff;
+  --viewer-primary-surface-hover: #dbeafe;
+  --viewer-primary-text: #1e40af;
+  --viewer-primary-border: #1d4ed8;
+  --viewer-selected-surface: #dbeafe;
+  --viewer-selected-text: #1e3a8a;
+  --viewer-selected-border: #1d4ed8;
+  --viewer-disabled-surface: #f1f5f9;
+  --viewer-disabled-text: #64748b;
+  --viewer-disabled-border: #cbd5e1;
+  --viewer-loop-surface: #d1fae5;
+  --viewer-loop-text: #064e3b;
+  --viewer-loop-border: #047857;
+  --viewer-resume-surface: #fffbeb;
+  --viewer-resume-surface-hover: #fef3c7;
+  --viewer-resume-text: #78350f;
+  --viewer-resume-border: #b45309;
   --script-line-elevation-shadow:
     0 2px 4px rgba(15, 23, 42, 0.24),
     0 8px 18px rgba(15, 23, 42, 0.3);
@@ -48,6 +152,76 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.viewer-surface {
+  border-color: var(--viewer-surface-border);
+  background: var(--viewer-surface);
+  color: var(--viewer-surface-text);
+}
+
+.viewer-surface-elevated {
+  border-color: var(--viewer-surface-border);
+  background: var(--viewer-surface-elevated);
+  color: var(--viewer-surface-text);
+  box-shadow: var(--viewer-surface-shadow);
+}
+
+.viewer-bottom-panel-surface {
+  box-shadow: var(--viewer-bottom-panel-shadow);
+}
+
+.viewer-interactive-surface {
+  border-color: var(--viewer-surface-border);
+  background: var(--viewer-surface-elevated);
+  color: var(--viewer-surface-text);
+}
+
+.viewer-interactive-surface:hover {
+  background: var(--viewer-surface-hover);
+}
+
+.viewer-primary-surface {
+  border-color: var(--viewer-primary-border);
+  background: var(--viewer-primary-surface);
+  color: var(--viewer-primary-text);
+}
+
+.viewer-primary-surface:hover {
+  background: var(--viewer-primary-surface-hover);
+}
+
+.viewer-selected-surface {
+  border-color: var(--viewer-selected-border);
+  background: var(--viewer-selected-surface);
+  color: var(--viewer-selected-text);
+}
+
+.viewer-disabled-surface {
+  border-color: var(--viewer-disabled-border);
+  background: var(--viewer-disabled-surface);
+  color: var(--viewer-disabled-text);
+}
+
+.viewer-loop-surface {
+  border-color: var(--viewer-loop-border);
+  background: var(--viewer-loop-surface);
+  color: var(--viewer-loop-text);
+}
+
+.viewer-muted-text {
+  color: var(--viewer-surface-muted-text);
+}
+
+.viewer-resume-surface {
+  border-color: var(--viewer-resume-border);
+  background: var(--viewer-resume-surface);
+  color: var(--viewer-resume-text);
+  box-shadow: var(--viewer-surface-shadow);
+}
+
+.viewer-resume-surface:hover {
+  background: var(--viewer-resume-surface-hover);
 }
 
 .script-line-rail-left::before {

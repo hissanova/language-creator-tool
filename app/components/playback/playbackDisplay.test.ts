@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { formatPlaybackTime, getPlaybackProgressPercentage, getPlaybackRangePercentages, getPlaybackRangeVisualStyle, resolveCurrentPlaybackLineId } from "./playbackDisplay";
+import { formatPlaybackDuration, formatPlaybackTime, getPlaybackProgressPercentage, getPlaybackRangePercentages, getPlaybackRangeVisualStyle, resolveCurrentPlaybackLineId } from "./playbackDisplay";
 import { firstRange, secondRange, withMedia } from "./playbackTestFixtures";
 
 test("current-line highlighting and auto-follow remain independent of Lock selection", () => {
@@ -18,6 +18,9 @@ test("current-line highlighting and auto-follow remain independent of Lock selec
 test("time and progress helpers retain safe behavior", () => {
   assert.equal(formatPlaybackTime(65.123), "1:05.123");
   assert.equal(formatPlaybackTime(null), "--:--.---");
+  assert.equal(formatPlaybackDuration(65.987), "1:05");
+  assert.equal(formatPlaybackDuration(3_661.2), "61:01");
+  assert.equal(formatPlaybackDuration(null), "--:--");
   assert.deepEqual(getPlaybackRangePercentages(firstRange, 20), { start: 50, width: 25 });
   assert.equal(getPlaybackRangePercentages(firstRange, null), null);
   assert.equal(getPlaybackProgressPercentage(40, 30), 100);

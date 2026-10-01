@@ -48,6 +48,50 @@ test("initial playback controls remain disabled until media metadata is ready", 
   assert.equal((metadataReadyHtml.match(/autocomplete="off"/gi) ?? []).length, 5);
 });
 
+test("timeline row precedes the wrapping playback-control row", () => {
+  const html = renderPlaybackBar(withMedia());
+  const timeline = html.indexOf('data-playback-row="timeline"');
+  const controls = html.indexOf('data-playback-row="controls"');
+  const currentTime = html.indexOf('data-playback-time="current"');
+  const seek = html.indexOf('data-playback-timeline="full-source"');
+  const duration = html.indexOf('data-playback-time="duration"');
+  assert.ok(timeline >= 0);
+  assert.ok(controls > timeline);
+  assert.ok(currentTime > timeline && seek > currentTime && duration > seek && controls > duration);
+  assert.equal((html.match(/data-playback-row=/g) ?? []).length, 2);
+  assert.match(html, /data-playback-row="controls"[^>]*role="group"|role="group"[^>]*data-playback-row="controls"/);
+  assert.match(html, /class="[^"]*flex-wrap[^"]*"[^>]*data-playback-row="controls"/);
+  assert.match(html, /class="[^"]*gap-0[^"]*"[^>]*data-playback-cluster="transport"/);
+  assert.match(html, /class="[^"]*gap-0[^"]*"[^>]*data-playback-cluster="speed"/);
+  for (const speedButton of html.matchAll(/<button[^>]*aria-label="Set playback speed[^>]*>/g)) {
+    assert.match(speedButton[0], /min-h-11/);
+  }
+  const timedHtml = renderPlaybackBar(withMedia({ currentTime: 65.123 }));
+  assert.match(timedHtml, /data-playback-time="current"[^>]*>1:05</);
+  assert.doesNotMatch(timedHtml, /data-playback-time="current"[^>]*>[^<]*\./);
+});
+
+test("skip buttons place seconds inward beside their directional icons", () => {
+  const html = renderPlaybackBar(withMedia());
+  const skipButtons = [...html.matchAll(/<button[^>]*data-skip-seconds="(-?\d+)"[^>]*>[\s\S]*?<\/button>/g)];
+  assert.equal(skipButtons.length, 4);
+  for (const [button, seconds] of skipButtons.map((match) => [match[0], Number(match[1])] as const)) {
+    const iconPosition = button.indexOf(`data-playback-icon="skip-${seconds < 0 ? "backward" : "forward"}"`);
+    const secondsPosition = button.indexOf(`${Math.abs(seconds)}s</span>`);
+    assert.ok(seconds < 0 ? iconPosition < secondsPosition : secondsPosition < iconPosition);
+  }
+});
+
+test("control surfaces are compact inside 44-pixel interactive targets", () => {
+  const html = renderPlaybackBar(withMedia());
+  const controls = [...html.matchAll(/<button[^>]*(?:data-skip-seconds|aria-label="(?:Play media|Enable whole-source loop|Set playback speed))[^>]*>[\s\S]*?<\/button>/g)];
+  assert.equal(controls.length, 12);
+  for (const control of controls) {
+    assert.match(control[0], /(?:h-11 min-h-11|min-h-11[^"]*h-11)/);
+    assert.match(control[0], /<span class="[^"]*h-9/);
+  }
+});
+
 
 test("Play and Lock controls have required names, pressed states, and distinct icons", () => {
   const unlocked = renderToStaticMarkup(
@@ -81,6 +125,9 @@ test("Play and Lock controls have required names, pressed states, and distinct i
   assert.match(locked, /aria-label="Unlock playback range"/);
   assert.match(locked, /data-playback-icon="lock-closed"/);
   assert.equal((locked.match(/<button/g) ?? []).length, 2);
+  assert.equal((unlocked.match(/viewer-interactive-surface/g) ?? []).length, 2);
+  assert.match(locked, /viewer-selected-surface/);
+  assert.doesNotMatch(locked, /dark:/);
 });
 
 
@@ -123,6 +170,7 @@ test("invalid timed lines disable both controls", () => {
     />,
   );
   assert.equal((html.match(/<button[^>]*disabled=""/g) ?? []).length, 2);
+  assert.equal((html.match(/viewer-disabled-surface/g) ?? []).length, 2);
 });
 
 

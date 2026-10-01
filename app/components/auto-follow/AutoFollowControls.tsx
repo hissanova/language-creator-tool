@@ -4,22 +4,19 @@ import type { AutoFollowMode } from "./autoFollow";
 export function AutoFollowControls({
   enabled,
   mode,
-  suspended,
   onEnabledChange,
   onModeChange,
-  onResume,
 }: {
   enabled: boolean;
   mode: AutoFollowMode;
-  suspended: boolean;
   onEnabledChange: (enabled: boolean) => void;
   onModeChange: (mode: AutoFollowMode) => void;
-  onResume: () => void;
 }) {
   return (
-    <div className="mt-3 flex flex-wrap items-center gap-2 border-t pt-3 text-sm">
-      <span className="font-medium text-gray-800">Auto-follow:</span>
-      <div className="inline-flex gap-1" role="group" aria-label="Auto-follow">
+    <>
+      <div className="grid gap-1" data-viewer-setting="auto-follow">
+        <span className="text-sm font-medium">Auto-follow</span>
+        <div className="inline-flex gap-1" role="group" aria-label="Auto-follow">
         {([true, false] as const).map((option) => {
           const selected = enabled === option;
           const label = option ? "On" : "Off";
@@ -33,17 +30,19 @@ export function AutoFollowControls({
               className={[
                 "rounded border px-2 py-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700",
                 selected
-                  ? "border-blue-700 bg-blue-100 text-blue-900"
-                  : "border-gray-300 bg-white text-gray-800 hover:bg-gray-100",
+                  ? "viewer-selected-surface"
+                  : "viewer-interactive-surface",
               ].join(" ")}
             >
               {label}
             </button>
           );
         })}
+        </div>
       </div>
-      <span className="ml-2 font-medium text-gray-800">Scroll mode:</span>
-      <div className="inline-flex gap-1" role="group" aria-label="Auto-follow scroll mode">
+      <div className="grid gap-1" data-viewer-setting="follow-mode">
+        <span className="text-sm font-medium">Follow position</span>
+        <div className="inline-flex gap-1" role="group" aria-label="Auto-follow scroll mode">
         {(["unpinned", "pinned"] as const).map((option) => {
           const selected = mode === option;
           const label = option === "unpinned" ? "Unpinned" : "Pinned";
@@ -58,29 +57,16 @@ export function AutoFollowControls({
               className={[
                 "rounded border px-2 py-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700 disabled:cursor-not-allowed disabled:opacity-50",
                 selected
-                  ? "border-blue-700 bg-blue-100 text-blue-900"
-                  : "border-gray-300 bg-white text-gray-800 hover:bg-gray-100",
+                  ? "viewer-selected-surface"
+                  : "viewer-interactive-surface",
               ].join(" ")}
             >
               {label}
             </button>
           );
         })}
+        </div>
       </div>
-      {enabled && suspended ? (
-        <>
-          <span className="text-amber-800">Auto-follow paused after manual scrolling.</span>
-          <button
-            type="button"
-            aria-label="Resume auto-follow after manual scrolling"
-            onClick={onResume}
-            onPointerUp={releasePlaybackButtonFocusOnPointerUp}
-            className="rounded border border-amber-700 bg-amber-50 px-2 py-1 font-medium text-amber-900 hover:bg-amber-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
-          >
-            Resume follow
-          </button>
-        </>
-      ) : null}
-    </div>
+    </>
   );
 }
