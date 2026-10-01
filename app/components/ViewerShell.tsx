@@ -16,6 +16,7 @@ import type { ScriptLineComponent } from "./script-line/types";
 import { viewerStyle as defaultStyle } from "../styles/viewerStyle";
 import { findImageResource, firstCaption } from "./blockContentQueries";
 import { PlaybackBar } from "./playback/PlaybackBar";
+import { useBottomControlPanel } from "./playback/useBottomControlPanel";
 import { releasePlaybackButtonFocusOnPointerUp } from "./playback/playbackButtonFocus";
 import { usePlaybackController } from "./playback/usePlaybackController";
 import { usePlaybackKeyboardShortcuts } from "./playback/playbackKeyboardShortcuts";
@@ -23,7 +24,7 @@ import { resolveCurrentPlaybackLineId } from "./playback/playbackDisplay";
 import { PlayIcon } from "./playback/PlaybackIcons";
 import { normalizeMediaSrc } from "./media/normalizeMediaSrc";
 import type { LinePlaybackRange } from "./playback/playbackState";
-import { AutoFollowControls } from "./auto-follow/AutoFollowControls";
+import { AutoFollowResume } from "./auto-follow/AutoFollowResume";
 import { useActiveLineAutoFollow } from "./auto-follow/useActiveLineAutoFollow";
 import {
   buildLinePlaybackRangeIndex,
@@ -34,7 +35,8 @@ import {
   resolveViewerLinePlaybackPresentation,
   resolveViewerSpeakers,
 } from "./viewerDocumentModel";
-import { ViewerOptionControls } from "./viewer-options/ViewerOptionControls";
+import { ViewerSettings } from "./viewer-options/ViewerSettings";
+import type { ViewerSettingsOwnerProps } from "./viewer-options/viewerSettingsTypes";
 import { useViewerOptionSelections } from "./viewer-options/useViewerOptionSelections";
 
 type Props = {
@@ -46,8 +48,7 @@ type Props = {
 type ViewerShellProps = Props & {
   LineComponent: ScriptLineComponent;
   showMetadata?: boolean;
-  showViewerControls?: boolean;
-};
+} & ViewerSettingsOwnerProps;
 
 function formatTime(value: number | undefined) {
   if (value == null) return "";
@@ -278,7 +279,11 @@ export function ViewerShell({
   mappingPresentationRules = defaultMappingPresentationRules,
   LineComponent,
   showMetadata = false,
-  showViewerControls = false,
+  theme,
+  onThemeChange,
+  viewerId,
+  viewerOptions,
+  onViewerChange,
 }: ViewerShellProps) {
   const viewerModel = useMemo(() => {
     const nextTextLines = collectDocumentTextLines(document.sections);
@@ -326,7 +331,8 @@ export function ViewerShell({
     suspended: autoFollowSuspended,
     resumeFollow,
     handleSeekIntent,
-    registerStickyControls,
+    resumePlacement,
+    registerBottomControls,
     registerLineElement,
   } = useActiveLineAutoFollow({
     documentToken: document,
@@ -335,6 +341,10 @@ export function ViewerShell({
     playbackPosition: playback.state.currentTime,
     playing: playback.state.playing,
   });
+  const {
+    register: registerBottomPanel,
+    obstruction: bottomObstruction,
+  } = useBottomControlPanel(registerBottomControls);
 
   const renderContext: SectionRenderContext = {
     document,
@@ -355,27 +365,35 @@ export function ViewerShell({
   };
 
   return (
-    <main className={style.layout.main}>
+    <main
+      className={style.layout.main}
+      style={{ paddingBottom: audioResources.length > 0 ? bottomObstruction + 24 : undefined }}
+    >
       <h1 className={style.layout.headerTitle}>{document.metadata.title}</h1>
 
       {showMetadata && <MetadataDetails document={document} />}
 
       {audioResources.length > 0 && (
-        <div ref={registerStickyControls} className={style.layout.mediaBar}>
+        <div
+          ref={registerBottomPanel}
+          className="viewer-surface viewer-bottom-panel-surface fixed inset-x-4 bottom-0 z-40 mx-auto max-w-4xl rounded-t-xl border border-b-0 px-2 pt-2"
+          style={{ paddingBottom: "max(0.5rem, env(safe-area-inset-bottom))" }}
+          data-viewer-control-panel="bottom"
+        >
           <PlaybackBar
             controller={playback}
             onSeekIntent={handleSeekIntent}
           />
-          <AutoFollowControls
-            enabled={autoFollowEnabled}
-            mode={autoFollowMode}
-            suspended={autoFollowSuspended}
-            onEnabledChange={setAutoFollowEnabled}
-            onModeChange={setAutoFollowMode}
-            onResume={resumeFollow}
-          />
         </div>
       )}
+
+      {autoFollowEnabled && autoFollowSuspended ? (
+        <AutoFollowResume
+          placement={resumePlacement}
+          bottomObstruction={bottomObstruction}
+          onResume={resumeFollow}
+        />
+      ) : null}
 
       {audioResources.length === 0 && fallbackVideo?.type === "media" && (
         <div className={style.layout.mediaBar}>
@@ -387,20 +405,27 @@ export function ViewerShell({
         </div>
       )}
 
-      {showViewerControls && (
-        <ViewerOptionControls
-          className={style.layout.controls}
-          formOptions={formOptions}
-          readingOptions={readingOptions}
-          translationLanguageOptions={translationLanguageOptions}
-          formId={selections.formId}
-          readingFormId={selections.readingFormId}
-          translationLanguageId={selections.translationLanguageId}
-          onFormChange={selectForm}
-          onReadingChange={selectReading}
-          onTranslationLanguageChange={selectTranslationLanguage}
-        />
-      )}
+      <ViewerSettings
+        formOptions={formOptions}
+        readingOptions={readingOptions}
+        translationLanguageOptions={translationLanguageOptions}
+        formId={selections.formId}
+        readingFormId={selections.readingFormId}
+        translationLanguageId={selections.translationLanguageId}
+        onFormChange={selectForm}
+        onReadingChange={selectReading}
+        onTranslationLanguageChange={selectTranslationLanguage}
+        autoFollowAvailable={audioResources.length > 0}
+        autoFollowEnabled={autoFollowEnabled}
+        autoFollowMode={autoFollowMode}
+        onAutoFollowEnabledChange={setAutoFollowEnabled}
+        onAutoFollowModeChange={setAutoFollowMode}
+        theme={theme}
+        onThemeChange={onThemeChange}
+        viewerId={viewerId}
+        viewerOptions={viewerOptions}
+        onViewerChange={onViewerChange}
+      />
 
       <div className="space-y-8">
         {document.sections.map((section) => renderDocumentSection(section, renderContext))}

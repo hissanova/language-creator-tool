@@ -14,7 +14,7 @@ export type ViewerOptionControlsProps = {
 };
 
 export function ViewerOptionControls({
-  className,
+  className = "grid gap-3",
   formOptions,
   readingOptions,
   translationLanguageOptions,
@@ -28,15 +28,15 @@ export function ViewerOptionControls({
   return (
     <div className={className}>
       {formOptions.length > 1 ? (
-        <label className="flex items-center gap-2">
+        <label className="grid gap-1" data-viewer-setting="form">
           <span className="text-sm font-medium">Form</span>
           <select
-            className="rounded border bg-white px-2 py-1 text-gray-950"
+            className="viewer-interactive-surface rounded border px-2 py-1"
             value={formId}
             onChange={(event) => onFormChange(event.target.value)}
           >
             {formOptions.map((form) => (
-              <option key={form.id} value={form.id} className="bg-white text-gray-950">
+              <option key={form.id} value={form.id}>
                 {form.label ?? form.id}
               </option>
             ))}
@@ -45,16 +45,16 @@ export function ViewerOptionControls({
       ) : null}
 
       {readingOptions.length > 0 ? (
-        <label className="flex items-center gap-2">
+        <label className="grid gap-1" data-viewer-setting="reading">
           <span className="text-sm font-medium">Reading</span>
           <select
-            className="rounded border bg-white px-2 py-1 text-gray-950"
+            className="viewer-interactive-surface rounded border px-2 py-1"
             value={readingFormId ?? ""}
             onChange={(event) => onReadingChange(event.target.value || null)}
           >
-            <option value="" className="bg-white text-gray-950">None</option>
+            <option value="">None</option>
             {readingOptions.map((form) => (
-              <option key={form.id} value={form.id} className="bg-white text-gray-950">
+              <option key={form.id} value={form.id}>
                 {form.label ?? form.id}
               </option>
             ))}
@@ -62,20 +62,22 @@ export function ViewerOptionControls({
         </label>
       ) : null}
 
-      <label className="flex items-center gap-2">
-        <span className="text-sm font-medium">Translation</span>
-        <select
-          className="rounded border bg-white px-2 py-1 text-gray-950"
-          value={translationLanguageId}
-          onChange={(event) => onTranslationLanguageChange(event.target.value)}
-        >
-          {translationLanguageOptions.map((language) => (
-            <option key={language.id} value={language.id} className="bg-white text-gray-950">
-              {language.label ?? language.id}
-            </option>
-          ))}
-        </select>
-      </label>
+      {translationLanguageOptions.length > 0 ? (
+        <label className="grid gap-1" data-viewer-setting="translation">
+          <span className="text-sm font-medium">Translation</span>
+          <select
+            className="viewer-interactive-surface rounded border px-2 py-1"
+            value={translationLanguageId}
+            onChange={(event) => onTranslationLanguageChange(event.target.value)}
+          >
+            {translationLanguageOptions.map((language) => (
+              <option key={language.id} value={language.id}>
+                {language.label ?? language.id}
+              </option>
+            ))}
+          </select>
+        </label>
+      ) : null}
     </div>
   );
 }

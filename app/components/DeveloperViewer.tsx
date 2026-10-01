@@ -3,8 +3,9 @@ import type { ViewerStyle } from "../types/viewerStyle";
 import type { MappingPresentationRule } from "../types/viewer/mappingPresentation";
 import { ViewerShell } from "./ViewerShell";
 import { DeveloperScriptLine } from "./script-line/DeveloperScriptLine";
+import type { ViewerSettingsOwnerProps } from "./viewer-options/viewerSettingsTypes";
 
-type Props = {
+type Props = ViewerSettingsOwnerProps & {
   document: Document;
   style?: ViewerStyle;
   mappingPresentationRules?: readonly MappingPresentationRule[];

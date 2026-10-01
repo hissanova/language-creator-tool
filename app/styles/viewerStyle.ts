@@ -47,8 +47,8 @@ export const viewerStyle: ViewerStyle = {
   layout: {
     main: "mx-auto max-w-4xl p-6",
     headerTitle: "mb-4 text-3xl font-bold",
-    mediaBar: "sticky top-0 z-30 mb-6 rounded-xl border bg-white p-3 shadow-sm",
-    controls: "mb-6 flex flex-wrap gap-3 rounded-xl border p-4",
+    mediaBar: "rounded-xl border bg-white p-3 shadow-sm",
+    controls: "grid gap-3",
     section: "rounded-2xl border p-5 shadow-sm",
     sectionHeader: "mb-4 flex items-center justify-between gap-4",
     sectionTitle: "text-xl font-bold",

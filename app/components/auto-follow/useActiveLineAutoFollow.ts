@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useReducer, useRef } from "react";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import {
   AUTO_FOLLOW_PROGRAMMATIC_SCROLL_TIMEOUT_MS,
   getAutoFollowScrollBehavior,
@@ -9,9 +9,11 @@ import {
   isLineWithinRegion,
   isManualAutoFollowKey,
   resolveAutoFollowScrollTarget,
+  resolveResumePlacement,
   shouldIgnoreProgrammaticScroll,
   type AutoFollowMode,
   type ProgrammaticScroll,
+  type ResumePlacement,
 } from "./autoFollow";
 import {
   initialAutoFollowState,
@@ -52,9 +54,10 @@ export function useActiveLineAutoFollow({
   playing,
 }: AutoFollowObservation) {
   const [state, dispatch] = useReducer(reduceAutoFollow, initialAutoFollowState);
-  const stickyControlsElementRef = useRef<HTMLDivElement | null>(null);
+  const bottomControlsElementRef = useRef<HTMLDivElement | null>(null);
   const programmaticScrollRef = useRef<ProgrammaticScroll | null>(null);
   const programmaticScrollTimerRef = useRef<number | null>(null);
+  const [resumePlacement, setResumePlacement] = useState<ResumePlacement>("neutral");
 
   const registry = useMemo(() => {
     void documentToken;
@@ -62,8 +65,8 @@ export function useActiveLineAutoFollow({
     return createLineElementRegistry();
   }, [documentToken, sourceToken]);
 
-  const registerStickyControls = useCallback((element: HTMLDivElement | null) => {
-    stickyControlsElementRef.current = element;
+  const registerBottomControls = useCallback((element: HTMLDivElement | null) => {
+    bottomControlsElementRef.current = element;
   }, []);
 
   const clearProgrammaticScroll = useCallback(() => {
@@ -92,10 +95,18 @@ export function useActiveLineAutoFollow({
     if (!lineElement?.isConnected) return null;
 
     const lineRect = lineElement.getBoundingClientRect();
-    const stickyRect = stickyControlsElementRef.current?.getBoundingClientRect() ?? null;
-    const usableViewport = getUsableViewport(window.innerHeight, stickyRect);
+    const bottomRect = bottomControlsElementRef.current?.getBoundingClientRect() ?? null;
+    const usableViewport = getUsableViewport(window.innerHeight, { bottom: bottomRect });
     return { lineRect, usableViewport };
   }, [registry]);
+
+  const updateResumePlacement = useCallback(() => {
+    const geometry = getCurrentGeometry(currentLineId);
+    setResumePlacement(resolveResumePlacement(
+      geometry?.lineRect ?? null,
+      geometry?.usableViewport ?? getUsableViewport(window.innerHeight),
+    ));
+  }, [currentLineId, getCurrentGeometry]);
 
   useEffect(() => {
     dispatch({
@@ -145,6 +156,7 @@ export function useActiveLineAutoFollow({
     const suspendForManualIntent = () => {
       if (!state.enabled || !playing || currentLineId == null) return;
       clearProgrammaticScroll();
+      updateResumePlacement();
       dispatch({ type: "manualScrollIntent" });
     };
 
@@ -169,6 +181,7 @@ export function useActiveLineAutoFollow({
           getAutoFollowSafeRegion(geometry.usableViewport),
         ),
       });
+      updateResumePlacement();
     };
 
     window.addEventListener("wheel", suspendForManualIntent, { passive: true });
@@ -176,14 +189,22 @@ export function useActiveLineAutoFollow({
     window.addEventListener("keydown", onKeyDown);
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("scrollend", clearProgrammaticScroll);
+    window.addEventListener("resize", updateResumePlacement);
     return () => {
       window.removeEventListener("wheel", suspendForManualIntent);
       window.removeEventListener("touchmove", suspendForManualIntent);
       window.removeEventListener("keydown", onKeyDown);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("scrollend", clearProgrammaticScroll);
+      window.removeEventListener("resize", updateResumePlacement);
     };
-  }, [clearProgrammaticScroll, currentLineId, getCurrentGeometry, playing, state.enabled]);
+  }, [clearProgrammaticScroll, currentLineId, getCurrentGeometry, playing, state.enabled, updateResumePlacement]);
+
+  useEffect(() => {
+    if (state.suspension.type !== "manual") return;
+    const animationFrame = window.requestAnimationFrame(updateResumePlacement);
+    return () => window.cancelAnimationFrame(animationFrame);
+  }, [state.suspension.type, updateResumePlacement]);
 
   // A new document/source replaces the line registry, so its old scroll target is obsolete.
   useEffect(() => () => clearProgrammaticScroll(), [clearProgrammaticScroll, registry]);
@@ -194,9 +215,10 @@ export function useActiveLineAutoFollow({
     mode: state.mode,
     setMode,
     suspended: state.suspension.type === "manual",
+    resumePlacement,
     resumeFollow: requestFollow,
     handleSeekIntent: requestFollow,
-    registerStickyControls,
+    registerBottomControls,
     registerLineElement: registry.register,
   };
 }

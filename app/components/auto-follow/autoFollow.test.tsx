@@ -2,48 +2,44 @@ import assert from "node:assert/strict";
 import test from "node:test";
 import { renderToStaticMarkup } from "react-dom/server";
 import { AutoFollowControls } from "./AutoFollowControls";
-import { AUTO_FOLLOW_DEFAULT_ENABLED, AUTO_FOLLOW_DEFAULT_MODE, getAutoFollowSafeRegion, getAutoFollowScrollBehavior, getCenteredScrollTarget, getUsableViewport, isLineWithinRegion, isManualAutoFollowKey, resolveAutoFollowScrollTarget, shouldIgnoreProgrammaticScroll, type AutoFollowMode } from "./autoFollow";
+import { AutoFollowResume } from "./AutoFollowResume";
+import { AUTO_FOLLOW_DEFAULT_ENABLED, AUTO_FOLLOW_DEFAULT_MODE, getAutoFollowSafeRegion, getAutoFollowScrollBehavior, getCenteredScrollTarget, getUsableViewport, isLineWithinRegion, isManualAutoFollowKey, resolveAutoFollowScrollTarget, resolveResumePlacement, shouldIgnoreProgrammaticScroll, type AutoFollowMode } from "./autoFollow";
 import { noop, targetMatching } from "../playback/playbackTestFixtures";
 
-function renderAutoFollowControls(
-  mode: AutoFollowMode,
-  suspended = false,
-  enabled = true,
-) {
+function renderAutoFollowControls(mode: AutoFollowMode, enabled = true) {
   return renderToStaticMarkup(
     <AutoFollowControls
       enabled={enabled}
       mode={mode}
-      suspended={suspended}
       onEnabledChange={noop}
       onModeChange={noop}
-      onResume={noop}
     />,
   );
 }
 
 
-test("auto-follow controls preserve On, Off, Unpinned, Pinned, and Resume states", () => {
+test("Settings auto-follow controls preserve On, Off, Unpinned, and Pinned states", () => {
   assert.equal(AUTO_FOLLOW_DEFAULT_ENABLED, true);
   assert.equal(AUTO_FOLLOW_DEFAULT_MODE, "unpinned");
   const unpinned = renderAutoFollowControls("unpinned");
   const pinned = renderAutoFollowControls("pinned");
-  const offPinned = renderAutoFollowControls("pinned", true, false);
-  const suspended = renderAutoFollowControls("unpinned", true);
+  const offPinned = renderAutoFollowControls("pinned", false);
   assert.match(unpinned, /aria-pressed="true"[^>]*>On<\/button>/);
   assert.match(unpinned, /aria-pressed="true"[^>]*>Unpinned<\/button>/);
   assert.match(pinned, /aria-pressed="true"[^>]*>Pinned<\/button>/);
   assert.match(offPinned, /aria-pressed="true"[^>]*>Off<\/button>/);
   assert.doesNotMatch(offPinned, /Resume follow/);
-  assert.match(suspended, /Resume follow<\/button>/);
 });
 
 
 test("auto-follow geometry retains the established safe-region and pinned policies", () => {
-  const usableViewport = getUsableViewport(1_000, { top: 0, bottom: 200 });
-  assert.deepEqual(usableViewport, { top: 200, bottom: 1_000 });
-  assert.deepEqual(getAutoFollowSafeRegion(usableViewport), { top: 400, bottom: 800 });
-  assert.equal(isLineWithinRegion({ top: 400, bottom: 800 }, { top: 400, bottom: 800 }), true);
+  const usableViewport = getUsableViewport(1_000, {
+    top: { top: 0, bottom: 100 },
+    bottom: { top: 800, bottom: 1_000 },
+  });
+  assert.deepEqual(usableViewport, { top: 100, bottom: 800 });
+  assert.deepEqual(getAutoFollowSafeRegion(usableViewport), { top: 275, bottom: 625 });
+  assert.equal(isLineWithinRegion({ top: 275, bottom: 625 }, { top: 275, bottom: 625 }), true);
   assert.equal(resolveAutoFollowScrollTarget({
     mode: "unpinned",
     lineRect: { top: 500, bottom: 600 },
@@ -55,13 +51,13 @@ test("auto-follow geometry retains the established safe-region and pinned polici
     lineRect: { top: 800, bottom: 900 },
     usableViewport,
     currentScrollY: 100,
-  }), 350);
+  }), 500);
   assert.equal(resolveAutoFollowScrollTarget({
     mode: "pinned",
     lineRect: { top: 500, bottom: 600 },
     usableViewport,
     currentScrollY: 100,
-  }), 50);
+  }), 200);
   assert.equal(getCenteredScrollTarget(
     { top: -200, bottom: -100 },
     usableViewport,
@@ -73,6 +69,41 @@ test("auto-follow geometry retains the established safe-region and pinned polici
     usableViewport,
     currentScrollY: 100,
   }), null);
+});
+
+test("bottom panel bounds reduce usable viewport for Unpinned and Pinned policies", () => {
+  const usableViewport = getUsableViewport(700, {
+    bottom: { top: 520, bottom: 720 },
+  });
+  assert.deepEqual(usableViewport, { top: 0, bottom: 520 });
+  assert.equal(resolveAutoFollowScrollTarget({
+    mode: "unpinned",
+    lineRect: { top: 180, bottom: 260 },
+    usableViewport,
+    currentScrollY: 100,
+  }), null);
+  assert.equal(resolveAutoFollowScrollTarget({
+    mode: "pinned",
+    lineRect: { top: 180, bottom: 260 },
+    usableViewport,
+    currentScrollY: 100,
+  }), 60);
+});
+
+test("Resume placement follows the resolved target above, below, or within the usable viewport", () => {
+  const viewport = { top: 50, bottom: 500 };
+  assert.equal(resolveResumePlacement({ top: -40, bottom: 20 }, viewport), "top");
+  assert.equal(resolveResumePlacement({ top: 520, bottom: 600 }, viewport), "bottom");
+  assert.equal(resolveResumePlacement({ top: 200, bottom: 260 }, viewport), "neutral");
+  assert.equal(resolveResumePlacement(null, viewport), "neutral");
+
+  for (const placement of ["top", "bottom", "neutral"] as const) {
+    const html = renderToStaticMarkup(
+      <AutoFollowResume placement={placement} bottomObstruction={180} onResume={noop} />,
+    );
+    assert.match(html, new RegExp(`data-resume-placement="${placement}"`));
+    assert.match(html, /class="pointer-events-none fixed/);
+  }
 });
 
 
