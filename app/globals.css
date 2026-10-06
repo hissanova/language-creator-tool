@@ -191,6 +191,33 @@ body {
   background: var(--viewer-primary-surface-hover);
 }
 
+/* Global and line Play/Pause share theme-aware transport colors. */
+.viewer-playback-idle-surface {
+  border-color: var(--viewer-surface-border);
+  background: var(--viewer-surface-elevated);
+  color: var(--viewer-surface-text);
+}
+
+.viewer-playback-playing-surface {
+  border-color: var(--viewer-loop-border);
+  background: var(--viewer-loop-surface);
+  color: var(--viewer-loop-text);
+}
+
+.viewer-playback-button:enabled:hover .viewer-playback-idle-surface,
+.viewer-playback-button.viewer-playback-idle-surface:enabled:hover {
+  background: var(--viewer-surface-hover);
+}
+
+.viewer-playback-button:enabled:hover .viewer-playback-playing-surface,
+.viewer-playback-button.viewer-playback-playing-surface:enabled:hover {
+  background: color-mix(in srgb, var(--viewer-loop-surface) 92%, var(--viewer-loop-text));
+}
+
+.viewer-playback-button:focus-visible {
+  outline-color: var(--viewer-primary-border);
+}
+
 .viewer-selected-surface {
   border-color: var(--viewer-selected-border);
   background: var(--viewer-selected-surface);

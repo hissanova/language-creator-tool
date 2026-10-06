@@ -215,6 +215,8 @@ export function ConversationScriptLine(props: ScriptLineCompositionProps) {
     hasPlaybackTiming,
     isRangeLocked,
     isCurrentPlaybackLine = false,
+    isPlaying,
+    onPause,
     onPlayLine,
     onToggleLineLock,
   } = props;
@@ -286,6 +288,8 @@ export function ConversationScriptLine(props: ScriptLineCompositionProps) {
       hasPlaybackTiming={hasPlaybackTiming}
       isRangeLocked={isRangeLocked}
       isCurrentPlaybackLine={isCurrentPlaybackLine}
+      isPlaying={isPlaying}
+      onPause={onPause}
       onPlayLine={onPlayLine}
       onToggleLineLock={onToggleLineLock}
       style={style}
