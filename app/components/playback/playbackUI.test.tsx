@@ -125,7 +125,8 @@ test("Play and Lock controls have required names, pressed states, and distinct i
   assert.match(locked, /aria-label="Unlock playback range"/);
   assert.match(locked, /data-playback-icon="lock-closed"/);
   assert.equal((locked.match(/<button/g) ?? []).length, 2);
-  assert.equal((unlocked.match(/viewer-interactive-surface/g) ?? []).length, 2);
+  assert.equal((unlocked.match(/viewer-interactive-surface/g) ?? []).length, 1);
+  assert.match(unlocked, /viewer-playback-idle-surface/);
   assert.match(locked, /viewer-selected-surface/);
   assert.doesNotMatch(locked, /dark:/);
 });
@@ -237,4 +238,32 @@ test("Conversation and Developer compositions receive identical Lock presentatio
   assert.match(viewer, /onToggleLineLock=\{context\.toggleLineLock\}/);
   assert.match(conversation, /isRangeLocked=\{isRangeLocked\}/);
   assert.match(developer, /isRangeLocked=\{isRangeLocked\}/);
+});
+
+
+test("both viewers share authoritative current-line Pause state and the global pause action", () => {
+  const viewer = readFileSync("app/components/ViewerShell.tsx", "utf8");
+  assert.match(viewer, /playing: playback\.state\.playing/);
+  assert.match(viewer, /pause: playback\.actions\.pause/);
+  assert.match(viewer, /isPlaying=\{context\.playing && linePlaybackPresentation\.isCurrentPlaybackLine\}/);
+  assert.match(viewer, /onPause=\{context\.pause\}/);
+  for (const name of ["ConversationScriptLine", "DeveloperScriptLine"]) {
+    const source = readFileSync(`app/components/script-line/${name}.tsx`, "utf8");
+    assert.match(source, /isPlaying=\{isPlaying\}/);
+    assert.match(source, /onPause=\{onPause\}/);
+  }
+});
+
+
+test("global Play/Pause uses the shared playing and idle palettes", () => {
+  for (const playing of [false, true]) {
+    const html = renderPlaybackBar(withMedia({ playing }));
+    const label = playing ? "Pause media" : "Play media";
+    const button = html.match(new RegExp(`<button[^>]*aria-label="${label}"[^>]*>[\\s\\S]*?</button>`))?.[0];
+    assert.ok(button);
+    assert.match(button, /viewer-playback-button/);
+    assert.match(button, new RegExp(`viewer-playback-${playing ? "playing" : "idle"}-surface`));
+    assert.match(button, new RegExp(`data-playback-icon="${playing ? "pause" : "play"}"`));
+    assert.doesNotMatch(button, /viewer-primary-surface/);
+  }
 });

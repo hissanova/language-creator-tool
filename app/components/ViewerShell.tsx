@@ -138,6 +138,8 @@ type SectionRenderContext = {
   playbackRanges: ReturnType<typeof buildLinePlaybackRangeIndex>;
   selectedLineRange: LinePlaybackRange | null;
   currentPlaybackLineId: string | null;
+  playing: boolean;
+  pause: () => void;
   playLine: (range: LinePlaybackRange) => void;
   toggleLineLock: (range: LinePlaybackRange) => void;
   registerLineElement: (lineId: string) => (element: HTMLDivElement | null) => void;
@@ -168,6 +170,8 @@ function renderSectionBlock(block: SectionBlock, context: SectionRenderContext):
             hasPlaybackTiming={linePlaybackPresentation.hasPlaybackTiming}
             isRangeLocked={linePlaybackPresentation.isRangeLocked}
             isCurrentPlaybackLine={linePlaybackPresentation.isCurrentPlaybackLine}
+            isPlaying={context.playing && linePlaybackPresentation.isCurrentPlaybackLine}
+            onPause={context.pause}
             onPlayLine={context.playLine}
             onToggleLineLock={context.toggleLineLock}
           />
@@ -359,6 +363,8 @@ export function ViewerShell({
     playbackRanges,
     selectedLineRange: playback.state.selectedLineRange,
     currentPlaybackLineId,
+    playing: playback.state.playing,
+    pause: playback.actions.pause,
     playLine: playback.actions.playLine,
     toggleLineLock: playback.actions.toggleLineLock,
     registerLineElement,

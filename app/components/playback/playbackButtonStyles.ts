@@ -20,10 +20,17 @@ export function playbackModeButtonClass({
   ].filter(Boolean).join(" ");
 }
 
+// Shared transport colors; callers supply the already-resolved playing state.
+export function playPauseSurfaceClass(playing: boolean) {
+  return playing ? "viewer-playback-playing-surface" : "viewer-playback-idle-surface";
+}
+
 export function linePlaybackButtonClass({
+  playing,
   pressed = false,
   disabled = false,
 }: {
+  playing?: boolean;
   pressed?: boolean;
   disabled?: boolean;
 }) {
@@ -31,10 +38,12 @@ export function linePlaybackButtonClass({
     "inline-flex h-10 w-10 min-h-10 min-w-10 aspect-square shrink-0 items-center justify-center rounded-full border-2 p-0 transition-colors",
     focusClasses,
     disabled ? "viewer-disabled-surface cursor-not-allowed opacity-60" : "",
-    !disabled && pressed
+    playing !== undefined ? "viewer-playback-button" : "",
+    !disabled && playing !== undefined ? playPauseSurfaceClass(playing) : "",
+    !disabled && playing === undefined && pressed
       ? "viewer-selected-surface shadow-inner"
       : "",
-    !disabled && !pressed
+    !disabled && playing === undefined && !pressed
       ? "viewer-interactive-surface"
       : "",
   ].filter(Boolean).join(" ");

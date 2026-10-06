@@ -2,7 +2,7 @@ import type { CSSProperties, ReactNode } from "react";
 import type { Speaker } from "../types/core/document";
 import type { ScriptLinePresentation, ViewerStyle } from "../types/viewerStyle";
 import type { LinePlaybackRange } from "./playback/playbackState";
-import { LockIcon, PlayIcon } from "./playback/PlaybackIcons";
+import { LockIcon, PauseIcon, PlayIcon } from "./playback/PlaybackIcons";
 import { linePlaybackButtonClass } from "./playback/playbackButtonStyles";
 import { releasePlaybackButtonFocusOnPointerUp } from "./playback/playbackButtonFocus";
 import { ScriptLineFrame } from "./script-line/ScriptLineFrame";
@@ -15,6 +15,8 @@ type Props = {
   hasPlaybackTiming?: boolean;
   isRangeLocked?: boolean;
   isCurrentPlaybackLine?: boolean;
+  isPlaying?: boolean;
+  onPause?: () => void;
   onPlayLine?: (range: LinePlaybackRange) => void;
   onToggleLineLock?: (range: LinePlaybackRange) => void;
   style: ViewerStyle;
@@ -37,6 +39,8 @@ export function ScriptLine({
   hasPlaybackTiming = false,
   isRangeLocked = false,
   isCurrentPlaybackLine = false,
+  isPlaying = false,
+  onPause,
   onPlayLine,
   onToggleLineLock,
   style,
@@ -57,6 +61,7 @@ export function ScriptLine({
     color: linePresentation.labelColor,
   };
   const isGridLayout = layoutVariant === "grid";
+  const playLabel = isPlaying ? "Pause playback" : "Play from this line";
   const disabledTitle = "Line timing is invalid or its audio cannot be resolved";
 
   const playControl = hasPlaybackTiming ? (
@@ -64,13 +69,13 @@ export function ScriptLine({
       <button
         type="button"
         disabled={!playbackRange}
-        onClick={() => playbackRange && onPlayLine?.(playbackRange)}
+        onClick={isPlaying ? onPause : () => playbackRange && onPlayLine?.(playbackRange)}
         onPointerUp={releasePlaybackButtonFocusOnPointerUp}
-        className={linePlaybackButtonClass({ disabled: !playbackRange })}
-        aria-label="Play from this line"
-        title={playbackRange ? "Play from this line" : disabledTitle}
+        className={linePlaybackButtonClass({ playing: isPlaying, disabled: !playbackRange })}
+        aria-label={playLabel}
+        title={playbackRange ? playLabel : disabledTitle}
       >
-        <PlayIcon className="h-4 w-4" />
+        {isPlaying ? <PauseIcon className="h-4 w-4" /> : <PlayIcon className="h-4 w-4" />}
       </button>
       <button
         type="button"

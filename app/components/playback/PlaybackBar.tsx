@@ -7,6 +7,7 @@ import {
   getPlaybackRangeVisualStyle,
   getPlaybackProgressPercentage,
 } from "./playbackDisplay";
+import { playPauseSurfaceClass } from "./playbackButtonStyles";
 import { releasePlaybackButtonFocusOnPointerUp } from "./playbackButtonFocus";
 import { LoopIcon, PauseIcon, PlayIcon, SkipIcon } from "./PlaybackIcons";
 
@@ -169,11 +170,11 @@ export function PlaybackBar({
               type="button"
               onClick={state.playing ? actions.pause : actions.play}
               onPointerUp={releasePlaybackButtonFocusOnPointerUp}
-              className="inline-flex h-11 min-h-11 min-w-14 items-center justify-center rounded-full border-0 bg-transparent p-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
+              className="viewer-playback-button inline-flex h-11 min-h-11 min-w-14 items-center justify-center rounded-full border-0 bg-transparent p-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-700"
               aria-label={playLabel}
               title={playLabel}
             >
-              <span className="viewer-primary-surface inline-flex h-9 w-full items-center justify-center rounded-full border-2 px-3">
+              <span className={`${playPauseSurfaceClass(state.playing)} inline-flex h-9 w-full items-center justify-center rounded-full border-2 px-3 transition-colors`}>
                 {state.playing ? <PauseIcon /> : <PlayIcon />}
               </span>
             </button>
